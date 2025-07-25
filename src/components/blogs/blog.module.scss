@@ -1,0 +1,37 @@
+.blog_item_title{
+    /* Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiu */
+
+  
+    min-height: 52px;
+    max-height: 60px;
+
+    /* Card/Title */
+    font-family: 'Albert Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 26px;
+    /* or 130% */
+    display: flex;
+    align-items: flex-start;
+
+    /* Neutrals/Black */
+    color: #252323;
+
+   
+
+}
+
+.blog_item_description{
+    overflow: hidden;
+    color: #555;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+   margin-top: 10px;
+    /* Card/Subtitle */
+    font-family: "Albert Sans";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 125% */
+}

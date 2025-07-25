@@ -1,0 +1,14 @@
+export { ArrowPrev } from './arrow-prev';
+export { ArrowNext } from './arrow-next';
+export { ArrowDownIcon } from './arrow-down';
+export { ArrowRight } from './arrow-right';
+export { CloseIcon } from './close';
+export { MapPin, MapPinNew } from './map-pin';
+export { SearchIcon } from './search';
+export { ShoppingCartIcon } from './shopping-cart';
+export { FavoriteIcon } from './favorite';
+export { LoginUserIcon } from './user-login';
+export { TruckDeliveryIcon } from './truck-delivery';
+export { UserIcon } from './user';
+export { HeartIcon } from './heart';
+export { MenuIcon } from './menu';

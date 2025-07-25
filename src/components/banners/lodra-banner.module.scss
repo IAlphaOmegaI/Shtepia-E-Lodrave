@@ -1,0 +1,181 @@
+.bannerContainer {
+  background-image: url(/home/legoBG.png);
+  min-height: 950px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #fff9f0;
+  display: flex;
+  position: relative;
+  margin-bottom: 50px;
+  .top_clouds {
+    background-image: url(/home/cloud.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    height: 141px;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-size: cover;
+  }
+  .yellowSection {
+   position: absolute;
+    width: auto;
+    height: 982px;
+    background-repeat: no-repeat;
+    top: -85px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex
+;
+    .rounded_ellipsis {
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+  .toys_left {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    height: 100%;
+    z-index: 43;
+    img {
+      height: 657px;
+    }
+  }
+  .cloud_left {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    z-index: 2;
+    img {
+      height: 215px;
+      width: 366px;
+    }
+  }
+  .toys_right {
+    position: absolute;
+    top: 100px;
+    right: 0;
+    height: 100%;
+    z-index: 43;
+    img {
+      height: 657px;
+    }
+  }
+  .cloud_right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    img {
+      width: 366px;
+      height: 215px;
+    }
+  }
+  .home {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+
+    z-index: 1;
+    margin: 0 auto;
+    z-index: 5;
+    img {
+      width: 512px;
+      margin: 0 auto;
+    }
+  }
+  .ground {
+    background-image: url(/home/ground.svg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 462px;
+    position: absolute;
+    bottom: 0;
+    z-index: 4; // Increased z-index to be above toys
+    .title {
+      position: relative;
+      padding-top: 100px;
+      z-index: 5; // Ensure title is above everything
+      h3 {
+        font-size: 64px;
+        font-weight: 900;
+        line-height: 66px;
+        text-align: center;
+        color: #febc1b;
+        -webkit-text-stroke: 3px #fff;
+        text-stroke: 3px #fff;
+        letter-spacing: -4px;
+      }
+      h1 {
+        font-size: 90px;
+        font-weight: 900;
+        line-height: 94px;
+        text-align: center;
+        color: #febc1b;
+        -webkit-text-stroke: 4px #fff;
+        text-stroke: 4px #fff;
+        letter-spacing: -4px;
+      }
+      .button_link {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px auto;
+        position: relative;
+        cursor: pointer;
+        pointer-events: all; // Ensure it can receive clicks
+        z-index: 10; // High z-index for the button
+        width: 100%;
+        height: 46px;
+        margin: 0 auto;
+        max-width: 550px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        background: #4885ee;
+        border-radius: 8px;
+        padding: 4px 16px;
+        gap: 10px;
+        font-family: 'Grandstander';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 32px;
+        color: #fff;
+        text-decoration: none; // Remove underline
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #3670d8;
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+  .bottomWaves {
+    background-image: url(/home/wavedesign.svg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 250px;
+    position: absolute;
+    bottom: -140px;
+    z-index: 40;
+  }
+}
