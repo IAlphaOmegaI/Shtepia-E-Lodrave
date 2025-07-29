@@ -7,30 +7,7 @@ import 'swiper/css/navigation';
 import ProductCard from './product-card';
 import { ArrowNext, ArrowPrev } from '../icons';
 import Image from 'next/image';
-
-type Product = {
-  id: number | string;
-  name: string;
-  description: string;
-  image: string;
-  basePrice: string;
-  price: string;
-  discount: string;
-  slug: string;
-  language: string;
-  translated_languages: string[];
-  product_type: string;
-  sale_price: number;
-  max_price: number;
-  min_price: number;
-  status: string;
-  quantity: number;
-  unit: string;
-  sku: string;
-  sold_quantity: number;
-  in_flash_sale: number;
-  visibility: string;
-};
+import type { Product } from '@/types';
 
 type CarouselProps = {
   products: Product[];

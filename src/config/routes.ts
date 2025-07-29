@@ -17,7 +17,7 @@ export const Routes = {
   home: '/',
   search: '/search',
   products: '/products',
-  product: (slug: string) => `/products/${slug}`,
+  product: (id: string | number) => `/products/${id}`,
   productsWithFilters: (filters?: { 
     categories?: number; 
     brand_id?: number; 

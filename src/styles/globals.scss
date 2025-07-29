@@ -42,3 +42,60 @@ $text-white: #ffffff;
   background: #fff;
   right: 40px;
 }
+
+/* Custom Filter Styles */
+.filter-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  
+  &:checked {
+    background-color: #febc1b;
+    border-color: #febc1b;
+    
+    &::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+  
+  &:hover {
+    border-color: #febc1b;
+  }
+  
+  &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(254, 188, 27, 0.1);
+  }
+}
+
+.filter-radio {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  
+  &:checked {
+    background-color: #febc1b;
+    border-color: #febc1b;
+  }
+  
+  &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(254, 188, 27, 0.1);
+  }
+}

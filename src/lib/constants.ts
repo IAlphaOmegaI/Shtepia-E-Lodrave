@@ -36,3 +36,4 @@ export const isMultiLangEnable =
 export const NEWSLETTER_POPUP_MODAL_KEY = 'SEEN_POPUP';
 export const REVIEW_POPUP_MODAL_KEY = 'SEEN_REVIEW_POPUP';
 export const NEW_COLLECTIONS_CATEGORY_ID = 16;
+export const NEW_COLLECTIONS_CATEGORY_SLUG = 'koleksioni-ri';

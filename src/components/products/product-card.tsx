@@ -8,9 +8,10 @@ import type { Product } from '@/types';
 
 type ProductCardProps = {
   product: Product;
+  removeMaxWidth?: boolean;
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = false }) => {
   const router = useRouter();
   const { addItem } = useCart();
   const { name, image, unit, quantity, min_price, max_price, sale_price, price, discount, brand } = product ?? {};
@@ -42,7 +43,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     : (image?.url || image?.src || '/icons/newCollection-card.svg');
 
   function handleProductClick() {
-    router.push(`/products/${product.slug}`);
+    router.push(`/products/${product.id}`);
   }
 
   function handleAddToCart(e: React.MouseEvent) {
@@ -59,7 +60,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   }
 
   return (
-    <div className="bg-white w-full rounded-lg border p-4 max-w-xs mx-auto text-left relative flex flex-col">
+    <div className={`bg-white w-full rounded-lg border p-4 ${removeMaxWidth ? '' : 'max-w-xs'} mx-auto text-left relative flex flex-col`}>
       <div className="relative h-[210px] mb-4 cursor-pointer" onClick={handleProductClick}>
         <Image
           src={imageUrl}
