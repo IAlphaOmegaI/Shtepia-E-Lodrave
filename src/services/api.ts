@@ -87,11 +87,21 @@ export const api = {
       const { data } = await apiClient.get('/me/');
       return data;
     },
+
+    updateProfile: async (userData: any) => {
+      const { data } = await apiClient.patch('/me/', userData);
+      return data;
+    },
+
   },
   
 
   // Orders
   orders: {
+    list: async () => {
+      const { data } = await apiClient.get('/orders/');
+      return data;
+    },
     getAll: async (): Promise<OrderListResponse> => {
       const { data } = await apiClient.get('/orders/');
       return data;
