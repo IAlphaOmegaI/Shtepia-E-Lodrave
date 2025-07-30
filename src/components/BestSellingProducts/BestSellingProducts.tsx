@@ -1,134 +1,63 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Button from '../ui/button';
 import { ShoppingCartIcon } from '../icons/shopping-cart';
 import ProductCarousel from '../products/product-carousel';
+import { api } from '@/services/api';
+import type { PopularProductCategory, PopularProduct, Product } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 
-const CATEGORIES = ['Lodra', 'Veshje', 'Aksesorë'];
-
-const dummyProducts = [
-  {
-    id: 1,
-    name: "LEGO Kitty Fairy's Garden",
-    description:
-      'Blueberries are perennial flowering plants with blue or purple berries. They are classified in the section Cyanococcus within the genus Vaccinium. Vaccinium also includes cranberries, bilberries, huckleberries and Madeira blueberries. Commercial blueberries—both wild and cultivated —are all native to North America.',
-    price: '3.700 Lekë',
-    basePrice: '9.700 Lekë',
-    discount: '60% OFF',
-    image: '/icons/newCollection-card.svg',
-    slug: 'lego-kitty-fairys-garden',
-    language: 'en',
-    translated_languages: ['en'],
+// Function to convert PopularProduct to Product format for ProductCard compatibility
+const convertToProductFormat = (popularProduct: PopularProduct): Product => {
+  return {
+    id: popularProduct.id,
+    name: popularProduct.name,
+    code: popularProduct.code,
+    slug: popularProduct.slug,
+    description: popularProduct.description,
+    price: popularProduct.price,
+    sale_price: popularProduct.sale_price,
+    min_price: popularProduct.price,
+    max_price: popularProduct.price,
+    discount: null,
+    image: popularProduct.image || '/icons/newCollection-card.svg',
+    gallery: [],
+    shop: popularProduct.shop,
+    categories: [],
+    brand: popularProduct.brand,
+    tags: [],
+    age_range: 0,
+    gender: 'unisex',
+    size: null,
+    loyalty_points: 0,
+    quantity: popularProduct.quantity,
+    availability: popularProduct.availability,
+    stickers: [],
+    language: 'sq',
+    translated_languages: ['sq'],
     product_type: 'simple',
-    sale_price: 38.59,
-    max_price: 42,
-    min_price: 42,
-    status: 'publish',
-    quantity: 30,
     unit: '1pc(s)',
-    sku: '1003',
+    sku: popularProduct.code,
     sold_quantity: 0,
-    in_flash_sale: 0,
+    in_flash_sale: false,
     visibility: 'visibility_public',
-  },
-  {
-    id: 2,
-    name: "LEGO Kitty Fairy's Garden",
-    description:
-      'Blueberries are perennial flowering plants with blue or purple berries. They are classified in the section Cyanococcus within the genus Vaccinium. Vaccinium also includes cranberries, bilberries, huckleberries and Madeira blueberries. Commercial blueberries—both wild and cultivated —are all native to North America.',
-    price: '3.700 Lekë',
-    basePrice: '9.700 Lekë',
-    discount: '60% OFF',
-    image: '/icons/newCollection-card.svg',
-    slug: 'lego-kitty-fairys-garden',
-    language: 'en',
-    translated_languages: ['en'],
-    product_type: 'simple',
-    sale_price: 38.59,
-    max_price: 42,
-    min_price: 42,
-    status: 'publish',
-    quantity: 30,
-    unit: '1pc(s)',
-    sku: '1003',
-    sold_quantity: 0,
-    in_flash_sale: 0,
-    visibility: 'visibility_public',
-  },
-  {
-    id: 3,
-    name: "LEGO Kitty Fairy's Garden",
-    description:
-      'Blueberries are perennial flowering plants with blue or purple berries. They are classified in the section Cyanococcus within the genus Vaccinium. Vaccinium also includes cranberries, bilberries, huckleberries and Madeira blueberries. Commercial blueberries—both wild and cultivated —are all native to North America.',
-    price: '3.700 Lekë',
-    basePrice: '9.700 Lekë',
-    discount: '60% OFF',
-    image: '/icons/newCollection-card.svg',
-    slug: 'lego-kitty-fairys-garden',
-    language: 'en',
-    translated_languages: ['en'],
-    product_type: 'simple',
-    sale_price: 38.59,
-    max_price: 42,
-    min_price: 42,
-    status: 'publish',
-    quantity: 30,
-    unit: '1pc(s)',
-    sku: '1003',
-    sold_quantity: 0,
-    in_flash_sale: 0,
-    visibility: 'visibility_public',
-  },
-  {
-    id: 4,
-    name: "LEGO Kitty Fairy's Garden",
-    description:
-      'Blueberries are perennial flowering plants with blue or purple berries. They are classified in the section Cyanococcus within the genus Vaccinium. Vaccinium also includes cranberries, bilberries, huckleberries and Madeira blueberries. Commercial blueberries—both wild and cultivated —are all native to North America.',
-    price: '3.700 Lekë',
-    basePrice: '9.700 Lekë',
-    discount: '60% OFF',
-    image: '/icons/newCollection-card.svg',
-    slug: 'lego-kitty-fairys-garden',
-    language: 'en',
-    translated_languages: ['en'],
-    product_type: 'simple',
-    sale_price: 38.59,
-    max_price: 42,
-    min_price: 42,
-    status: 'publish',
-    quantity: 30,
-    unit: '1pc(s)',
-    sku: '1003',
-    sold_quantity: 0,
-    in_flash_sale: 0,
-    visibility: 'visibility_public',
-  },
-  {
-    id: 5,
-    name: "LEGO Kitty Fairy's Garden",
-    description:
-      'Blueberries are perennial flowering plants with blue or purple berries. They are classified in the section Cyanococcus within the genus Vaccinium. Vaccinium also includes cranberries, bilberries, huckleberries and Madeira blueberries. Commercial blueberries—both wild and cultivated —are all native to North America.',
-    price: '3.700 Lekë',
-    basePrice: '9.700 Lekë',
-    discount: '60% OFF',
-    image: '/icons/newCollection-card.svg',
-    slug: 'lego-kitty-fairys-garden',
-    language: 'en',
-    translated_languages: ['en'],
-    product_type: 'simple',
-    sale_price: 38.59,
-    max_price: 42,
-    min_price: 42,
-    status: 'publish',
-    quantity: 30,
-    unit: '1pc(s)',
-    sku: '1003',
-    sold_quantity: 0,
-    in_flash_sale: 0,
-    visibility: 'visibility_public',
-  },
-];
+    status: popularProduct.status,
+    in_stock: popularProduct.in_stock,
+    height: null,
+    width: null,
+    length: null,
+    variations: [],
+    variation_options: [],
+    related_products: [],
+    created_at: popularProduct.created_at,
+    updated_at: popularProduct.created_at,
+    average_rating: 0,
+    total_reviews: 0,
+    ratings: [],
+    average_product_rating: 0,
+  };
+};
 
 const breakpoints = {
   320: { slidesPerView: 1, spaceBetween: 10 },
@@ -138,7 +67,31 @@ const breakpoints = {
 };
 
 const BestSellingProducts = () => {
-  const [activeTab, setActiveTab] = useState('Lodra');
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [popularCategories, setPopularCategories] = useState<PopularProductCategory[]>([]);
+  
+  const { data, isLoading } = useQuery({
+    queryKey: ['popularProducts'],
+    queryFn: () => api.products.getPopular(),
+  });
+
+  useEffect(() => {
+    if (data?.popular_products) {
+      setPopularCategories(data.popular_products);
+      // Set first category as active if not already set
+      if (!activeTab && data.popular_products.length > 0) {
+        setActiveTab(data.popular_products[0].category.name);
+      }
+    }
+  }, [data, activeTab]);
+
+  // Get products for active tab
+  const activeProducts = popularCategories.find(
+    (cat) => cat.category.name === activeTab
+  )?.products || [];
+
+  // Convert products to the format expected by ProductCarousel
+  const formattedProducts = activeProducts.map(convertToProductFormat);
 
   return (
     <div className="w-full bg-[#fff] pb-12">
@@ -158,24 +111,36 @@ const BestSellingProducts = () => {
           </h1>
         </div>
 
-        <div className="flex justify-center gap-4 mb-10 mt-[-41px]">
-          {CATEGORIES.map((cat) => (
+        <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">
+          {popularCategories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setActiveTab(cat)}
+              key={cat.category.id}
+              onClick={() => setActiveTab(cat.category.name)}
               className={
-                'px-6 py-2 rounded-t-[16px] font-semibold transition-colors border-t border-l border-r ' +
-                (activeTab === cat
-                  ? 'bg-[#FFCB47] text-[#000] border-[#FFCB47] border-none'
-                  : 'bg-[#FFF] text-[#777] hover:bg-white')
+                'px-8 py-3 rounded-[20px] font-albertsans font-semibold text-[18px] transition-all duration-200 capitalize ' +
+                (activeTab === cat.category.name
+                  ? 'bg-[#FFF] text-[#000] shadow-lg transform scale-105'
+                  : 'bg-[#FFE4A1] text-[#666] hover:bg-[#FFD98F] hover:text-[#333]')
               }
             >
-              {cat}
+              {cat.category.name === 'veshje' ? 'Veshje' : 
+               cat.category.name === 'lodra' ? 'Lodra' : 
+               cat.category.name === 'aksesore' ? 'Aksesorë' :
+               cat.category.name === 'pantallona' ? 'Pantallona' :
+               cat.category.name === 'puzzle' ? 'Puzzle' :
+               cat.category.name === 'fustane' ? 'Fustane' :
+               cat.category.name.charAt(0).toUpperCase() + cat.category.name.slice(1)}
             </button>
           ))}
         </div>
 
-        <ProductCarousel products={dummyProducts} breakpoints={breakpoints} />
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F11602]"></div>
+          </div>
+        ) : (
+          <ProductCarousel products={formattedProducts} breakpoints={breakpoints} />
+        )}
       </div>
       <Image
         src={'/icons/yellow-wave.svg'}

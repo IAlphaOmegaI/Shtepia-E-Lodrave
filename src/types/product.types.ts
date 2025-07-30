@@ -88,3 +88,32 @@ export interface ProductFilters {
   gender?: 'male' | 'female' | 'unisex';
   age_range?: number;
 }
+
+// Simplified product type for popular products
+export interface PopularProduct {
+  id: number;
+  name: string;
+  code: string;
+  slug: string;
+  description: string;
+  shop: ProductShop;
+  brand: Brand;
+  price: string;
+  sale_price?: string | null;
+  quantity: number;
+  availability: 'available' | 'out_of_stock' | 'limited';
+  status: 'publish' | 'draft' | 'pending';
+  in_stock: boolean;
+  image?: any;
+  created_at: string;
+}
+
+// Popular products response type
+export interface PopularProductCategory {
+  category: Category;
+  products: PopularProduct[];
+}
+
+export interface PopularProductsResponse {
+  popular_products: PopularProductCategory[];
+}

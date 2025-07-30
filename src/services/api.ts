@@ -1,7 +1,8 @@
 import apiClient from '@/lib/api-client';
 import type { 
   Product, 
-  ProductListResponse, 
+  ProductListResponse,
+  PopularProductsResponse, 
   Category, 
   CategoryListResponse,
   Brand,
@@ -37,6 +38,19 @@ export const api = {
       });
       return data;
     },
+    getByCategorySlug: async (slug: string, params?: any): Promise<ProductListResponse> => {
+      const { data } = await apiClient.get('/products/', {
+        params: {
+          categories__slug: slug,
+          ...params,
+        },
+      });
+      return data;
+    },
+    getPopular: async (): Promise<PopularProductsResponse> => {
+      const { data } = await apiClient.get('/popular-products/');
+      return data;
+    },
   },
 
   // Categories
@@ -69,6 +83,10 @@ export const api = {
       const { data } = await apiClient.post('/register/', userData);
       return data;
     },
+    me: async () => {
+      const { data } = await apiClient.get('/me/');
+      return data;
+    },
   },
   
 
@@ -92,6 +110,22 @@ export const api = {
     },
     getBySlug: async (slug: string): Promise<Blog> => {
       const { data } = await apiClient.get(`/blogs/${slug}/`);
+      return data;
+    },
+  },
+
+  // Filters
+  filters: {
+    getByCategory: async (categorySlug: string) => {
+      const { data } = await apiClient.get(`/all_filters/${categorySlug}/`);
+      return data;
+    },
+    getOffers: async () => {
+      const { data } = await apiClient.get(`/all_filters/oferta/`);
+      return data;
+    },
+    getAll: async () => {
+      const { data } = await apiClient.get(`/all_filters/all/`);
       return data;
     },
   },

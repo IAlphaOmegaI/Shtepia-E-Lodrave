@@ -10,8 +10,8 @@ import { ArrowNext, ArrowPrev } from '@/components/icons';
 import { useRouter } from 'next/navigation';
 import ProductCard from '../products/product-card';
 import type { Product } from '@/types';
-import { NEW_COLLECTIONS_CATEGORY_ID } from '@/lib/constants';
-import { FilteredRoutes } from '@/config/routes';
+import { NEW_COLLECTIONS_CATEGORY_ID, NEW_COLLECTIONS_CATEGORY_SLUG } from '@/lib/constants';
+import { Routes } from '@/config/routes';
 
 interface NewCollectionsProps {
   products: Product[];
@@ -77,7 +77,7 @@ const NewCollections: React.FC<NewCollectionsProps> = ({ products }) => {
           <div className="mt-[48px] flex justify-center items-center ">
             <button
               className="flex items-center justify-center gap-[10px] h-[52px] px-4 rounded-[8px] bg-[#1A66EA] shadow-[0px_4px_16px_rgba(19,30,69,0.10)]"
-              onClick={() => router.push(FilteredRoutes.newCollections())}
+              onClick={() => router.push(Routes.category(NEW_COLLECTIONS_CATEGORY_SLUG))}
             >
               <span className="text-white text-[18px] leading-[24px] font-[600] font-albertsans text-center">
                 Shiko të gjitha

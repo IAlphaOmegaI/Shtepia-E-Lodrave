@@ -51,10 +51,12 @@ const FeaturedCategories = async () => {
           {categories.slice(0, 6).map((cat, idx) => (
             <div
               key={cat.id}
-              style={{ backgroundColor: cardBgColors[idx % cardBgColors.length] }}
+              style={{
+                backgroundColor: cardBgColors[idx % cardBgColors.length],
+              }}
               className="relative flex items-center rounded-2xl shadow-lg w-full h-[200px] overflow-hidden"
             >
-              <Link 
+              <Link
                 href={Routes.category(cat.slug)}
                 className="absolute inset-0 z-20"
               />
@@ -64,15 +66,15 @@ const FeaturedCategories = async () => {
               </div>
               {/* Category image */}
               <Image
-                src={cat.featured_image || '/featured_category.png'}
+                src={cat.featured_image || "/featured_category.png"}
                 alt={cat.name}
                 width={230}
                 height={230}
                 className="absolute w-[230px] h-[230px] object-contain left-0 bottom-0 top-[-30px] z-10"
               />
               {/* Category name */}
-              <div className="flex-1 flex items-center justify-end h-full z-10 pr-10">
-                <span className="text-white text-3xl font-bold  px-4 py-2 rounded-xl font-grandstander font-extrabol">
+              <div className="flex-1 flex items-center justify-end h-full z-10 pr-10 ">
+                <span className="text-white text-3xl font-bold  px-4 py-2 rounded-xl font-grandstander font-extrabol max-w-[170px] capitalize">
                   {cat.name}
                 </span>
               </div>

@@ -31,7 +31,7 @@ import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { useWindowSize } from 'react-use';
 import { useShop } from '@/framework/shop';
 import { usePathname } from 'next/navigation';
@@ -43,6 +43,9 @@ import { LoginUserIcon } from '../icons/user-login';
 import { TruckDeliveryIcon } from '../icons/truck-delivery';
 import { useCart } from '@/store/quick-cart/cart.context';
 import { useWishlist } from '../../framework/rest/wishlist';
+import { useRouter } from 'next/navigation';
+import { AuthService } from '@/services';
+import Image from 'next/image';
 
 const Search = dynamic(() => import('@/components/ui/search/search'));
 const AuthorizedMenu = dynamic(() => import('./menu/authorized-menu'), {
@@ -68,6 +71,37 @@ const Header = ({ layout }: { layout?: string }) => {
   );
   const [isAuthorize] = useAtom(authorizationAtom);
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [userData, setUserData] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
+  
+  // Set isClient to true after mount to avoid hydration errors
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  // Get user data from localStorage on mount and when auth changes
+  useEffect(() => {
+    if (!isClient) return;
+    
+    const getUserData = () => {
+      if (typeof window !== 'undefined') {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          try {
+            return JSON.parse(userStr);
+          } catch (e) {
+            return null;
+          }
+        }
+      }
+      return null;
+    };
+    
+    setUserData(getUserData());
+  }, [isAuthorize, isClient]);
   const isHomePage = useIsHomePage();
   const siteHeaderRef = React.useRef(null);
   useActiveScroll(siteHeaderRef);
@@ -91,6 +125,20 @@ const Header = ({ layout }: { layout?: string }) => {
   );
   const [isScrolling] = useAtom(checkIsScrollingStart);
   const { width } = useWindowSize();
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   
   return (
     <>
@@ -267,16 +315,92 @@ const Header = ({ layout }: { layout?: string }) => {
 
               {/* User */}
               <div className="flex items-center text-white">
-                {isAuthorize ? (
-                  <AuthorizedMenu />
-                ) : (
-                  <motion.button
-                    whileTap={{ scale: 0.88 }}
-                    className="flex h-full items-center justify-center p-2 focus:text-[#F44535] focus:outline-0"
-                  >
-                    <LoginUserIcon height={22}></LoginUserIcon>
-                  </motion.button>
-                )}
+                <div className="relative" ref={dropdownRef}>
+                  {isClient && isAuthorize ? (
+                    <>
+                      <motion.button
+                        whileTap={{ scale: 0.88 }}
+                        onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                        className="flex h-full items-center justify-center p-2 focus:outline-0"
+                      >
+                        <Image 
+                          src="/avatar.svg" 
+                          alt="User avatar" 
+                          width={32} 
+                          height={32}
+                          className="rounded-full"
+                        />
+                      </motion.button>
+                      {userDropdownOpen && (
+                        <div className="absolute right-0 top-full mt-3 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden z-[100]">
+                          {/* Arrow pointing up */}
+                          <div className="absolute -top-2 right-8 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white"></div>
+                          {/* User info section */}
+                          <div className="p-6 border-b border-gray-100">
+                            <div className="flex items-center space-x-4">
+                              <Image 
+                                src="/avatar.svg" 
+                                alt="User avatar" 
+                                width={60} 
+                                height={60}
+                                className="rounded-full"
+                              />
+                              <div className="flex-1">
+                                <p className="text-md font-medium text-blue-600 break-all">
+                                  {userData?.email || 'Useremail@gmail.com'}
+                                </p>
+                                <Link
+                                  href="/profile"
+                                  className="text-base text-gray-700 hover:text-gray-900 flex items-center mt-1 group"
+                                  onClick={() => setUserDropdownOpen(false)}
+                                >
+                                  <span>Profili Im</span>
+                                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Menu items */}
+                          <div className="py-2">
+                            <Link
+                              href="/my-loyalty-card"
+                              className="block px-6 py-4 text-lg text-gray-900 hover:bg-gray-50 transition-colors"
+                              onClick={() => setUserDropdownOpen(false)}
+                            >
+                              My loyalty card
+                            </Link>
+                          </div>
+                          
+                          {/* Logout */}
+                          <div className="border-t border-gray-100">
+                            <button
+                              onClick={() => {
+                                AuthService.logout();
+                                setUserDropdownOpen(false);
+                                router.push('/');
+                                window.location.reload();
+                              }}
+                              className="block w-full text-left px-6 py-4 text-lg text-gray-900 hover:bg-gray-50 transition-colors"
+                            >
+                              Logout
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <motion.button
+                      whileTap={{ scale: 0.88 }}
+                      onClick={() => router.push('/login')}
+                      className="flex h-full items-center justify-center p-2 focus:text-[#F44535] focus:outline-0"
+                    >
+                      <LoginUserIcon height={22} />
+                    </motion.button>
+                  )}
+                </div>
                 <motion.button
                   whileTap={{ scale: 0.88 }}
                   onClick={() => window.location.href = '/favorites'}
@@ -303,7 +427,7 @@ const Header = ({ layout }: { layout?: string }) => {
             </div>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative z--1">
           <ul className="hidden items-center space-x-7 rtl:space-x-reverse md:flex 2xl:space-x-10 md:justify-evenly bg-[#fff] relative">
             <DynamicMenu />
           </ul>

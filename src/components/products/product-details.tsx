@@ -1,0 +1,462 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useCart } from "@/store/quick-cart/cart.context";
+import { useWishlist } from "@/framework/rest/wishlist";
+import { Product } from "@/types/product.types";
+import { ArrowDownIcon } from "@/components/icons";
+import { HeartIcon } from "@/components/icons/heart";
+import Counter from "@/components/ui/counter";
+import Button from "@/components/ui/button";
+import { useToast } from "@/contexts/toast-context";
+
+import { ShoppingCartIcon } from "lucide-react";
+
+interface ProductDetailsProps {
+  product: Product;
+}
+
+export default function ProductDetails({ product }: ProductDetailsProps) {
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
+  const [isSpecsOpen, setIsSpecsOpen] = useState(true);
+  const { addItem } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { showToast } = useToast();
+
+  // Use product image or default images
+  const productImages = [];
+  if (product.image) {
+    productImages.push(product.image);
+  }
+  if (product.gallery && product.gallery.length > 0) {
+    productImages.push(...product.gallery);
+  }
+
+  // Fill with placeholder if needed
+  while (productImages.length < 5) {
+    productImages.push("/placeholder.jpg");
+  }
+
+  const images = productImages;
+
+  // Calculate prices and discount
+  const originalPrice = parseFloat(product.price || "0");
+  const salePrice = product.sale_price
+    ? parseFloat(product.sale_price)
+    : originalPrice;
+
+  const handleAddToCart = () => {
+    const priceValue = product.sale_price
+      ? parseFloat(product.sale_price)
+      : parseFloat(product.price);
+    addItem({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      image: product.image || "/placeholder.jpg",
+      price: priceValue,
+      quantity: quantity,
+    });
+    
+    // Show success toast
+    showToast(`${product.name} u shtua në shportë!`, 'success');
+  };
+
+  const handleToggleWishlist = () => {
+    const isInList = isInWishlist(product.id);
+    
+    if (isInList) {
+      removeFromWishlist(product.id);
+      showToast(`${product.name} u hoq nga lista e dëshirave!`, 'info');
+    } else {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        price: salePrice,
+        image: product.image || "/placeholder.jpg",
+        slug: product.slug,
+        brand: product.brand,
+      });
+      showToast(`${product.name} u shtua në listën e dëshirave!`, 'success');
+    }
+  };
+  const hasDiscount = salePrice < originalPrice;
+  const discountPercentage = hasDiscount
+    ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
+    : 0;
+
+  return (
+    <div className="max-w-7xl mx-auto bg-white rounded-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Left side - Image Gallery */}
+        <div className="flex gap-4">
+          {/* Thumbnail column */}
+          <div className="flex flex-col gap-3">
+            {images.slice(0, 4).map((image, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedImage(index)}
+                className={`relative w-[110px] h-[110px] rounded-lg overflow-hidden border-2 transition-all ${
+                  selectedImage === index
+                    ? "border-[#1A66EA]"
+                    : "border-gray-200"
+                }`}
+              >
+                <Image
+                  src={image || "/placeholder.jpg"}
+                  alt={`${product.name} ${index + 1}`}
+                  fill
+                  className="object-contain p-2"
+                />
+              </button>
+            ))}
+            {images.length > 4 && (
+              <button className="relative w-[110px] h-[110px] rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100 flex items-center justify-center">
+                <span className="text-2xl font-bold text-gray-600">5+</span>
+              </button>
+            )}
+          </div>
+
+          {/* Main image */}
+          <div className="flex-1">
+            <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-50 border border-gray-200">
+              <Image
+                src={images[selectedImage] || "/placeholder.jpg"}
+                alt={product.name}
+                fill
+                className="object-contain p-8"
+              />
+              <button className="absolute top-4 right-4 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M21 9v6M3 15V9M15 21h4a2 2 0 0 0 2-2v-4M9 3H5a2 2 0 0 0-2 2v4" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right side - Product Info */}
+        <div className="flex flex-col border border-gray-200 rounded-lg ">
+          <div className="p-6 flex-1">
+            {product.categories && product.categories.length > 0 && (
+              <Link
+                href={`/category/${product.categories[0].slug}`}
+                className="text-[#777] text-sm font-medium mb-2 hover:text-[#1A66EA] underline transition-colors inline-block capitalize"
+              >
+                {product.categories[0].name}
+              </Link>
+            )}
+
+            <h1 className="text-[32px] font-bold text-[#252323] mb-6 font-albertsans">
+              {product.name}
+            </h1>
+
+            <div className="mb-8">
+              {hasDiscount && (
+                <div className="text-[#C1C1C1] line-through text-[20px] font-normal font-albertsans mb-1">
+                  {originalPrice.toFixed(0)} Lekë
+                </div>
+              )}
+              <div className="flex items-center gap-4">
+                <span className="text-[36px] font-bold text-[#1A66EA] font-albertsans">
+                  {salePrice.toFixed(0)} Lekë
+                </span>
+                {hasDiscount && (
+                  <span className="bg-[#D1E0FB] text-[#1A66EA] px-5 py-2 rounded-[40px] text-[18px] font-semibold font-albertsans">
+                    {discountPercentage}% OFF
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Quantity and Add to Cart */}
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center border border-[#E5E5E5] rounded-[8px] bg-[#F8F8F8]">
+                <button
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="px-4 py-3 hover:bg-gray-200 transition-colors text-[24px] font-medium text-[#666]"
+                  disabled={quantity <= 1}
+                >
+                  -
+                </button>
+                <span className="px-6 font-medium text-[20px] text-[#252323] font-albertsans min-w-[60px] text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() =>
+                    setQuantity((q) => Math.min(q + 1, product.quantity))
+                  }
+                  className="px-4 py-3 hover:bg-gray-200 transition-colors text-[24px] font-medium text-[#666]"
+                  disabled={quantity >= product.quantity}
+                >
+                  +
+                </button>
+              </div>
+
+              <span className="text-[#777] text-[16px] font-albertsans">
+                ({product.quantity} units available)
+              </span>
+            </div>
+
+            <div className="flex gap-4 mb-10">
+              <button
+                onClick={handleAddToCart}
+                disabled={product.quantity === 0}
+                className="cursor-pointer flex-1 bg-[#FEBC1B] hover:bg-[#FEB000] text-[#252323] font-semibold py-4 px-8 rounded-[8px] transition-colors flex items-center justify-center gap-3 text-[18px] font-albertsans h-[56px]"
+              >
+                <ShoppingCartIcon className="w-5 h-5 text-[#252323]" />
+                Shtoje në shportë
+              </button>
+
+              <button 
+                onClick={handleToggleWishlist}
+                className={`p-3 border-2 rounded-[50px] transition-all w-[56px] h-[56px] flex items-center justify-center ${
+                  isInWishlist(product.id) 
+                    ? 'bg-[#F11602] border-[#F11602] hover:bg-red-600' 
+                    : 'border-[#F11602] hover:bg-red-50'
+                }`}
+              >
+                <HeartIcon className={`w-7 h-7 transition-colors ${
+                  isInWishlist(product.id) ? 'text-white' : 'text-[#F11602]'
+                }`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Shipping Info */}
+          <div className="bg-gray-100  p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <svg
+                className="w-5 h-5 text-[#666]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
+                />
+              </svg>
+              <span className="text-[15px] text-[#555] font-albertsans">
+                Ships nationwide
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <svg
+                className="w-5 h-5 text-[#666]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span className="text-[15px] text-[#555] font-albertsans">
+                Estimated delivery: 3-5 business days
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <svg
+                className="w-5 h-5 text-[#666]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
+                />
+              </svg>
+              <span className="text-[15px] text-[#555] font-albertsans">
+                Shipping cost calculated at checkout
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* About this item section */}
+      <div className="mt-12">
+        <h2 className="text-[24px] font-bold text-[#252323] mb-6 font-albertsans">
+          About this item
+        </h2>
+
+        {/* Description */}
+        <div className="border-t border-gray-200">
+          <button
+            className="w-full py-4 flex items-center justify-between text-left"
+            onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
+          >
+            <span className="font-semibold text-[#252323] text-[18px] font-albertsans">
+              Description
+            </span>
+            <ArrowDownIcon
+              className={`w-5 h-5 text-gray-500 transition-transform ${
+                isDescriptionOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {isDescriptionOpen && (
+            <div className="pb-6 text-gray-600 space-y-4">
+              <p>
+                {product.description ||
+                  "With 90 years of experience, Lego is one of the world's leading manufacturers of play materials. For the brand, play is vital to the development of all children, helping them thrive in a complex and challenging world. Its main goal is to inspire and develop the builders of tomorrow, as well as generating a positive impact on society and the planet. Lego sets provide the possibility of continuous discovery by offering the magical opportunity to create something new every time."}
+              </p>
+              <div>
+                <p className="font-semibold mb-2">Easy transport and storage</p>
+                <p>
+                  - Its boxed packaging allows you to take your set everywhere
+                  comfortably and conveniently. It is useful not only for
+                  transporting it, but also for easy storage anywhere in your
+                  home.
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold mb-2">Use under supervision</p>
+                <p>
+                  Recommended for use from {product.age_range || 4} years old.
+                  Please supervise young children to avoid accidents.
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold mb-2">Legal notice</p>
+                <p>• Recommended for ages {product.age_range || 4} and up.</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Specifications */}
+        <div className="border-t border-gray-200">
+          <button
+            className="w-full py-4 flex items-center justify-between text-left"
+            onClick={() => setIsSpecsOpen(!isSpecsOpen)}
+          >
+            <span className="font-semibold text-[#252323] text-[18px] font-albertsans">
+              Specifications
+            </span>
+            <ArrowDownIcon
+              className={`w-5 h-5 text-gray-500 transition-transform ${
+                isSpecsOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {isSpecsOpen && (
+            <div className="pb-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Brand:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.brand?.name || "Lego"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Height:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.height ? `${product.height} cm` : "13 cm"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Line:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.categories?.[0]?.name || "Gabby's Dollhouse"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Broad:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.width ? `${product.width} cm` : "11 cm"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Model:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.code || "10787"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Long:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.length ? `${product.length} cm` : "17 cm"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Number of pieces:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  130
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Materials:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  Plastic
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Presentation:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  Box
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-[#777] text-[14px] font-albertsans">
+                  Minimum recommended age:
+                </span>
+                <span className="text-[#252323] text-[14px] font-albertsans">
+                  {product.age_range ? `${product.age_range} years` : "4 years"}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

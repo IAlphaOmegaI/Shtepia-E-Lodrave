@@ -1,8 +1,13 @@
-export default function ProductsPage() {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold">Products Page</h1>
-      <p className="text-gray-600">All products listing will be here</p>
-    </div>
-  );
+import { api } from '@/services/api';
+import ShopPageClient from './shop-page-client';
+
+// Server Component - fetches initial data
+export default async function ShopPage() {
+  // Fetch initial products server-side
+  const initialData = await api.products.getAll({
+    page: 1,
+    limit: 12,
+  });
+
+  return <ShopPageClient initialData={initialData} />;
 }
