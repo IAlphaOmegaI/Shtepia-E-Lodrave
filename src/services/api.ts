@@ -83,6 +83,10 @@ export const api = {
       const { data } = await apiClient.post('/register/', userData);
       return data;
     },
+    me: async () => {
+      const { data } = await apiClient.get('/me/');
+      return data;
+    },
   },
   
 
@@ -118,6 +122,10 @@ export const api = {
     },
     getOffers: async () => {
       const { data } = await apiClient.get(`/all_filters/oferta/`);
+      return data;
+    },
+    getAll: async () => {
+      const { data } = await apiClient.get(`/all_filters/all/`);
       return data;
     },
   },

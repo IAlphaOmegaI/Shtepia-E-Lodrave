@@ -1,10 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/store/quick-cart/cart.context';
+import { useWishlist } from '@/framework/rest/wishlist';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/contexts/toast-context';
 import type { Product } from '@/types';
+import { ShoppingCartIcon, Heart } from 'lucide-react';
 
 type ProductCardProps = {
   product: Product;
@@ -14,6 +18,9 @@ type ProductCardProps = {
 const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = false }) => {
   const router = useRouter();
   const { addItem } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { showToast } = useToast();
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const { name, image, unit, quantity, min_price, max_price, sale_price, price, discount, brand } = product ?? {};
 
   const displayPrice = sale_price || price || '0';
@@ -46,8 +53,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
     router.push(`/products/${product.id}`);
   }
 
-  function handleAddToCart(e: React.MouseEvent) {
+  async function handleAddToCart(e: React.MouseEvent) {
     e.stopPropagation();
+    setIsAddingToCart(true);
+    
+    // Add item to cart
     addItem({
       id: product.id,
       name: product.name,
@@ -57,11 +67,75 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       quantity: 1,
       image: imageUrl,
     });
+    
+    // Show success toast
+    showToast(`${product.name} u shtua në shportë!`, 'success');
+    
+    // Simulate loading animation
+    setTimeout(() => {
+      setIsAddingToCart(false);
+    }, 500);
+  }
+
+  function handleToggleWishlist(e: React.MouseEvent) {
+    e.stopPropagation();
+    const isInList = isInWishlist(product.id);
+    
+    if (isInList) {
+      removeFromWishlist(product.id);
+      showToast(`${product.name} u hoq nga lista e dëshirave!`, 'info');
+    } else {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        price: parseFloat(displayPrice),
+        image: imageUrl,
+        slug: product.slug,
+        brand: brand,
+      });
+      showToast(`${product.name} u shtua në listën e dëshirave!`, 'success');
+    }
+  }
+
+  if (isAddingToCart) {
+    // Show skeleton for entire card while adding to cart
+    return (
+      <div className={`bg-white w-full rounded-lg border p-4 ${removeMaxWidth ? '' : 'max-w-xs'} mx-auto relative`}>
+        <Skeleton className="h-[210px] mb-4" />
+        <Skeleton className="h-[26px] mb-2" />
+        <Skeleton className="h-[20px] w-2/3 mb-4" />
+        <Skeleton className="h-[32px] w-1/2 mb-4" />
+        <Skeleton className="h-[44px]" />
+      </div>
+    );
   }
 
   return (
-    <div className={`bg-white w-full rounded-lg border p-4 ${removeMaxWidth ? '' : 'max-w-xs'} mx-auto text-left relative flex flex-col`}>
-      <div className="relative h-[210px] mb-4 cursor-pointer" onClick={handleProductClick}>
+    <div
+      className={`bg-white w-full rounded-lg border p-4 ${
+        removeMaxWidth ? "" : "max-w-xs"
+      } mx-auto text-left relative flex flex-col`}
+    >
+      {/* Wishlist button */}
+      <button
+        onClick={handleToggleWishlist}
+        className={`absolute top-2 right-2 z-10 p-2 rounded-full transition-all ${
+          isInWishlist(product.id)
+            ? 'bg-[#F11602] hover:bg-red-600'
+            : 'bg-white hover:bg-gray-100 shadow-md'
+        }`}
+      >
+        <Heart 
+          className={`w-5 h-5 transition-colors ${
+            isInWishlist(product.id) ? 'text-white fill-white' : 'text-[#F11602]'
+          }`}
+        />
+      </button>
+      
+      <div
+        className="relative h-[210px] mb-4 cursor-pointer"
+        onClick={handleProductClick}
+      >
         <Image
           src={imageUrl}
           alt={`${name} image`}
@@ -73,7 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
         {name}
       </h3>
       <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px] mb-1">
-        {brand?.name || 'Brand'}
+        {brand?.name || "Brand"}
       </p>
       <div className="flex items-end justify-between gap-2 flex-wrap mb-2 mt-auto">
         <div className="flex flex-col items-start pt-[28px]">
@@ -94,11 +168,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       </div>
       <div>
         {Number(quantity) > 0 && (
+          // On hover we should make the icon color red 
           <button
             onClick={handleAddToCart}
-            className="w-full flex items-center justify-center gap-2 h-[44px] px-4 border border-[#F11602] text-[#F11602] font-semibold rounded-[8px] hover:bg-[#F11602] hover:text-white transition-colors"
+            disabled={isAddingToCart}
+            className="cursor-pointer w-full flex items-center justify-center gap-2 h-[44px] px-4 border border-[#F11602] text-[#F11602] font-semibold rounded-[8px] hover:bg-[#F11602] hover:text-white transition-colors group"
           >
-            <Image src="/icons/cart-icon.svg" alt="Cart" width={20} height={20} />
+            <ShoppingCartIcon className="w-5 h-5 text-[#F11602] group-hover:text-[#fff]" />
             <span className="text-[16px] leading-[20px] font-[500] font-albertsans text-center">
               Shtoje në shportë
             </span>

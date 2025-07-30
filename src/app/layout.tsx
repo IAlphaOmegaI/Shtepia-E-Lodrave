@@ -8,6 +8,8 @@ import { SettingsProvider } from "@/framework/settings";
 import { Provider as JotaiProvider } from "jotai";
 import ManagedDrawer from "@/components/ui/drawer/managed-drawer";
 import CartCounterButton from "@/components/cart/cart-counter-button";
+import { ToastProvider } from "@/contexts/toast-context";
+import { AuthProvider } from "@/providers/auth-provider";
 
 export const metadata: Metadata = {
   title: "Shtëpia e Lodrave",
@@ -27,13 +29,17 @@ export default function RootLayout({
         <JotaiProvider>
           <QueryProvider>
             <SettingsProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  {children}
-                  <ManagedDrawer />
-                  <CartCounterButton />
-                </WishlistProvider>
-              </CartProvider>
+              <AuthProvider>
+                <CartProvider>
+                  <ToastProvider>
+                    <WishlistProvider>
+                      {children}
+                      <ManagedDrawer />
+                      <CartCounterButton />
+                    </WishlistProvider>
+                  </ToastProvider>
+                </CartProvider>
+              </AuthProvider>
             </SettingsProvider>
           </QueryProvider>
         </JotaiProvider>

@@ -10,8 +10,12 @@ export function useAuthStore() {
   };
 
   const unauthorize = () => {
-    setAuthorized(false);
     AuthService.logout();
+    setAuthorized(false);
+    // Clear the persisted auth state
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('isAuthorized');
+    }
   };
 
   return {
