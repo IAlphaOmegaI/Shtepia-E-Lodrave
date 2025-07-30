@@ -29,10 +29,18 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized
+      // Handle unauthorized - clear all auth data
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
-        // Redirect to login if needed
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('isAuthorized');
+        
+        // Redirect to login page if not already there
+        const currentPath = window.location.pathname;
+        if (!currentPath.includes('/login')) {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);

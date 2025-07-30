@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { AuthService } from '@/services';
 import { Routes } from '@/config/routes';
 import { useAuthStore } from '@/store/use-auth';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +17,8 @@ export default function LoginPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,24 +40,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg">
-      {/* Logo */}
-      <div className="text-center mb-8">
-        <Link href={Routes.home}>
-          <Image
-            src="/assets/logo.png"
-            alt="Shtëpia e Lodrave"
-            width={120}
-            height={60}
-            className="mx-auto"
-          />
-        </Link>
-        <h1 className="text-2xl font-bold mt-4 font-grandstander text-gray-900">
-          Mirë se vini përsëri!
-        </h1>
-        <p className="text-gray-600 mt-2 font-albertsans">
-          Hyni në llogarinë tuaj për të vazhduar
-        </p>
+    <div className="bg-white p-8 rounded-2xl shadow-sm max-w-md w-full">
+      {/* Title */}
+      <h1 className="text-3xl font-bold text-red-600 text-center mb-2">
+        Almost there!
+      </h1>
+      
+      {/* Down arrow */}
+      <div className="flex justify-center mb-8">
+        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
       </div>
 
       {/* Error Message */}
@@ -68,7 +63,7 @@ export default function LoginPage() {
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 font-albertsans">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
             Email
           </label>
           <input
@@ -76,75 +71,72 @@ export default function LoginPage() {
             id="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-albertsans"
-            placeholder="email@example.com"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter your email"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1 font-albertsans">
-            Fjalëkalimi
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            Password
           </label>
-          <input
-            type="password"
-            id="password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-albertsans"
-            placeholder="••••••••"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Password"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <label className="flex items-center">
             <input
-              id="remember-me"
-              name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-albertsans">
-              Më mbaj mend
-            </label>
-          </div>
-
+            <span className="ml-2 text-sm text-gray-600">Remember me?</span>
+          </label>
           <Link
             href={Routes.forgotPassword}
-            className="text-sm text-blue-600 hover:text-blue-500 font-albertsans"
+            className="text-sm text-blue-600 hover:text-blue-700"
           >
-            Keni harruar fjalëkalimin?
+            Forgot your password?
           </Link>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#1A66EA] text-white py-3 px-4 rounded-lg hover:bg-[#1557C7] transition-colors font-semibold font-albertsans disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Duke hyrë...' : 'Hyr'}
+          {loading ? 'Logging in...' : 'Log in'}
         </button>
       </form>
 
-      {/* Divider */}
-      <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500 font-albertsans">Ose</span>
-        </div>
-      </div>
-
       {/* Sign up link */}
-      <p className="text-center text-gray-600 font-albertsans">
-        Nuk keni llogari?{' '}
-        <Link
-          href={Routes.register}
-          className="text-blue-600 hover:text-blue-500 font-semibold"
-        >
-          Regjistrohuni tani
+      <p className="text-center text-sm text-gray-600 mt-6">
+        Don't have an account?{' '}
+        <Link href={Routes.register} className="text-orange-500 hover:text-orange-600 font-medium">
+          Sign up
         </Link>
       </p>
     </div>

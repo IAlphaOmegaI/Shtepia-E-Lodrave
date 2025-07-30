@@ -9,6 +9,7 @@ type TreeMenuProps = {
   categorySlug?: string;
   className?: string;
   onFiltersApplied?: (filters: FilterParams) => void;
+  isShopPage?: boolean;
 };
 
 type FilterData = {
@@ -83,7 +84,7 @@ const FilterSection: React.FC<{ title: string; children: React.ReactNode }> = ({
   );
 };
 
-const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, onFiltersApplied }) => {
+const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, onFiltersApplied, isShopPage = false }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -113,19 +114,69 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
 
   // Fetch filter data
   useEffect(() => {
+    if (!isShopPage && !categorySlug) return;
+    
     const fetchFilters = async () => {
       try {
         setLoading(true);
-        // Fetch category filters
-        const response = await api.filters.getByCategory(categorySlug);
-        if (response && response[categorySlug]) {
-          setFilterData(response[categorySlug]);
-        }
         
-        // Fetch offers
-        const offersResponse = await api.filters.getOffers();
-        if (offersResponse && offersResponse.oferta) {
-          setOfferData(offersResponse.oferta);
+        if (isShopPage) {
+          // For shop page, fetch all filters
+          const response = await api.filters.getAll();
+          if (response) {
+            // Merge all category filters for shop page
+            const allCategories: { id: number; name: string }[] = [];
+            const allBrands: { id: number; name: string }[] = [];
+            const allAges: { id: number; label: string }[] = [];
+            
+            // Extract unique brands from the response
+            if (response.brands) {
+              allBrands.push(...response.brands);
+            }
+            
+            // Extract categories from each category section
+            Object.keys(response).forEach(key => {
+              if (key !== 'brands' && key !== 'oferta' && response[key]) {
+                if (response[key].categories) {
+                  response[key].categories.forEach((cat: any) => {
+                    if (!allCategories.find(c => c.id === cat.id)) {
+                      allCategories.push(cat);
+                    }
+                  });
+                }
+                if (response[key].ages) {
+                  response[key].ages.forEach((age: any) => {
+                    if (!allAges.find(a => a.id === age.id)) {
+                      allAges.push(age);
+                    }
+                  });
+                }
+              }
+            });
+            
+            setFilterData({
+              categories: allCategories,
+              brands: allBrands,
+              ages: allAges,
+            });
+            
+            // Set offers if available
+            if (response.oferta) {
+              setOfferData(response.oferta);
+            }
+          }
+        } else {
+          // For category page, fetch category-specific filters
+          const response = await api.filters.getByCategory(categorySlug);
+          if (response && response[categorySlug]) {
+            setFilterData(response[categorySlug]);
+          }
+          
+          // Fetch offers separately for category pages
+          const offersResponse = await api.filters.getOffers();
+          if (offersResponse && offersResponse.oferta) {
+            setOfferData(offersResponse.oferta);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch filters:', error);
@@ -135,7 +186,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
     };
 
     fetchFilters();
-  }, [categorySlug]);
+  }, [categorySlug, isShopPage]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -198,9 +249,12 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
     setApplying(true);
     
     // Build filter params
-    const filterParams: FilterParams = {
-      categories__slug: categorySlug,
-    };
+    const filterParams: FilterParams = {};
+    
+    // Only add categories__slug for category pages, not shop page
+    if (!isShopPage && categorySlug) {
+      filterParams.categories__slug = categorySlug;
+    }
     
     // Add selected category
     if (selectedCategory !== null) {
@@ -245,9 +299,11 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
     
     // Apply cleared filters
     if (onFiltersApplied) {
-      onFiltersApplied({
-        categories__slug: categorySlug,
-      });
+      const clearedParams: FilterParams = {};
+      if (!isShopPage && categorySlug) {
+        clearedParams.categories__slug = categorySlug;
+      }
+      onFiltersApplied(clearedParams);
     }
   };
 
@@ -383,6 +439,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
         <Button
           onClick={handleApplyFilters}
           disabled={applying}
+          variant="custom"
           className="w-full bg-[#FEBC1B] hover:bg-[#FEB000] text-black font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
         >
           {applying ? 'Applying...' : 'Apply Filters'}

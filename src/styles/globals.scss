@@ -15,6 +15,10 @@ $text-white: #ffffff;
   font-family: 'Grandstander', cursive;
 }
 
+.albertus-font {
+  font-family: 'Albertus', cursive;
+}
+
 .swiperButtonPrev {
   display: flex;
   width: 44px;
@@ -98,4 +102,33 @@ $text-white: #ffffff;
     outline-offset: 2px;
     box-shadow: 0 0 0 3px rgba(254, 188, 27, 0.1);
   }
+}
+
+/* Image filter styles */
+.filter-red {
+  filter: brightness(0) saturate(100%) invert(17%) sepia(98%) saturate(4968%) hue-rotate(4deg) brightness(94%) contrast(97%);
+}
+
+.filter-white {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+/* Toast animations */
+@keyframes slide-in-bottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-bottom {
+  animation: slide-in-bottom 0.3s ease-out;
+}
+
+.z--1{
+  z-index: -1;
 }

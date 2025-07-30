@@ -87,10 +87,12 @@ export const api = {
       const { data } = await apiClient.get('/me/');
       return data;
     },
+
     updateProfile: async (userData: any) => {
       const { data } = await apiClient.patch('/me/', userData);
       return data;
     },
+
   },
   
 
@@ -130,6 +132,10 @@ export const api = {
     },
     getOffers: async () => {
       const { data } = await apiClient.get(`/all_filters/oferta/`);
+      return data;
+    },
+    getAll: async () => {
+      const { data } = await apiClient.get(`/all_filters/all/`);
       return data;
     },
   },
