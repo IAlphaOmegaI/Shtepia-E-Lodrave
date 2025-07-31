@@ -1,5 +1,5 @@
 import Header from '@/components/layouts/header';
-import Footer from '@/components/layouts/footer/footer-bar';
+import Footer from '@/components/layouts/footer/footer';
 import { SettingsProvider } from '@/contexts/settings.context';
 
 export default function MainLayout({

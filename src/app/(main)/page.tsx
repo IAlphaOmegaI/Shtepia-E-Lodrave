@@ -38,7 +38,7 @@ export default async function HomePage() {
       <LoyaltyCard />
       
       {/* Blogs Section */}
-      <div className="bg-[#FFFAEE] py-20">
+      <div className="bg-[#fff] py-20">
         <div className="container mx-auto px-4">
           <BlogsCard 
             title="Blogs" 
@@ -49,54 +49,6 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Categories */}
-      <section className="py-10">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-6">Categories</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map((category: any) => (
-              <div
-                key={category.id}
-                className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition"
-              >
-                <h3 className="font-semibold">{category.name}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Products */}
-      <section className="py-10">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-6">Featured Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product: any) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition"
-              >
-                {product.image && (
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                )}
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                  <p className="text-gray-600 text-sm mb-2">
-                    {product.description?.substring(0, 100)}...
-                  </p>
-                  <p className="text-xl font-bold text-blue-600">
-                    ${product.price}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

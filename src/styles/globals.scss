@@ -10,6 +10,12 @@ $text-white: #ffffff;
   text-stroke: $width $color;
   paint-order: stroke fill;
 }
+body{
+  background-color: #FFFAEE;
+  &.darker-v1{
+    background-color: #FFF2D1;
+  }
+}
 
 .grandstander-font {
   font-family: 'Grandstander', cursive;

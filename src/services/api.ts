@@ -93,6 +93,11 @@ export const api = {
       return data;
     },
 
+    changePassword: async (passwordData: { current_password: string; new_password: string }) => {
+      const { data } = await apiClient.post('/change-password/', passwordData);
+      return data;
+    },
+
   },
   
 

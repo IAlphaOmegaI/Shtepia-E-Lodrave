@@ -8,7 +8,7 @@ export default function FavoritesPage() {
   const { items } = useWishlist();
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mb-40">
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <h1 className="text-[32px] font-bold text-[#C32929] font-albertsans">Favorite items</h1>
