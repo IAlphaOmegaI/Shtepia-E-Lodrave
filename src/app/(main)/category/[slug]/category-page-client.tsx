@@ -82,11 +82,11 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className=" min-h-screen">
       {/* Category Header */}
-      <PageHeader 
-        title={categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} 
-        showClouds={true} 
+      <PageHeader
+        title={categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}
+        showClouds={true}
       />
 
       {/* Main Content */}
@@ -97,7 +97,17 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
             onClick={() => setShowMobileFilters(true)}
             className="w-full bg-[#FEBC1B] text-black font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-[#FEB000] transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="4" y1="21" x2="4" y2="14"></line>
               <line x1="4" y1="10" x2="4" y2="3"></line>
               <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -114,42 +124,73 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
 
         {/* Mobile overlay backdrop */}
         {showMobileFilters && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setShowMobileFilters(false)} />
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setShowMobileFilters(false)}
+          />
         )}
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Single TreeMenu that adapts position based on screen size */}
-          <aside className={`
-            ${showMobileFilters ? 'fixed right-0 top-0 h-full w-full max-w-sm z-50' : 'hidden'}
+          <aside
+            className={`
+            ${
+              showMobileFilters
+                ? "fixed right-0 top-0 h-full w-full max-w-sm z-50"
+                : "hidden"
+            }
             lg:relative lg:block lg:right-auto lg:top-auto lg:h-auto lg:w-64 lg:max-w-none lg:z-auto
             flex-shrink-0
-          `}>
-            <div className={`
-              ${showMobileFilters ? 'h-full bg-white shadow-lg' : ''}
+          `}
+          >
+            <div
+              className={`
+              ${showMobileFilters ? "h-full bg-white shadow-lg" : ""}
               lg:h-auto lg:bg-transparent lg:shadow-none
-            `}>
+            `}
+            >
               {/* Mobile header - only visible on mobile when filters are open */}
-              <div className={`${showMobileFilters ? 'flex' : 'hidden'} items-center justify-between p-4 border-b lg:hidden`}>
+              <div
+                className={`${
+                  showMobileFilters ? "flex" : "hidden"
+                } items-center justify-between p-4 border-b lg:hidden`}
+              >
                 <h2 className="text-lg font-semibold">Filters</h2>
                 <button
                   onClick={() => setShowMobileFilters(false)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 </button>
               </div>
-              
+
               {/* TreeMenu wrapper */}
-              <div className={`
-                ${showMobileFilters ? 'overflow-y-auto h-[calc(100%-64px)] p-4' : ''}
+              <div
+                className={`
+                ${
+                  showMobileFilters
+                    ? "overflow-y-auto h-[calc(100%-64px)] p-4"
+                    : ""
+                }
                 lg:overflow-visible lg:h-auto lg:p-0 lg:sticky lg:top-4
-              `}>
-                <TreeMenu 
-                  categorySlug={slug} 
-                  className="bg-white" 
+              `}
+              >
+                <TreeMenu
+                  categorySlug={slug}
+                  className="bg-white"
                   onFiltersApplied={(filters) => {
                     handleFiltersApplied(filters);
                     setShowMobileFilters(false);
@@ -163,12 +204,16 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
           <main className="flex-1">
             {/* Products Header */}
             <div className="bg-white rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <p className="text-gray-600 font-albertsans">{paginatorInfo?.total || 0} produkte</p>
-              
+              <p className="text-gray-600 font-albertsans">
+                {paginatorInfo?.total || 0} produkte
+              </p>
+
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <span className="text-gray-600 font-albertsans text-sm sm:text-base">Produkte:</span>
-                  <select 
+                  <span className="text-gray-600 font-albertsans text-sm sm:text-base">
+                    Produkte:
+                  </span>
+                  <select
                     value={itemsPerPage}
                     onChange={(e) => {
                       setItemsPerPage(Number(e.target.value));
@@ -181,10 +226,12 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                     <option value={36}>36</option>
                   </select>
                 </div>
-                
+
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <span className="text-gray-600 font-albertsans text-sm sm:text-base">Sort:</span>
-                  <select 
+                  <span className="text-gray-600 font-albertsans text-sm sm:text-base">
+                    Sort:
+                  </span>
+                  <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="border border-gray-300 rounded px-3 py-1 font-albertsans text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#FEBC1B] focus:border-[#FEBC1B] cursor-pointer flex-1 sm:flex-initial"
@@ -221,47 +268,64 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-8 bg-white rounded-lg p-8">
-                <p className="text-gray-500 text-lg">No products found with the selected filters</p>
-                <p className="text-gray-400 mt-2">Try adjusting your filters to see more results</p>
+                <p className="text-gray-500 text-lg">
+                  No products found with the selected filters
+                </p>
+                <p className="text-gray-400 mt-2">
+                  Try adjusting your filters to see more results
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} removeMaxWidth={true} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    removeMaxWidth={true}
+                  />
                 ))}
               </div>
             )}
-            
+
             {/* Pagination */}
             {paginatorInfo && paginatorInfo.last_page > 1 && (
               <div className="mt-8">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      <PaginationPrevious
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        className={
+                          currentPage === 1
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }
                       />
                     </PaginationItem>
-                    
+
                     {/* Generate page numbers */}
                     {(() => {
                       const pages = [];
                       const maxPagesToShow = 5;
                       const halfRange = Math.floor(maxPagesToShow / 2);
                       let startPage = Math.max(1, currentPage - halfRange);
-                      let endPage = Math.min(paginatorInfo.last_page, startPage + maxPagesToShow - 1);
-                      
+                      let endPage = Math.min(
+                        paginatorInfo.last_page,
+                        startPage + maxPagesToShow - 1
+                      );
+
                       // Adjust start if we're near the end
                       if (endPage - startPage < maxPagesToShow - 1) {
                         startPage = Math.max(1, endPage - maxPagesToShow + 1);
                       }
-                      
+
                       // Add first page and ellipsis if needed
                       if (startPage > 1) {
                         pages.push(
                           <PaginationItem key={1}>
-                            <PaginationLink 
+                            <PaginationLink
                               onClick={() => setCurrentPage(1)}
                               className="cursor-pointer"
                             >
@@ -277,12 +341,12 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                           );
                         }
                       }
-                      
+
                       // Add page numbers
                       for (let i = startPage; i <= endPage; i++) {
                         pages.push(
                           <PaginationItem key={i}>
-                            <PaginationLink 
+                            <PaginationLink
                               onClick={() => setCurrentPage(i)}
                               isActive={currentPage === i}
                               className="cursor-pointer"
@@ -292,7 +356,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                           </PaginationItem>
                         );
                       }
-                      
+
                       // Add ellipsis and last page if needed
                       if (endPage < paginatorInfo.last_page) {
                         if (endPage < paginatorInfo.last_page - 1) {
@@ -304,8 +368,10 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                         }
                         pages.push(
                           <PaginationItem key={paginatorInfo.last_page}>
-                            <PaginationLink 
-                              onClick={() => setCurrentPage(paginatorInfo.last_page)}
+                            <PaginationLink
+                              onClick={() =>
+                                setCurrentPage(paginatorInfo.last_page)
+                              }
                               className="cursor-pointer"
                             >
                               {paginatorInfo.last_page}
@@ -313,14 +379,22 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                           </PaginationItem>
                         );
                       }
-                      
+
                       return pages;
                     })()}
-                    
+
                     <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginatorInfo.last_page))}
-                        className={currentPage === paginatorInfo.last_page ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      <PaginationNext
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, paginatorInfo.last_page)
+                          )
+                        }
+                        className={
+                          currentPage === paginatorInfo.last_page
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }
                       />
                     </PaginationItem>
                   </PaginationContent>

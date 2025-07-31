@@ -1,9 +1,24 @@
 export const FacebookIcon: React.FC<React.SVGAttributes<{}>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" {...props}>
+  <svg
+    width="36"
+    height="37"
+    viewBox="0 0 36 37"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      x="0.5"
+      y="0.848633"
+      width="35"
+      height="35"
+      rx="17.5"
+      stroke="white"
+    />
     <path
-      data-name="_ionicons_svg_logo-facebook (6)"
-      d="M11.338 0H.662A.663.663 0 000 .663v10.674a.663.663 0 00.662.662H6V7.25H4.566V5.5H6V4.206a2.28 2.28 0 012.459-2.394c.662 0 1.375.05 1.541.072V3.5H8.9c-.753 0-.9.356-.9.881V5.5h1.794L9.56 7.25H8V12h3.338a.663.663 0 00.662-.663V.662A.663.663 0 0011.338 0z"
-      fill="currentColor"
+      d="M13 16.3486V20.3486H16V27.3486H20V20.3486H23L24 16.3486H20V14.3486C20 14.0834 20.1054 13.8291 20.2929 13.6415C20.4804 13.454 20.7348 13.3486 21 13.3486H24V9.34863H21C19.6739 9.34863 18.4021 9.87542 17.4645 10.8131C16.5268 11.7508 16 13.0226 16 14.3486V16.3486H13Z"
+      stroke="white"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

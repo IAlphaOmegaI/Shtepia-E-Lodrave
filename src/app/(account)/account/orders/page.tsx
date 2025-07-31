@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { ChevronDownIcon } from '@/components/icons/chevron-down';
 import { ChevronUpIcon } from '@/components/icons/chevron-up';
-import { ShoppingCartIcon } from '@/components/icons/shopping-cart';
+import { BoxIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import { formatDistance } from 'date-fns';
 import { sq } from 'date-fns/locale';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Routes } from '@/config/routes';
 
 interface OrderItem {
   id: number;
@@ -91,21 +93,21 @@ export default function OrdersPage() {
   if (orders.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-16 text-center">
-        <div className="w-32 h-32 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-          <ShoppingCartIcon className="w-16 h-16 text-gray-400" />
+        <div className="w-12 h-12 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+          <BoxIcon className="w-12 h-12 text-[#D09A16]" />
         </div>
-        <h2 className="text-2xl font-grandstander font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-grandstander font-bold text-[#D09A16] mb-2">
           Ende pa porosi?
         </h2>
         <p className="text-gray-600 font-albertsans mb-6">
           Duket sikur nuk keni bërë asnjë porosi ende.
         </p>
-        <a
-          href="/"
+        <Link
+          href={Routes.products}
           className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-albertsans font-medium"
         >
           Filloni blerjet
-        </a>
+        </Link>
       </div>
     );
   }

@@ -13,6 +13,12 @@ export interface ProductDiscount {
   value: string;
 }
 
+export interface ProductGalleryImage {
+  id: number;
+  original: string;
+  thumbnail: string;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -24,8 +30,8 @@ export interface Product {
   min_price: string;
   max_price: string;
   discount?: ProductDiscount | null;
-  image: any; // TODO: Define proper image type
-  gallery: any[];
+  image: string;
+  gallery: ProductGalleryImage[];
   shop: ProductShop;
   categories: Category[];
   brand: Brand;

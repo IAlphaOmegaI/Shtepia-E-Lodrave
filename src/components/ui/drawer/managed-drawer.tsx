@@ -9,10 +9,9 @@ const CartSidebarView = dynamic(
   () => import('@/components/cart/cart-sidebar-view'),
 );
 
-// TODO: Add other drawer views as needed
-// const MobileMainMenu = dynamic(
-//   () => import('@/components/layouts/mobile-menu/mobile-main-menu'),
-// );
+const MobileMainMenu = dynamic(
+  () => import('@/components/layouts/mobile-menu/mobile-main-menu'),
+);
 
 export default function ManagedDrawer() {
   const [{ display, view, data }, setDrawerState] = useAtom(drawerAtom);
@@ -21,6 +20,7 @@ export default function ManagedDrawer() {
     <Drawer
       open={display}
       onClose={() => setDrawerState({ display: false, view: '' })}
+      className="z-50 bg-white"
       variant={
         [
           'FILTER_VIEW',
@@ -33,12 +33,7 @@ export default function ManagedDrawer() {
       }
     >
       {view === 'cart' && <CartSidebarView />}
-      {view === 'MAIN_MENU_VIEW' && (
-        <div className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Mobile Menu</h2>
-          <p>Mobile menu content coming soon...</p>
-        </div>
-      )}
+      {view === 'MAIN_MENU_VIEW' && <MobileMainMenu />}
     </Drawer>
   );
 }
