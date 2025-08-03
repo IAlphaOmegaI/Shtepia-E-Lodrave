@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Routes } from '@/config/routes';
 import { ArrowPrev } from '@/components/icons';
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -80,7 +78,7 @@ export default function ForgotPasswordPage() {
           Rivendosni fjalëkalimin
         </h1>
         <p className="text-gray-600 mt-2 font-albertsans">
-          Vendosni emailin tuaj dhe do t'ju dërgojmë një link për rivendosje
+          Vendosni emailin tuaj dhe do t&apos;ju dërgojmë një link për rivendosje
         </p>
       </div>
 

@@ -46,8 +46,6 @@ export default function CartPage() {
                   <CartItem
                     key={item.id}
                     item={item}
-                    onRemove={() => removeItem(item.id)}
-                    onUpdate={(quantity) => updateItem(item.id, quantity)}
                   />
                 ))}
               </div>

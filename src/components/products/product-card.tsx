@@ -46,9 +46,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
   }
   
   // Check if image is a valid URL string or extract from object
-  let imageUrl = (typeof image === 'string' && image.trim() !== '') 
-    ? image 
-    : (image?.url || image?.src || '/product-placeholder.jpg');
+  let imageUrl = '/product-placeholder.jpg';
+  if (typeof image === 'string' && image.trim() !== '') {
+    imageUrl = image;
+  } else if (typeof image === 'object' && image !== null) {
+    imageUrl = (image as any).url || (image as any).src || '/product-placeholder.jpg';
+  }
   
   // Use placeholder if there's an image error
   if (imageError) {

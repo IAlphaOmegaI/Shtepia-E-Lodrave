@@ -5,8 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthService } from '@/services';
-import { FavoriteIcon } from '@/components/icons/favorite';
-import { ShoppingCartIcon } from '@/components/icons/shopping-cart';
 import { CreditCardIcon } from '@/components/icons/credit-card';
 import { UserIcon } from '@/components/icons/user';
 import { Routes } from '@/config/routes';

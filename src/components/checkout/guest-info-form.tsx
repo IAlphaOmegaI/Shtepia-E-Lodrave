@@ -86,7 +86,7 @@ const GuestInfoForm: React.FC<Props> = ({ onInfoChange, className }) => {
                   </h4>
                   <p className="text-dark text-opacity-90 font-albertus mb-3 max-w-[400px]">
                     Krijoni një llogari me ne dhe fitoni pikë në çdo blerje që
-                    mund t'i përdorni për zbritje!
+                    mund t&apos;i përdorni për zbritje!
                   </p>
                   <Link
                     href={Routes.register}

@@ -10,9 +10,10 @@ import type { Metadata } from 'next';
 export async function generateMetadata({ 
   params 
 }: { 
-  params: { slug: string } 
+  params: Promise<{ slug: string }> 
 }): Promise<Metadata> {
-  const blog = await BlogService.getBySlug(params.slug);
+  const { slug } = await params;
+  const blog = await BlogService.getBySlug(slug);
   
   if (!blog) {
     return {
@@ -38,10 +39,11 @@ export async function generateMetadata({
 export default async function BlogDetailPage({ 
   params 
 }: { 
-  params: { slug: string } 
+  params: Promise<{ slug: string }> 
 }) {
+  const { slug } = await params;
   // Fetch blog data on the server
-  const blog = await BlogService.getBySlug(params.slug);
+  const blog = await BlogService.getBySlug(slug);
   
   // If blog not found, show 404
   if (!blog) {

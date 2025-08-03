@@ -30,7 +30,7 @@ type PriceRange = {
 };
 
 export type FilterParams = {
-  categories__slug: string;
+  categories__slug?: string;
   categories?: string;
   brand?: string;
   age_range?: string;

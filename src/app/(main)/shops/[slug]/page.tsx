@@ -1,8 +1,10 @@
-export default function ShopDetailPage({ params }: { params: { slug: string } }) {
+export default async function ShopDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold">Shop Detail</h1>
-      <p className="text-gray-600">Shop Detail page - slug: {params.slug}</p>
+      <p className="text-gray-600">Shop Detail page - slug: {slug}</p>
     </div>
   );
 }

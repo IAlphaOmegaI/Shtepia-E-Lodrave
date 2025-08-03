@@ -39,9 +39,12 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({ product }
     }
   }
   
-  const imageUrl = (typeof image === 'string' && image.trim() !== '') 
-    ? image 
-    : (image?.url || image?.src || '/placeholder.jpg');
+  let imageUrl = '/placeholder.jpg';
+  if (typeof image === 'string' && image.trim() !== '') {
+    imageUrl = image;
+  } else if (typeof image === 'object' && image !== null) {
+    imageUrl = (image as any).url || (image as any).src || '/placeholder.jpg';
+  }
 
   const handleAddToCart = () => {
     addItem({
@@ -96,7 +99,7 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({ product }
           
           {brand && (
             <p className="text-[#777] font-albertsans text-[14px] font-medium mt-1">
-              {brand.name || brand}
+              {typeof brand === 'string' ? brand : brand.name}
             </p>
           )}
 

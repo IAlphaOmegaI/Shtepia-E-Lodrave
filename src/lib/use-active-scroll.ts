@@ -1,7 +1,7 @@
 import { RefObject, useEffect } from 'react';
 
 export const useActiveScroll = <T extends HTMLElement = HTMLElement>(
-  ref: RefObject<T>,
+  ref: RefObject<T | null>,
   offset = 0
 ) => {
   useEffect(() => {
