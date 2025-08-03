@@ -21,6 +21,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { showToast } = useToast();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { name, image, unit, quantity, min_price, max_price, sale_price, price, discount, brand } = product ?? {};
 
   const displayPrice = sale_price || price || '0';
@@ -45,9 +46,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
   }
   
   // Check if image is a valid URL string or extract from object
-  const imageUrl = (typeof image === 'string' && image.trim() !== '') 
+  let imageUrl = (typeof image === 'string' && image.trim() !== '') 
     ? image 
-    : (image?.url || image?.src || '/icons/newCollection-card.svg');
+    : (image?.url || image?.src || '/product-placeholder.jpg');
+  
+  // Use placeholder if there's an image error
+  if (imageError) {
+    imageUrl = '/product-placeholder.jpg';
+  } else if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('//')) {
+    // Prepend NEXT_PUBLIC_URL if the image is a relative path
+    imageUrl = `${process.env.NEXT_PUBLIC_URL || 'http://63.178.242.103'}${imageUrl}`;
+  }
 
   function handleProductClick() {
     router.push(`/products/${product.id}`);
@@ -114,7 +123,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
     <div
       className={`bg-white w-full rounded-lg border p-4 ${
         removeMaxWidth ? "" : "max-w-xs"
-      } mx-auto text-left relative flex flex-col`}
+      } mx-auto text-left relative flex flex-col h-full`}
     >
       {/* Wishlist button */}
       <button
@@ -141,9 +150,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           alt={`${name} image`}
           fill
           className="object-contain"
+          onError={() => setImageError(true)}
         />
       </div>
-      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px]">
+      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2 min-h-[52px]">
         {name}
       </h3>
       <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px] mb-1">
@@ -151,11 +161,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       </p>
       <div className="flex items-end justify-between gap-2 flex-wrap mb-2 mt-auto">
         <div className="flex flex-col items-start pt-[28px]">
-          {originalPrice !== displayPrice && (
-            <span className="text-[#c1c1c1] font-albertsans text-[16px] font-medium leading-[24px] line-through">
-              {originalPrice} Lekë
-            </span>
-          )}
+          <div className="min-h-[24px]">
+            {originalPrice !== displayPrice && (
+              <span className="text-[#c1c1c1] font-albertsans text-[16px] font-medium leading-[24px] line-through">
+                {originalPrice} Lekë
+              </span>
+            )}
+          </div>
           <span className="text-[#1A66EA] font-albertsans text-[24px] font-extrabold leading-[32px]">
             {displayPrice} Lekë
           </span>

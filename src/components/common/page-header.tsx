@@ -2,13 +2,15 @@ import React from 'react';
 import Image from 'next/image';
 
 interface PageHeaderProps {
-  title: string;
+  title?: string;
+  showTitle?: boolean;
   showClouds?: boolean;
   className?: string;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ 
-  title, 
+  title = '', 
+  showTitle = true,
   showClouds = true,
   className = '' 
 }) => {
@@ -38,12 +40,14 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         />
       </div>
 
-      {/* Title in the center */}
-      <div className="relative z-10 h-full min-h-[208px] flex items-center justify-center px-4">
-        <h1 className="text-white font-grandstander font-bold text-[50px] md:text-[70px] lg:text-[80px] leading-tight text-center">
-          {title}
-        </h1>
-      </div>
+      {/* Title in the center - conditional */}
+      {showTitle && title && (
+        <div className="relative z-10 h-full min-h-[208px] flex items-center justify-center px-4">
+          <h1 className="text-white font-grandstander font-bold text-[50px] md:text-[70px] lg:text-[80px] leading-tight text-center">
+            {title}
+          </h1>
+        </div>
+      )}
 
       {/* Bottom clouds - conditional */}
       {showClouds && (

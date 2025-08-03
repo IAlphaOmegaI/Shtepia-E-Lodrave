@@ -30,8 +30,10 @@ const ProductCarousel: React.FC<CarouselProps> = ({
         className="py-5"
       >
         {products.map((item) => (
-          <SwiperSlide key={item.id}>
-            <ProductCard product={item} />
+          <SwiperSlide key={item.id} className="h-auto">
+            <div className="h-full">
+              <ProductCard product={item} />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>

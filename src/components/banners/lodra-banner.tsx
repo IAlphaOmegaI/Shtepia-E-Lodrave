@@ -53,13 +53,11 @@ const LodraBanner = () => {
       <div className={styles.ground}>
         <div className={styles.title}>
           <h3 className="font-grandstander">Mirësevini te</h3>
-          <h1 className="font-grandstander"> Shtëpia e Lodrave</h1>
-
-      
-            <Link href="/products" className={styles.button_link}>
-              <span>Zhvillo imagjinaten me LEGO!</span>
-            </Link>
-        
+          <h1 className="font-grandstander">Shtëpia e Lodrave</h1>
+          
+          <Link href="/products" className={styles.button_link}>
+            <span>Zhvillo imagjinaten me LEGO!</span>
+          </Link>
         </div>
       </div>
       <div className={styles.bottomWaves}></div>
