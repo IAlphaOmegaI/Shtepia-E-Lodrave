@@ -1,0 +1,39 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["fra1"],
+  "functions": {
+    "app/api/**.ts": {
+      "maxDuration": 30
+    },
+    "app/**/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,DELETE,PATCH,POST,PUT" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/robots.txt",
+      "destination": "/api/robots"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "http://63.178.242.103/api",
+    "NEXT_PUBLIC_URL": "http://63.178.242.103",
+    "NEXT_PUBLIC_SITE_NAME": "Shtëpia e Lodrave",
+    "NEXT_PUBLIC_DEFAULT_LANGUAGE": "en"
+  }
+}
