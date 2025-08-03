@@ -1,16 +1,20 @@
-export function fadeInRight(duration: number = 0.3) {
+import { Variants } from 'framer-motion';
+
+export function fadeInRight(duration: number = 0.3): Variants {
   return {
     from: {
       right: '-100%',
       transition: {
-        type: 'easeInOut',
+        type: 'tween',
+        ease: 'easeInOut',
         duration: duration,
       },
     },
     to: {
       right: 0,
       transition: {
-        type: 'easeInOut',
+        type: 'tween',
+        ease: 'easeInOut',
         duration: duration,
       },
     },

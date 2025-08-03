@@ -37,6 +37,7 @@ const CartContext = createContext<{
   totalItems: number;
   totalUniqueItems: number;
   total: number;
+  isEmpty: boolean;
   addItem: (item: CartItem) => void;
   removeItem: (id: string | number) => void;
   updateItem: (id: string | number, quantity: number) => void;
@@ -140,6 +141,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <CartContext.Provider
       value={{
         ...state,
+        isEmpty: state.items.length === 0,
         addItem,
         removeItem,
         updateItem,

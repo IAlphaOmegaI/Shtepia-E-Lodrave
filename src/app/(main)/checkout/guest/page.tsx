@@ -32,7 +32,7 @@ export default function GuestCheckoutPage() {
   const [shippingAddress] = useAtom(shippingAddressAtom);
 
   useEffect(() => {
-    resetCheckout();
+    resetCheckout(null);
   }, [resetCheckout]);
 
   return (

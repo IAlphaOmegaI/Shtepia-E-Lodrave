@@ -5,6 +5,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import Image from 'next/image';
 
+interface ProfileFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  birth_date: string;
+}
+
+interface PasswordChangeData {
+  current_password: string;
+  new_password: string;
+}
+
 export default function ProfilePage() {
   const queryClient = useQueryClient();
   const [successMessage, setSuccessMessage] = useState('');
@@ -44,7 +57,7 @@ export default function ProfilePage() {
   }, [userData]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: any) => api.auth.updateProfile(data),
+    mutationFn: (data: ProfileFormData) => api.auth.updateProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
       setSuccessMessage('Profili u përditësua me sukses!');
@@ -58,7 +71,7 @@ export default function ProfilePage() {
   });
 
   const changePasswordMutation = useMutation({
-    mutationFn: (data: any) => api.auth.changePassword(data),
+    mutationFn: (data: PasswordChangeData) => api.auth.changePassword(data),
     onSuccess: () => {
       setSuccessMessage('Fjalëkalimi u ndryshua me sukses!');
       setShowPasswordForm(false);
@@ -70,7 +83,7 @@ export default function ProfilePage() {
       setPasswordError('');
       setTimeout(() => setSuccessMessage(''), 3000);
     },
-    onError: (error: any) => {
+    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
       setPasswordError(error.response?.data?.message || 'Ndodhi një gabim gjatë ndryshimit të fjalëkalimit');
     },
   });

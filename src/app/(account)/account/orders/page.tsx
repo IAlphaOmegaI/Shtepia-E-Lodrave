@@ -119,7 +119,7 @@ export default function OrdersPage() {
       </div>
       
       <div className="divide-y">
-        {orders.map((order) => {
+        {orders.map((order : Order) => {
           const isExpanded = expandedOrders.includes(order.id);
           
           return (
@@ -159,7 +159,7 @@ export default function OrdersPage() {
               
               {isExpanded && (
                 <div className="mt-6 space-y-4">
-                  {order.items.map((item) => (
+                  {order.items.map((item : OrderItem) => (
                     <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                       <Image
                         src={item.product_image}

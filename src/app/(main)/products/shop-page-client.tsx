@@ -217,7 +217,7 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {products.map((product) => (
+                {products.map((product: any) => (
                   <ProductCard key={product.id} product={product} removeMaxWidth={true} />
                 ))}
               </div>
@@ -241,7 +241,7 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                       const maxPagesToShow = 5;
                       const halfRange = Math.floor(maxPagesToShow / 2);
                       let startPage = Math.max(1, currentPage - halfRange);
-                      let endPage = Math.min(paginatorInfo.last_page, startPage + maxPagesToShow - 1);
+                      const endPage = Math.min(paginatorInfo.last_page, startPage + maxPagesToShow - 1);
                       
                       // Adjust start if we're near the end
                       if (endPage - startPage < maxPagesToShow - 1) {

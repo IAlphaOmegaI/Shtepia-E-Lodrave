@@ -7,6 +7,7 @@ import { api } from '@/services/api';
 import ProductCard from '@/components/products/product-card';
 import PageHeader from '@/components/common/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Category, Product } from '@/types';
 import {
   Pagination,
   PaginationContent,
@@ -70,7 +71,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
   
   // Get category name from the first product's categories
   const categoryName = products.length > 0 && products[0].categories?.length > 0 
-    ? products[0].categories.find(cat => cat.slug === slug)?.name || slug
+    ? products[0].categories.find((cat: Category) => cat.slug === slug)?.name || slug
     : slug;
 
   // Handle filters applied
@@ -277,7 +278,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {products.map((product) => (
+                {products.map((product: Product) => (
                   <ProductCard
                     key={product.id}
                     product={product}
@@ -311,7 +312,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                       const maxPagesToShow = 5;
                       const halfRange = Math.floor(maxPagesToShow / 2);
                       let startPage = Math.max(1, currentPage - halfRange);
-                      let endPage = Math.min(
+                      const endPage = Math.min(
                         paginatorInfo.last_page,
                         startPage + maxPagesToShow - 1
                       );

@@ -30,6 +30,8 @@ export interface AuthResponse {
   access?: string;
   refresh?: string;
   token?: string;
+  access_token?: string;
+  refresh_token?: string;
   user?: User;
   expires_in?: number;
   token_type?: string;

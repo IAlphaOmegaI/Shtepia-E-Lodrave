@@ -21,11 +21,13 @@ export class AuthService {
       const response = await api.auth.login(credentials);
       
       // Store tokens and user data
-      if (response.access_token || response.access || response.token) {
-        this.setToken(response.access_token || response.access || response.token);
+      const token = response.access_token || response.access || response.token;
+      if (token) {
+        this.setToken(token);
       }
-      if (response.refresh_token || response.refresh) {
-        this.setRefreshToken(response.refresh_token || response.refresh);
+      const refreshToken = response.refresh_token || response.refresh;
+      if (refreshToken) {
+        this.setRefreshToken(refreshToken);
       }
       if (response.user) {
         this.setUser(response.user);
@@ -46,11 +48,13 @@ export class AuthService {
       const response = await api.auth.register(userData);
       
       // Auto-login after registration if tokens are returned
-      if (response.access_token || response.access || response.token) {
-        this.setToken(response.access_token || response.access || response.token);
+      const token = response.access_token || response.access || response.token;
+      if (token) {
+        this.setToken(token);
       }
-      if (response.refresh_token || response.refresh) {
-        this.setRefreshToken(response.refresh_token || response.refresh);
+      const refreshToken = response.refresh_token || response.refresh;
+      if (refreshToken) {
+        this.setRefreshToken(refreshToken);
       }
       if (response.user) {
         this.setUser(response.user);

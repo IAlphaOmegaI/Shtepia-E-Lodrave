@@ -30,12 +30,6 @@ const Drawer: React.FC<DrawerProps> = ({
   // For now, we'll default to 'ltr' since we don't have locale from router in App Router
   const dir = 'ltr';
 
-  if (dir === 'rtl' && variant === 'right') {
-    variant = 'left';
-  } else if (dir === 'rtl' && variant === 'left') {
-    variant = 'right';
-  }
-
   return (
     <AnimatePresence>
       {open && (

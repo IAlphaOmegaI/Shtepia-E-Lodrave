@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import type { SetStateAction } from 'react';
 
 interface Address {
   id: string;
@@ -78,16 +79,20 @@ export const clearCheckoutAtom = atom(null, (_get, set, _data) => {
 });
 export const billingAddressAtom = atom(
   (get) => get(checkoutAtom).billing_address,
-  (get, set, data: Address) => {
+  (get, set, update: SetStateAction<Address | null>) => {
     const prev = get(checkoutAtom);
-    return set(checkoutAtom, { ...prev, billing_address: data });
+    const currentValue = prev.billing_address;
+    const newValue = typeof update === 'function' ? update(currentValue) : update;
+    return set(checkoutAtom, { ...prev, billing_address: newValue });
   }
 );
 export const shippingAddressAtom = atom(
   (get) => get(checkoutAtom).shipping_address,
-  (get, set, data: Address) => {
+  (get, set, update: SetStateAction<Address | null>) => {
     const prev = get(checkoutAtom);
-    return set(checkoutAtom, { ...prev, shipping_address: data });
+    const currentValue = prev.shipping_address;
+    const newValue = typeof update === 'function' ? update(currentValue) : update;
+    return set(checkoutAtom, { ...prev, shipping_address: newValue });
   }
 );
 export const deliveryTimeAtom = atom(
