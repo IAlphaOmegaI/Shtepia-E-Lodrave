@@ -66,6 +66,9 @@ const breakpoints = {
   1440: { slidesPerView: 4, spaceBetween: 24 },
 };
 
+// Number of categories to display
+const MAX_CATEGORIES_TO_DISPLAY = 3;
+
 const BestSellingProducts = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [popularCategories, setPopularCategories] = useState<PopularProductCategory[]>([]);
@@ -85,8 +88,9 @@ const BestSellingProducts = () => {
     }
   }, [data, activeTab]);
 
-  // Get products for active tab
-  const activeProducts = popularCategories.find(
+  // Get products for active tab (only from displayed categories)
+  const displayedCategories = popularCategories.slice(0, MAX_CATEGORIES_TO_DISPLAY);
+  const activeProducts = displayedCategories.find(
     (cat) => cat.category.name === activeTab
   )?.products || [];
 
@@ -112,7 +116,7 @@ const BestSellingProducts = () => {
         </div>
 
         <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">
-          {popularCategories.map((cat) => (
+          {popularCategories.slice(0, MAX_CATEGORIES_TO_DISPLAY).map((cat) => (
             <button
               key={cat.category.id}
               onClick={() => setActiveTab(cat.category.name)}

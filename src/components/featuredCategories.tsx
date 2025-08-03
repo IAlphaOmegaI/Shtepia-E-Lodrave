@@ -1,5 +1,7 @@
+'use client';
+
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CategoryService } from '@/services';
 import { Routes } from '@/config/routes';
@@ -35,18 +37,53 @@ const cardBgColors = [
   '#FFB4A2', // 6th (peach)
 ];
 
-const FeaturedCategories = async () => {
-  // Fetch featured categories from API
-  const categories = await CategoryService.getFeaturedCategories();
-  
+const FeaturedCategories = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await CategoryService.getFeaturedCategories();
+        // Filter to only show parent categories (not children)
+        const parentCategories = data.filter((cat: Category) => cat.is_parent && !cat.is_child);
+        setCategories(parentCategories);
+      } catch (error) {
+        console.error('Error fetching featured categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="bg-[#FFF8EC] mb-10 sm:mb-0 sm:py-40">
+        <div className="container mx-auto px-10 sm:px-0">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="relative flex items-center rounded-2xl shadow-lg w-full h-[200px] overflow-hidden bg-gray-200 animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // If no categories, return null
   if (!categories || categories.length === 0) {
     return null;
   }
   
   return (
-    <div className="bg-[#FFF8EC] py-40">
-      <div className="container mx-auto">
+    <div className="bg-[#FFF8EC] mb-10 sm:mb-0sm:py-40">
+      <div className="container mx-auto  px-10 sm:px-0">
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
           {categories.slice(0, 6).map((cat, idx) => (
             <div
@@ -66,7 +103,11 @@ const FeaturedCategories = async () => {
               </div>
               {/* Category image */}
               <Image
-                src={cat.featured_image || "/featured_category.png"}
+                src={
+                  cat.featured_image && cat.featured_image.trim() !== '' 
+                    ? `${process.env.NEXT_PUBLIC_URL || 'http://63.178.242.103'}${cat.featured_image}`
+                    : "/featured_category.png"
+                }
                 alt={cat.name}
                 width={230}
                 height={230}

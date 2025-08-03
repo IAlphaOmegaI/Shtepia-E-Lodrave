@@ -8,6 +8,25 @@
   display: flex;
   position: relative;
   margin-bottom: 50px;
+  overflow: hidden;
+  
+  // Responsive adjustments
+  @media (max-width: 1280px) {
+    min-height: 800px;
+  }
+  
+  @media (max-width: 1024px) {
+    min-height: 700px;
+  }
+  
+  @media (max-width: 768px) {
+    min-height: 550px;
+    background-position: center bottom;
+  }
+  
+  @media (max-width: 640px) {
+    min-height: 510px;
+  }
   .top_clouds {
     background-image: url(/home/cloud.svg);
     background-position: center;
@@ -34,11 +53,42 @@
     text-align: center;
     justify-content: center;
     align-items: center;
-    display: flex
-;
+    display: flex;
+    
+    @media (max-width: 1280px) {
+      height: 800px;
+      top: -60px;
+    }
+    
+    @media (max-width: 1024px) {
+      height: 700px;
+      top: -50px;
+    }
+    
+    @media (max-width: 768px) {
+      height: 500px;
+      top: 0;
+    }
+    
+    @media (max-width: 640px) {
+      height: 400px;
+      top: 0;
+    }
+    
     .rounded_ellipsis {
       object-fit: contain;
       mix-blend-mode: multiply;
+      width: 100%;
+      height: 100%;
+      max-width: 982px;
+      
+      @media (max-width: 1024px) {
+        max-width: 800px;
+      }
+      
+      @media (max-width: 768px) {
+        max-width: 600px;
+      }
     }
   }
   .toys_left {
@@ -47,8 +97,34 @@
     left: 0;
     height: 100%;
     z-index: 43;
+    
+    @media (max-width: 1280px) {
+      top: 80px;
+    }
+    
+    @media (max-width: 1024px) {
+      top: 60px;
+    }
+    
+    @media (max-width: 1024px) {
+      display: none; // Hide on tablets and below for better focus on content
+    }
+    
     img {
       height: 657px;
+      width: auto;
+      
+      @media (max-width: 1280px) {
+        height: 550px;
+      }
+      
+      @media (max-width: 1024px) {
+        height: 450px;
+      }
+      
+      @media (max-width: 768px) {
+        height: 350px;
+      }
     }
   }
   .cloud_left {
@@ -68,8 +144,34 @@
     right: 0;
     height: 100%;
     z-index: 43;
+    
+    @media (max-width: 1280px) {
+      top: 80px;
+    }
+    
+    @media (max-width: 1024px) {
+      top: 60px;
+    }
+    
+    @media (max-width: 1024px) {
+      display: none; // Hide on tablets and below for better focus on content
+    }
+    
     img {
       height: 657px;
+      width: auto;
+      
+      @media (max-width: 1280px) {
+        height: 550px;
+      }
+      
+      @media (max-width: 1024px) {
+        height: 450px;
+      }
+      
+      @media (max-width: 768px) {
+        height: 350px;
+      }
     }
   }
   .cloud_right {
@@ -89,13 +191,39 @@
     top: 70px;
     left: 0;
     width: 100%;
-
-    z-index: 1;
-    margin: 0 auto;
     z-index: 5;
+    display: flex;
+    justify-content: center;
+    
+    @media (max-width: 1024px) {
+      top: 50px;
+    }
+    
+    @media (max-width: 768px) {
+      top: 40px;
+      z-index: 10;
+    }
+    
+    @media (max-width: 640px) {
+      top: 30px;
+    }
+    
     img {
       width: 512px;
+      height: auto;
       margin: 0 auto;
+      
+      @media (max-width: 768px) {
+        width: 400px;
+      }
+      
+      @media (max-width: 640px) {
+        width: 300px;
+      }
+      
+      @media (max-width: 480px) {
+        width: 250px;
+      }
     }
   }
   .ground {
@@ -108,10 +236,47 @@
     position: absolute;
     bottom: 0;
     z-index: 4; // Increased z-index to be above toys
+    
+    @media (max-width: 1024px) {
+      height: 400px;
+    }
+    
+    @media (max-width: 768px) {
+      height: 240px;
+      background-size: 120% 100%;
+      background-position: center bottom;
+    }
+    
+    @media (max-width: 640px) {
+              z-index: 50;
+
+    }
+    @media (max-width: 480px) {
+       background:none;
+    }
     .title {
       position: relative;
       padding-top: 100px;
-      z-index: 5; // Ensure title is above everything
+      z-index: 50; // Much higher z-index to ensure visibility
+      padding-left: 20px;
+      padding-right: 20px;
+      
+      @media (max-width: 1024px) {
+        padding-top: 60px;
+        margin-top: 20px;
+      }
+      
+      @media (max-width: 768px) {
+        padding-top: 30px;
+        margin-top: 5px;
+      }
+      
+      @media (max-width: 640px) {
+        padding-top: 30px;
+        margin-top: 0;
+        
+      }
+      
       h3 {
         font-size: 64px;
         font-weight: 900;
@@ -121,6 +286,34 @@
         -webkit-text-stroke: 3px #fff;
         text-stroke: 3px #fff;
         letter-spacing: -4px;
+        position: relative;
+        z-index: 51;
+        margin: 0;
+        
+        @media (max-width: 1024px) {
+          font-size: 40px;
+          line-height: 44px;
+          -webkit-text-stroke: 3px #fff;
+          text-stroke: 3px #fff;
+          text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+          font-size: 36px;
+          line-height: 40px;
+          -webkit-text-stroke: 3px #fff;
+          text-stroke: 3px #fff;
+          letter-spacing: -1px;
+          text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        @media (max-width: 640px) {
+          font-size: 58px;
+          line-height: 76px;
+          -webkit-text-stroke: 2.5px #fff;
+          text-stroke: 2.5px #fff;
+
+        }
       }
       h1 {
         font-size: 90px;
@@ -131,23 +324,51 @@
         -webkit-text-stroke: 4px #fff;
         text-stroke: 4px #fff;
         letter-spacing: -4px;
+        position: relative;
+        z-index: 51;
+        margin: 0 0 15px 0;
+        
+        @media (max-width: 1024px) {
+          font-size: 56px;
+          line-height: 60px;
+          -webkit-text-stroke: 4px #fff;
+          text-stroke: 4px #fff;
+          text-shadow: 0 0 15px rgba(0,0,0,0.3);
+          letter-spacing: -3px;
+        }
+        
+        @media (max-width: 768px) {
+          font-size: 52px;
+          line-height: 56px;
+          letter-spacing: -2px;
+          -webkit-text-stroke: 4px #fff;
+          text-stroke: 4px #fff;
+          text-shadow: 0 0 15px rgba(0,0,0,0.5);
+          margin-bottom: 15px;
+        }
+        
+        @media (max-width: 640px) {
+          font-size: 61px;
+          line-height: 64px;
+          -webkit-text-stroke: 3px #fff;
+          text-stroke: 3px #fff;
+          letter-spacing: -1px;
+          z-index:99
+        }
       }
       .button_link {
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 10px auto;
+        margin: 20px auto 10px;
         position: relative;
         cursor: pointer;
         pointer-events: all; // Ensure it can receive clicks
         z-index: 10; // High z-index for the button
         width: 100%;
         height: 46px;
-        margin: 0 auto;
         max-width: 550px;
         text-align: center;
-        justify-content: center;
-        align-items: center;
         background: #4885ee;
         border-radius: 8px;
         padding: 4px 16px;
@@ -159,14 +380,43 @@
         color: #fff;
         text-decoration: none; // Remove underline
         transition: all 0.3s ease;
+        
+        @media (max-width: 1024px) {
+          font-size: 28px;
+          max-width: 450px;
+        }
+        
+        @media (max-width: 768px) {
+          font-size: 26px;
+          max-width: 380px;
+          height: 48px;
+          margin-top: 15px;
+        }
+        
+        @media (max-width: 640px) {
+          font-size: 22px;
+          max-width: 320px;
+          height: 44px;
+        }
+        
+        @media (max-width: 480px) {
+          font-size: 20px;
+          padding: 6px 14px;
+                  max-width: 100%;
+        }
 
         &:hover {
           background: #3670d8;
           transform: scale(1.05);
+          
+          @media (max-width: 768px) {
+            transform: scale(1.02);
+          }
         }
       }
     }
   }
+  
   .bottomWaves {
     background-image: url(/home/wavedesign.svg);
     background-size: cover;
@@ -177,5 +427,23 @@
     position: absolute;
     bottom: -140px;
     z-index: 40;
+    
+    @media (max-width: 1024px) {
+      height: 200px;
+      bottom: -110px;
+    }
+    
+    @media (max-width: 768px) {
+      height: 150px;
+      bottom: -80px;
+    }
+    
+    @media (max-width: 640px) {
+      height: 120px;
+      bottom: -60px;
+    }
+    @media (max-width: 480px) {
+      background:none;
+    }
   }
 }

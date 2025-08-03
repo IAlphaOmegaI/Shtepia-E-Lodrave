@@ -43,15 +43,10 @@ export default function LoginPage() {
     <div className="bg-white p-8 rounded-2xl shadow-sm max-w-md w-full">
       {/* Title */}
       <h1 className="text-3xl font-bold text-red-600 text-center mb-2">
-        Almost there!
+        Ju lutem kyquni
       </h1>
       
-      {/* Down arrow */}
-      <div className="flex justify-center mb-8">
-        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
+     
 
       {/* Error Message */}
       {error && (
@@ -64,7 +59,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-            Email
+            Emaili
           </label>
           <input
             type="email"
@@ -72,14 +67,14 @@ export default function LoginPage() {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter your email"
+            placeholder="Emaili"
             required
           />
         </div>
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-            Password
+            Fjalëkalimi
           </label>
           <div className="relative">
             <input
@@ -88,7 +83,7 @@ export default function LoginPage() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Password"
+              placeholder="Fjalëkalimi juaj"
               required
             />
             <button
@@ -106,20 +101,12 @@ export default function LoginPage() {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <span className="ml-2 text-sm text-gray-600">Remember me?</span>
-          </label>
+         
           <Link
             href={Routes.forgotPassword}
             className="text-sm text-blue-600 hover:text-blue-700"
           >
-            Forgot your password?
+            Keni harruar fjalëkalimin?
           </Link>
         </div>
 
@@ -128,15 +115,15 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Logging in...' : 'Log in'}
+          {loading ? 'Kyqu...' : 'Kyqu'}
         </button>
       </form>
 
       {/* Sign up link */}
       <p className="text-center text-sm text-gray-600 mt-6">
-        Don't have an account?{' '}
+        Nuk keni një llogari?{' '}
         <Link href={Routes.register} className="text-orange-500 hover:text-orange-600 font-medium">
-          Sign up
+          Antarsohuni
         </Link>
       </p>
     </div>

@@ -45,8 +45,6 @@ import { TruckDeliveryIcon } from '../icons/truck-delivery';
 import { useCart } from '@/store/quick-cart/cart.context';
 import { useWishlist } from '../../framework/rest/wishlist';
 import { useRouter } from 'next/navigation';
-import { AuthService } from '@/services';
-import Image from 'next/image';
 
 const Search = dynamic(() => import('@/components/ui/search/search'));
 const AuthorizedMenu = dynamic(() => import('./menu/authorized-menu'), {
@@ -72,37 +70,13 @@ const Header = ({ layout }: { layout?: string }) => {
   );
   const [isAuthorize] = useAtom(authorizationAtom);
   const [openDropdown, setOpenDropdown] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [userData, setUserData] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
   
   // Set isClient to true after mount to avoid hydration errors
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
-  // Get user data from localStorage on mount and when auth changes
-  useEffect(() => {
-    if (!isClient) return;
-    
-    const getUserData = () => {
-      if (typeof window !== 'undefined') {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-          try {
-            return JSON.parse(userStr);
-          } catch (e) {
-            return null;
-          }
-        }
-      }
-      return null;
-    };
-    
-    setUserData(getUserData());
-  }, [isAuthorize, isClient]);
   const isHomePage = useIsHomePage();
   const siteHeaderRef = React.useRef(null);
   useActiveScroll(siteHeaderRef);
@@ -126,20 +100,6 @@ const Header = ({ layout }: { layout?: string }) => {
   );
   const [isScrolling] = useAtom(checkIsScrollingStart);
   const { width } = useWindowSize();
-  
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setUserDropdownOpen(false);
-      }
-    }
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
   
   return (
     <>
@@ -253,93 +213,17 @@ const Header = ({ layout }: { layout?: string }) => {
             
             {/* Right Section - User Actions */}
             <div className="flex items-center justify-end space-x-3 text-white">
-                <div className="relative" ref={dropdownRef}>
-                  {isClient && isAuthorize ? (
-                    <>
-                      <motion.button
-                        whileTap={{ scale: 0.88 }}
-                        onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                        className="flex items-center justify-center p-2 focus:outline-0"
-                      >
-                        <Image
-                          src="/avatar.svg"
-                          alt="User avatar"
-                          width={28}
-                          height={28}
-                          className="rounded-full"
-                        />
-                      </motion.button>
-                      {userDropdownOpen && (
-                        <div className="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-2xl overflow-hidden z-[100]">
-                          <div className="absolute -top-2 right-8 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white"></div>
-                          <div className="p-4 border-b border-gray-100">
-                            <div className="flex items-center space-x-3">
-                              <Image
-                                src="/avatar.svg"
-                                alt="User avatar"
-                                width={50}
-                                height={50}
-                                className="rounded-full"
-                              />
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-blue-600 break-all">
-                                  {userData?.email || "Useremail@gmail.com"}
-                                </p>
-                                <Link
-                                  href="/account/profile"
-                                  className="text-sm text-gray-700 hover:text-gray-900 flex items-center mt-1 group"
-                                  onClick={() => setUserDropdownOpen(false)}
-                                >
-                                  <span>Profili Im</span>
-                                  <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                  </svg>
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="py-1">
-                            <Link
-                              href="/account/loyalty-card"
-                              className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-                              onClick={() => setUserDropdownOpen(false)}
-                            >
-                              Karta ime besnikërisë 
-                            </Link>
-                            <Link
-                              href="/account/orders"
-                              className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-                              onClick={() => setUserDropdownOpen(false)}
-                            >
-                              Porositë
-                            </Link>
-                          </div>
-                          <div className="border-t border-gray-100">
-                            <button
-                              onClick={() => {
-                                AuthService.logout();
-                                setUserDropdownOpen(false);
-                                router.push("/");
-                                window.location.reload();
-                              }}
-                              className="block w-full text-left px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-                            >
-                              Logout
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <motion.button
-                      whileTap={{ scale: 0.88 }}
-                      onClick={() => router.push("/login")}
-                      className="flex items-center justify-center p-2 focus:text-[#F44535] focus:outline-0"
-                    >
-                      <LoginUserIcon height={20} />
-                    </motion.button>
-                  )}
-                </div>
+                {isClient && isAuthorize ? (
+                  <AuthorizedMenu />
+                ) : (
+                  <motion.button
+                    whileTap={{ scale: 0.88 }}
+                    onClick={() => router.push("/login")}
+                    className="flex items-center justify-center p-2 focus:text-[#F44535] focus:outline-0"
+                  >
+                    <LoginUserIcon height={20} />
+                  </motion.button>
+                )}
                 
                 <motion.button
                   whileTap={{ scale: 0.88 }}
@@ -394,93 +278,17 @@ const Header = ({ layout }: { layout?: string }) => {
             </div>
             
             {/* Right - User Icon */}
-            <div className="relative" ref={dropdownRef}>
-              {isClient && isAuthorize ? (
-                <motion.button
-                  whileTap={{ scale: 0.88 }}
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center justify-center p-2 focus:outline-0"
-                >
-                  <Image
-                    src="/avatar.svg"
-                    alt="User avatar"
-                    width={28}
-                    height={28}
-                    className="rounded-full"
-                  />
-                </motion.button>
-              ) : (
-                <motion.button
-                  whileTap={{ scale: 0.88 }}
-                  onClick={() => router.push("/login")}
-                  className="flex items-center justify-center p-2 focus:outline-0"
-                >
-                  <LoginUserIcon height={20} className="text-white" />
-                </motion.button>
-              )}
-              
-              {/* Mobile User Dropdown */}
-              {userDropdownOpen && isClient && isAuthorize && (
-                <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-2xl shadow-2xl overflow-hidden z-[100]">
-                  <div className="absolute -top-2 right-8 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white"></div>
-                  <div className="p-4 border-b border-gray-100">
-                    <div className="flex items-center space-x-3">
-                      <Image
-                        src="/avatar.svg"
-                        alt="User avatar"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-blue-600 break-all">
-                          {userData?.email || "Useremail@gmail.com"}
-                        </p>
-                        <Link
-                          href="/account/profile"
-                          className="text-xs text-gray-700 hover:text-gray-900 flex items-center mt-1 group"
-                          onClick={() => setUserDropdownOpen(false)}
-                        >
-                          <span>Profili Im</span>
-                          <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="py-1">
-                    <Link
-                      href="/account/loyalty-card"
-                      className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-                      onClick={() => setUserDropdownOpen(false)}
-                    >
-                      My loyalty card
-                    </Link>
-                    <Link
-                      href="/account/orders"
-                      className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-                      onClick={() => setUserDropdownOpen(false)}
-                    >
-                      My Orders
-                    </Link>
-                  </div>
-                  <div className="border-t border-gray-100">
-                    <button
-                      onClick={() => {
-                        AuthService.logout();
-                        setUserDropdownOpen(false);
-                        router.push("/");
-                        window.location.reload();
-                      }}
-                      className="block w-full text-left px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {isClient && isAuthorize ? (
+              <AuthorizedMenu />
+            ) : (
+              <motion.button
+                whileTap={{ scale: 0.88 }}
+                onClick={() => router.push("/login")}
+                className="flex items-center justify-center p-2 focus:outline-0"
+              >
+                <LoginUserIcon height={20} className="text-white" />
+              </motion.button>
+            )}
           </div>
 
         </div>

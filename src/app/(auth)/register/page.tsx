@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { AuthService } from '@/services';
 import { Routes } from '@/config/routes';
 import { useAuthStore } from '@/store/use-auth';
@@ -56,22 +55,13 @@ export default function RegisterPage() {
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-lg">
-      {/* Logo */}
+      {/* Title */}
       <div className="text-center mb-8">
-        <Link href={Routes.home}>
-          <Image
-            src="/assets/logo.png"
-            alt="Shtëpia e Lodrave"
-            width={120}
-            height={60}
-            className="mx-auto"
-          />
-        </Link>
-        <h1 className="text-2xl font-bold mt-4 font-grandstander text-gray-900">
-          Krijoni llogarinë tuaj
+        <h1 className="text-3xl font-bold font-grandstander text-[#D32F2F] mb-2">
+          Bëhu pjesë e kësaj familjeje
         </h1>
-        <p className="text-gray-600 mt-2 font-albertsans">
-          Regjistrohuni për të filluar blerjet
+        <p className="text-gray-600 font-albertsans">
+          Bëhuni pjesë e kësaj familjeje dhe shijoni shportën personalizuar dhe ofertat ekskluzive.
         </p>
       </div>
 
@@ -186,7 +176,7 @@ export default function RegisterPage() {
           disabled={loading}
           className="w-full bg-[#1A66EA] text-white py-3 px-4 rounded-lg hover:bg-[#1557C7] transition-colors font-semibold font-albertsans disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Duke u regjistruar...' : 'Regjistrohu'}
+          {loading ? 'Duke u regjistruar...' : 'Antarsohuni'}
         </button>
       </form>
 
