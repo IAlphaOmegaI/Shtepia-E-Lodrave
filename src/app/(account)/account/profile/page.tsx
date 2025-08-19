@@ -4,13 +4,25 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import Image from 'next/image';
+import { parsePhoneNumber, isValidPhoneNumber, AsYouType, isPossiblePhoneNumber } from 'libphonenumber-js';
+import AddressModal from '@/components/checkout/address-modal';
+import { PlusIcon, PencilIcon, TrashIcon } from 'lucide-react';
+import { useToast } from '@/contexts/toast-context';
 
 interface ProfileFormData {
   first_name: string;
   last_name: string;
   email: string;
-  phone: string;
-  birth_date: string;
+  phone_number: string;
+  date_of_birth: string;
+}
+
+interface Address {
+  id?: string;
+  street_address: string;
+  city: string;
+  zip: string;
+  contact_number: string;
 }
 
 interface PasswordChangeData {
@@ -20,6 +32,7 @@ interface PasswordChangeData {
 
 export default function ProfilePage() {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
@@ -30,6 +43,9 @@ export default function ProfilePage() {
     confirm_password: '',
   });
   const [passwordError, setPasswordError] = useState('');
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   
   const { data: userData } = useQuery({
     queryKey: ['user', 'me'],
@@ -40,24 +56,55 @@ export default function ProfilePage() {
     first_name: userData?.first_name || '',
     last_name: userData?.last_name || '',
     email: userData?.email || '',
-    phone: userData?.phone || '',
-    birth_date: userData?.birth_date || '',
+    phone_number: userData?.phone_number || '',
+    date_of_birth: userData?.date_of_birth || '',
   });
+
+  const [phoneValidation, setPhoneValidation] = useState<{
+    isValid: boolean;
+    isPossible: boolean;
+    error: string;
+  }>({ isValid: true, isPossible: true, error: '' });
 
   useEffect(() => {
     if (userData) {
+      // Set addresses
+      if (userData.addresses) {
+        setAddresses(userData.addresses);
+      }
+      
+      // Extract phone number without country code for display
+      let phoneForDisplay = userData.phone_number || '';
+      
+      // Remove +355 prefix if present
+      if (phoneForDisplay.startsWith('+355')) {
+        phoneForDisplay = phoneForDisplay.substring(4);
+      } else if (phoneForDisplay.startsWith('355')) {
+        phoneForDisplay = phoneForDisplay.substring(3);
+      }
+      
+      // Remove any non-digit characters
+      phoneForDisplay = phoneForDisplay.replace(/\D/g, '');
+      
+      // Format it using the library
+      if (phoneForDisplay) {
+        const formatter = new AsYouType('AL');
+        const formatted = formatter.input('+355' + phoneForDisplay);
+        phoneForDisplay = formatted.replace('+355 ', '').replace('+355', '');
+      }
+      
       setFormData({
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
         email: userData.email || '',
-        phone: userData.phone || '',
-        birth_date: userData.birth_date || '',
+        phone_number: phoneForDisplay,
+        date_of_birth: userData.date_of_birth || '',
       });
     }
   }, [userData]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: ProfileFormData) => api.auth.updateProfile(data),
+    mutationFn: (data: ProfileFormData & { addresses?: Address[] }) => api.auth.updateProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
       setSuccessMessage('Profili u përditësua me sukses!');
@@ -90,14 +137,193 @@ export default function ProfilePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfileMutation.mutate(formData);
+    
+    // Validate phone if provided
+    if (formData.phone_number) {
+      const digitsOnly = formData.phone_number.replace(/\D/g, '');
+      if (digitsOnly.length < 8) {
+        setErrorMessage('Numri i telefonit duhet të ketë të paktën 8 shifra');
+        setTimeout(() => setErrorMessage(''), 3000);
+        return;
+      }
+      
+      const fullNumber = '+355' + digitsOnly;
+      if (!isValidPhoneNumber(fullNumber, 'AL')) {
+        setErrorMessage('Numri i telefonit nuk është i vlefshëm');
+        setTimeout(() => setErrorMessage(''), 3000);
+        return;
+      }
+    }
+    
+    // Prepare data to send
+    const dataToSend = { ...formData };
+    
+    // Add +355 prefix to phone before sending
+    if (dataToSend.phone_number) {
+      const digitsOnly = dataToSend.phone_number.replace(/\D/g, '');
+      dataToSend.phone_number = '+355' + digitsOnly;
+    }
+    
+    // Format date to YYYY-MM-DD if it exists
+    if (dataToSend.date_of_birth) {
+      // The input type="date" already returns YYYY-MM-DD format
+      // But let's ensure it's correct
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(dataToSend.date_of_birth)) {
+        // Try to parse and reformat the date
+        const date = new Date(dataToSend.date_of_birth);
+        if (!isNaN(date.getTime())) {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          dataToSend.date_of_birth = `${year}-${month}-${day}`;
+        } else {
+          // If date is invalid, remove it from the payload
+          delete dataToSend.date_of_birth;
+        }
+      }
+    } else {
+      // If date is empty, remove it from the payload
+      delete dataToSend.date_of_birth;
+    }
+    
+    // Include addresses in the update
+    dataToSend.addresses = addresses;
+    
+    updateProfileMutation.mutate(dataToSend);
+  };
+
+  const handleAddAddress = (newAddress: Address) => {
+    const addressWithId = {
+      ...newAddress,
+      id: Date.now().toString() // Generate a temporary ID
+    };
+    const updatedAddresses = [...addresses, addressWithId];
+    setAddresses(updatedAddresses);
+    setIsAddressModalOpen(false);
+    
+    // Auto-save addresses
+    const dataToSend: any = {
+      first_name: userData?.first_name || '',
+      last_name: userData?.last_name || '',
+      email: userData?.email || '',
+      phone_number: userData?.phone_number || '',
+      date_of_birth: userData?.date_of_birth || '',
+      addresses: updatedAddresses
+    };
+    updateProfileMutation.mutate(dataToSend);
+    showToast('Adresa u shtua dhe u ruajt', 'success');
+  };
+
+  const handleEditAddress = (updatedAddress: Address) => {
+    const updatedAddresses = addresses.map(addr => 
+      addr.id === editingAddress?.id ? { ...updatedAddress, id: addr.id } : addr
+    );
+    setAddresses(updatedAddresses);
+    setEditingAddress(null);
+    setIsAddressModalOpen(false);
+    
+    // Auto-save addresses
+    const dataToSend: any = {
+      first_name: userData?.first_name || '',
+      last_name: userData?.last_name || '',
+      email: userData?.email || '',
+      phone_number: userData?.phone_number || '',
+      date_of_birth: userData?.date_of_birth || '',
+      addresses: updatedAddresses
+    };
+    updateProfileMutation.mutate(dataToSend);
+    showToast('Adresa u përditësua dhe u ruajt', 'success');
+  };
+
+  const handleDeleteAddress = (addressId: string) => {
+    if (confirm('Jeni të sigurt që doni të fshini këtë adresë?')) {
+      const updatedAddresses = addresses.filter(addr => addr.id !== addressId);
+      setAddresses(updatedAddresses);
+      
+      // Auto-save addresses
+      const dataToSend: any = {
+        first_name: userData?.first_name || '',
+        last_name: userData?.last_name || '',
+        email: userData?.email || '',
+        phone_number: userData?.phone_number || '',
+        date_of_birth: userData?.date_of_birth || '',
+        addresses: updatedAddresses
+      };
+      updateProfileMutation.mutate(dataToSend);
+      showToast('Adresa u fshin dhe ndryshimet u ruajtën', 'success');
+    }
+  };
+
+  const openAddressModal = (address?: Address) => {
+    if (address) {
+      setEditingAddress(address);
+    } else {
+      setEditingAddress(null);
+    }
+    setIsAddressModalOpen(true);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    
+    if (name === 'phone_number') {
+      // Remove any non-digit characters
+      const digitsOnly = value.replace(/\D/g, '');
+      
+      // Limit to 9 digits (Albanian mobile numbers are 9 digits after country code)
+      const limitedDigits = digitsOnly.slice(0, 9);
+      
+      // Format using libphonenumber-js
+      const formatter = new AsYouType('AL');
+      
+      // Add +355 prefix if not empty
+      let formattedValue = '';
+      if (limitedDigits) {
+        formattedValue = formatter.input('+355' + limitedDigits);
+        // Remove the +355 prefix for display since we show it separately
+        formattedValue = formattedValue.replace('+355 ', '').replace('+355', '');
+      }
+      
+      setFormData({ ...formData, [name]: formattedValue });
+      
+      // Real-time validation
+      if (limitedDigits.length > 0) {
+        const fullNumber = '+355' + limitedDigits;
+        
+        // Check if it's at least possible
+        const possible = isPossiblePhoneNumber(fullNumber, 'AL');
+        
+        // Check if it's valid
+        const valid = isValidPhoneNumber(fullNumber, 'AL');
+        
+        // Validate the starting digits for Albanian numbers
+        const validStarts = ['4', '6']; // Albanian numbers start with 4 (landline) or 6 (mobile)
+        const hasValidStart = validStarts.some(start => limitedDigits.startsWith(start));
+        
+        let error = '';
+        if (!hasValidStart && limitedDigits.length >= 1) {
+          error = 'Numri duhet të fillojë me 4 ose 6';
+        } else if (limitedDigits.length >= 8 && !valid) {
+          error = 'Numri nuk është i vlefshëm';
+        } else if (limitedDigits.length < 8) {
+          error = `${8 - limitedDigits.length} shifra të tjera nevojiten`;
+        }
+        
+        setPhoneValidation({
+          isValid: valid,
+          isPossible: possible && hasValidStart,
+          error: error
+        });
+      } else {
+        setPhoneValidation({ isValid: true, isPossible: true, error: '' });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,12 +364,29 @@ export default function ProfilePage() {
   const handleCancelEdit = () => {
     setIsEditMode(false);
     // Reset form data to original values
+    // Extract phone number without country code for display
+    let phoneForDisplay = userData?.phone_number || '';
+    
+    if (phoneForDisplay.startsWith('+355')) {
+      phoneForDisplay = phoneForDisplay.substring(4);
+    } else if (phoneForDisplay.startsWith('355')) {
+      phoneForDisplay = phoneForDisplay.substring(3);
+    }
+    
+    phoneForDisplay = phoneForDisplay.replace(/\D/g, '');
+    
+    if (phoneForDisplay) {
+      const formatter = new AsYouType('AL');
+      const formatted = formatter.input('+355' + phoneForDisplay);
+      phoneForDisplay = formatted.replace('+355 ', '').replace('+355', '');
+    }
+    
     setFormData({
       first_name: userData?.first_name || '',
       last_name: userData?.last_name || '',
       email: userData?.email || '',
-      phone: userData?.phone || '',
-      birth_date: userData?.birth_date || '',
+      phone_number: phoneForDisplay,
+      date_of_birth: userData?.date_of_birth || '',
     });
   };
 
@@ -190,14 +433,14 @@ export default function ProfilePage() {
 
         {/* Right Column - Content */}
         <div className="flex-1">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#D32F2F] font-grandstander mb-4 md:mb-6 lg:mb-8 text-center md:text-left">My profile</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#D32F2F] font-grandstander mb-4 md:mb-6 lg:mb-8 text-center md:text-left">Profili im</h1>
 
           {/* Profile Content */}
           <form onSubmit={handleSubmit}>
             {/* Account Information */}
             <div className="mb-10">
               <div className="flex items-center justify-between mb-4 md:mb-6">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-medium text-gray-600 font-albertsans">Account information</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-medium text-gray-600 font-albertsans">Informacioni i llogarisë</h2>
                 {!isEditMode && (
                   <button
                     onClick={() => setIsEditMode(true)}
@@ -234,13 +477,13 @@ export default function ProfilePage() {
 
         {/* Personal Information */}
         <div className="mb-10">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-600 mb-4 md:mb-6 font-albertsans">Personal information</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-600 mb-4 md:mb-6 font-albertsans">Informacioni personal</h2>
           
           <div className="space-y-6">
             <div>
               <label className="block text-gray-600 mb-2 font-albertsans text-sm sm:text-base">
                 {isEditMode && <span className="text-red-500">* </span>}
-                Name
+                Emri
               </label>
               {isEditMode ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -249,7 +492,7 @@ export default function ProfilePage() {
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    placeholder="First name"
+                    placeholder="Emri"
                     className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-albertsans text-sm sm:text-base"
                     required
                   />
@@ -258,7 +501,7 @@ export default function ProfilePage() {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    placeholder="Last name"
+                    placeholder="Mbiemri"
                     className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-albertsans text-sm sm:text-base"
                     required
                   />
@@ -267,37 +510,86 @@ export default function ProfilePage() {
                 <p className="text-base sm:text-lg font-medium font-albertsans">
                   {userData?.first_name || userData?.last_name 
                     ? `${userData.first_name} ${userData.last_name}` 
-                    : 'User name goes here'}
+                    : 'Emri i përdoruesit'}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-gray-600 mb-2 font-albertsans text-sm sm:text-base">Phone</label>
+              <label className="block text-gray-600 mb-2 font-albertsans text-sm sm:text-base">Telefoni</label>
               {isEditMode ? (
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="+355 123456789"
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-albertsans text-sm sm:text-base"
-                />
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                    +355
+                  </span>
+                  <input
+                    type="tel"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleInputChange}
+                    placeholder="6X XXX XXXX"
+                    className={`w-full pl-14 pr-10 py-2 sm:py-3 border ${
+                      phoneValidation.error && formData.phone_number
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg focus:outline-none focus:ring-2 ${
+                      phoneValidation.error && formData.phone_number
+                        ? "focus:ring-red-500"
+                        : "focus:ring-blue-500"
+                    } font-albertsans text-sm sm:text-base`}
+                  />
+                  {/* Validation indicator */}
+                  {formData.phone_number && (
+                    <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+                      {phoneValidation.isValid ? (
+                        <svg
+                          className="h-5 w-5 text-green-500"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ) : phoneValidation.error ? (
+                        <svg
+                          className="h-5 w-5 text-red-500"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ) : null}
+                    </span>
+                  )}
+                </div>
               ) : (
                 <p className="text-base sm:text-lg font-medium font-albertsans">
-                  {userData?.phone || '+355 123456789'}
+                  {userData?.phone_number || 'Nuk është vendosur'}
+                </p>
+              )}
+              {/* Real-time error message */}
+              {isEditMode && phoneValidation.error && formData.phone_number && (
+                <p className="text-sm text-red-500 mt-1">
+                  {phoneValidation.error}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-gray-600 mb-2 font-albertsans text-sm sm:text-base">Date of birth</label>
+              <label className="block text-gray-600 mb-2 font-albertsans text-sm sm:text-base">Data e lindjes</label>
               {isEditMode ? (
                 <div className="relative">
                   <input
                     type="date"
-                    name="birth_date"
-                    value={formData.birth_date}
+                    name="date_of_birth"
+                    value={formData.date_of_birth}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-albertsans text-sm sm:text-base"
                   />
@@ -307,7 +599,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <p className="text-base sm:text-lg font-medium font-albertsans">
-                  {userData?.birth_date ? formatDate(userData.birth_date) : 'May-02-1990'}
+                  {userData?.date_of_birth ? formatDate(userData.date_of_birth) : 'Nuk është vendosur'}
                 </p>
               )}
             </div>
@@ -322,20 +614,89 @@ export default function ProfilePage() {
                   disabled={updateProfileMutation.isPending}
                   className="bg-blue-600 text-white px-8 sm:px-12 py-2.5 sm:py-3 rounded-lg hover:bg-blue-700 transition-colors font-albertsans font-medium disabled:opacity-50 text-sm sm:text-base"
                 >
-                  {updateProfileMutation.isPending ? 'Saving...' : 'Save'}
+                  {updateProfileMutation.isPending ? 'Duke ruajtur...' : 'Ruaj'}
                 </button>
                 <button
                   type="button"
                   onClick={handleCancelEdit}
                   className="border border-gray-300 text-gray-700 px-8 sm:px-12 py-2.5 sm:py-3 rounded-lg hover:bg-gray-50 transition-colors font-albertsans font-medium text-sm sm:text-base"
                 >
-                  Cancel
+                  Anulo
                 </button>
               </div>
             )}
           </form>
         </div>
       </div>
+
+      {/* Addresses Section */}
+      <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg sm:text-xl font-grandstander font-bold">Adresat e mia</h3>
+          <button
+            onClick={() => openAddressModal()}
+            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-albertsans font-medium text-sm"
+          >
+            <PlusIcon className="w-4 h-4" />
+            Shto adresë
+          </button>
+        </div>
+        
+        {addresses.length === 0 ? (
+          <div className="bg-gray-50 rounded-lg p-8 text-center">
+            <p className="text-gray-600 font-albertsans mb-4">Nuk keni asnjë adresë të ruajtur</p>
+            <button
+              onClick={() => openAddressModal()}
+              className="text-red-600 hover:text-red-700 font-albertsans font-medium"
+            >
+              Shtoni adresën tuaj të parë
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {addresses.map((address) => (
+              <div key={address.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-albertsans font-semibold">Adresa</h4>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => openAddressModal(address)}
+                      className="text-gray-600 hover:text-blue-600 transition-colors"
+                      title="Ndrysho"
+                    >
+                      <PencilIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteAddress(address.id!)}
+                      className="text-gray-600 hover:text-red-600 transition-colors"
+                      title="Fshi"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 font-albertsans">
+                  {address.street_address}<br />
+                  {address.city}, {address.zip}<br />
+                  Tel: {address.contact_number}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Address Modal */}
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        onClose={() => {
+          setIsAddressModalOpen(false);
+          setEditingAddress(null);
+        }}
+        onSave={editingAddress ? handleEditAddress : handleAddAddress}
+        type="shipping"
+        initialData={editingAddress || undefined}
+      />
 
       {/* Password Change Section */}
       <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t">

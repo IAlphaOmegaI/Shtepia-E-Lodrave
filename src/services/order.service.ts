@@ -104,6 +104,83 @@ export class OrderService {
   }
 
   /**
+   * Calculate order totals and fees
+   */
+  static async calculateOrder(data: {
+    items: { product_id: number; quantity: number }[];
+    shipping_info: {
+      city: string;
+      country: string;
+      zip_code: string;
+      contact_phone: string;
+      address: string;
+    };
+    payment_method?: string;
+    shipping_notes?: string;
+    order_notes?: string;
+    use_points?: boolean;
+    user_id?: number | null;
+  }) {
+    try {
+      const payload = {
+        order_items: data.items,
+        shipping_info: data.shipping_info,
+        use_points: data.use_points || false,
+        user_id: data.user_id || null,
+      };
+      
+      const response = await api.orders.calculateOrder(payload);
+      return response;
+    } catch (error) {
+      console.error('Error calculating order:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create an order (for both guest and authenticated users)
+   */
+  static async createOrder(data: {
+    items: { product_id: number; quantity: number }[];
+    shipping_info: {
+      city: string;
+      country: string;
+      zip_code: string;
+      contact_phone: string;
+      address: string;
+    };
+    payment_method?: string;
+    shipping_notes?: string;
+    order_notes?: string;
+    use_points?: boolean;
+    first_name: string;
+    last_name: string;
+    email: string;
+  }) {
+    try {
+      const payload = {
+        shop: 2, // hardcoded for now
+        vendor: 1, // hardcoded for now
+        payment_method: data.payment_method || "cash",
+        shipping_notes: data.shipping_notes || "",
+        order_notes: data.order_notes || "",
+        items: data.items,
+        use_points: data.use_points || false,
+        shipping_info: data.shipping_info,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+      };
+      
+      const response = await api.orders.create(payload);
+      return response;
+    } catch (error) {
+      console.error('Error creating order:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Validate order data before submission
    */
   static validateOrderData(orderData: CreateOrderData): string[] {

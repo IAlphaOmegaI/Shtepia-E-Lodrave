@@ -72,29 +72,21 @@ export const defaultCheckout: CheckoutState = {
   use_wallet: false,
 };
 
-// Original atom.
+// Original atom - keeping localStorage for other checkout data but not addresses
 export const checkoutAtom = atomWithStorage('checkout', defaultCheckout);
 export const clearCheckoutAtom = atom(null, (_get, set, _data) => {
   return set(checkoutAtom, defaultCheckout);
 });
-export const billingAddressAtom = atom(
-  (get) => get(checkoutAtom).billing_address,
-  (get, set, update: SetStateAction<Address | null>) => {
-    const prev = get(checkoutAtom);
-    const currentValue = prev.billing_address;
-    const newValue = typeof update === 'function' ? update(currentValue) : update;
-    return set(checkoutAtom, { ...prev, billing_address: newValue });
-  }
-);
-export const shippingAddressAtom = atom(
-  (get) => get(checkoutAtom).shipping_address,
-  (get, set, update: SetStateAction<Address | null>) => {
-    const prev = get(checkoutAtom);
-    const currentValue = prev.shipping_address;
-    const newValue = typeof update === 'function' ? update(currentValue) : update;
-    return set(checkoutAtom, { ...prev, shipping_address: newValue });
-  }
-);
+
+// Billing address - no localStorage persistence
+export const billingAddressAtom = atom<Address | null>(null);
+
+// Shipping address - no localStorage persistence
+export const shippingAddressAtom = atom<Address | null>(null);
+
+// Order note - no localStorage persistence
+export const orderNoteAtom = atom<string>('');
+
 export const deliveryTimeAtom = atom(
   (get) => get(checkoutAtom).delivery_time,
   (get, set, data: DeliveryTime) => {
@@ -137,13 +129,6 @@ export const guestNameAtom = atom(
   (get, set, data: string) => {
     const prev = get(checkoutAtom);
     return set(checkoutAtom, { ...prev, customer_name: data });
-  }
-);
-export const orderNoteAtom = atom(
-  (get) => get(checkoutAtom).note,
-  (get, set, data: string) => {
-    const prev = get(checkoutAtom);
-    return set(checkoutAtom, { ...prev, note: data });
   }
 );
 export const verifiedResponseAtom = atom(

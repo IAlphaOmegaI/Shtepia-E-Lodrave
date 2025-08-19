@@ -158,6 +158,23 @@ export class AuthService {
   }
 
   /**
+   * Get current user from API
+   */
+  static async getCurrentUser(): Promise<User | null> {
+    try {
+      const response = await api.auth.me();
+      if (response) {
+        this.setUser(response);
+        return response;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+      return null;
+    }
+  }
+
+  /**
    * Refresh authentication token
    */
   static async refreshToken(): Promise<string | null> {

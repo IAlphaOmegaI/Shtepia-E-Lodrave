@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation';
 import { Routes } from '@/config/routes';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAtom } from 'jotai';
+import { shippingAddressAtom } from '@/store/checkout';
 
 interface Props {
   onContinue?: () => void;
@@ -10,6 +12,14 @@ interface Props {
   showContinueButton?: boolean;
   showPaymentMethod?: boolean;
   showPlaceOrder?: boolean;
+  orderCalculation?: {
+    total: number;
+    subtotal: number;
+    shipping_cost: number;
+    loyalty_applied?: number;
+  } | null;
+  usePoints?: boolean;
+  userPoints?: number;
 }
 
 const CheckoutSummary: React.FC<Props> = ({ 
@@ -17,11 +27,15 @@ const CheckoutSummary: React.FC<Props> = ({
   onPlaceOrder,
   showContinueButton = false,
   showPaymentMethod = false,
-  showPlaceOrder = false
+  showPlaceOrder = false,
+  orderCalculation,
+  usePoints = false,
+  userPoints = 0
 }) => {
   const { items, total } = useCart();
   const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery');
+  const [shippingAddress] = useAtom(shippingAddressAtom);
 
   const formatPrice = (amount: number) => new Intl.NumberFormat('en-US', {
     style: 'decimal',
@@ -29,9 +43,10 @@ const CheckoutSummary: React.FC<Props> = ({
     maximumFractionDigits: 0,
   }).format(amount);
 
-  // Calculate shipping (example - you can make this dynamic)
-  const shipping = 500; // Example shipping cost
-  const finalTotal = total + shipping;
+  // Use calculated values from API or fallback to defaults
+  const subtotal = orderCalculation?.subtotal || total;
+  const shipping = orderCalculation?.shipping_cost || 0;
+  const finalTotal = orderCalculation?.total || total;
 
   const handleContinue = () => {
     if (onContinue) {
@@ -48,7 +63,7 @@ const CheckoutSummary: React.FC<Props> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Përmbledhja e porosisë</h2>
+        <h2 className="text-lg font-semibold mb-4 font-grandstander">Përmbledhja e porosisë</h2>
         
         {/* Items list */}
         <div className="space-y-3 mb-6">
@@ -66,26 +81,26 @@ const CheckoutSummary: React.FC<Props> = ({
 
         {/* Totals */}
         <div className="space-y-2 text-sm">
-          {showPaymentMethod ? (
-            <>
-              {/* For confirmation page */}
-              <div className="flex justify-between">
-                <span className="text-gray-600">Nëntotali ({items.length} produkte)</span>
-                <span className="font-medium">{formatPrice(total)} Lekë</span>
-              </div>
-              <div className="flex justify-between pb-4">
-                <span className="text-gray-600">Dërgesa</span>
-                <span className="font-medium">{formatPrice(shipping)} Lekë</span>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* For initial checkout page */}
-              <div className="flex justify-between pb-4 border-b">
-                <span className="text-gray-600">Dërgesa</span>
-                <span className="text-gray-600 text-right">Llogaritet pasi të shtoni adresën</span>
-              </div>
-            </>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Nëntotali ({items.length} produkte)</span>
+            <span className="font-medium">{formatPrice(subtotal)} Lekë</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Dërgesa</span>
+            <span className="font-medium">
+              {orderCalculation && shippingAddress 
+                ? `${formatPrice(shipping)} Lekë`
+                : 'Llogaritet pasi të shtoni adresën'
+              }
+            </span>
+          </div>
+          
+          {/* Loyalty Points Discount */}
+          {usePoints && orderCalculation?.loyalty_applied && orderCalculation.loyalty_applied > 0 && (
+            <div className="flex justify-between text-green-600 pb-4">
+              <span>Përdorimi i pikëve të besnikërisë</span>
+              <span className="font-medium">-{formatPrice(orderCalculation.loyalty_applied)} Lekë</span>
+            </div>
           )}
         </div>
 
@@ -110,23 +125,21 @@ const CheckoutSummary: React.FC<Props> = ({
         {/* Final Total */}
         <div className="mt-6 pt-4 border-t">
           <div className="flex justify-between items-center">
-            {showPaymentMethod ? (
-              <>
-                <span className="text-lg font-bold">Totali</span>
-                <span className="text-lg font-bold text-blue-600">
-                  {formatPrice(finalTotal)} Lekë
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="text-lg font-semibold">Nëntotali</span>
-                <span className="text-lg font-semibold text-blue-600">
-                  {formatPrice(total)} Lekë
-                </span>
-              </>
-            )}
+            <span className="text-lg font-bold font-grandstander">Totali</span>
+            <span className="text-lg font-bold text-blue-600">
+              {formatPrice(finalTotal)} Lekë
+            </span>
           </div>
         </div>
+
+        {/* Address Warning */}
+        {!shippingAddress && showPlaceOrder && (
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              <strong>Kujdes:</strong> Ju lutem shtoni adresën e dërgesës para se të bëni porosinë
+            </p>
+          </div>
+        )}
 
         {/* Action Buttons */}
         {showContinueButton && (
@@ -138,7 +151,7 @@ const CheckoutSummary: React.FC<Props> = ({
           </button>
         )}
 
-        {showPlaceOrder && (
+        {showPlaceOrder && shippingAddress && (
           <button
             onClick={handlePlaceOrder}
             className="w-full mt-6 bg-orange-400 text-white py-3 px-4 rounded-lg font-medium hover:bg-orange-500 transition-colors"

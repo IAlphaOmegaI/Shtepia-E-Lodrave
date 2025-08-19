@@ -121,7 +121,11 @@ export const api = {
       return data;
     },
     create: async (orderData: CreateOrderData): Promise<Order> => {
-      const { data } = await apiClient.post('/orders/', orderData);
+      const { data } = await apiClient.post('/orders/create/', orderData);
+      return data;
+    },
+    calculateOrder: async (orderData: any) => {
+      const { data } = await apiClient.post('/calculate-order/', orderData);
       return data;
     },
   },
