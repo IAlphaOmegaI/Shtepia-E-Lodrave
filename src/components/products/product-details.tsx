@@ -30,11 +30,19 @@ interface ProductDetailsProps {
 // Helper function to get full image URL
 const getImageUrl = (path: string) => {
   if (!path) return '/placeholder.jpg';
-  // If path already has http, return as is
-  if (path.startsWith('http')) return path;
-  // Otherwise prepend the base URL
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://63.178.242.103';
-  return `${baseUrl}${path}`;
+  
+  // If path already has http/https, return as is
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  
+  // For relative paths starting with /, prepend the API base URL
+  if (path.startsWith('/')) {
+    return `https://api.shtepialodrave.com${path}`;
+  }
+  
+  // For paths without leading slash, add it
+  return `https://api.shtepialodrave.com/${path}`;
 };
 
 export default function ProductDetails({ product }: ProductDetailsProps) {

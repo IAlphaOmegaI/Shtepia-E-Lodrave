@@ -29,6 +29,8 @@ export class ProductService {
   static async getById(id: string | number) {
     try {
       const response = await api.products.getById(id);
+      console.log("XHANI")
+      console.log(response);
       return response;
     } catch (error) {
       console.error(`Error fetching product ${id}:`, error);
@@ -66,6 +68,21 @@ export class ProductService {
         ...params 
       });
       return response.data || [];
+    } catch (error) {
+      console.error(`Error searching products for "${query}":`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Search products for autocomplete
+   * Returns limited results for search dropdown
+   */
+  static async searchProducts(query: string, limit: number = 8) {
+    try {
+      const response = await api.products.search(query, { limit });
+      const products = response.data || [];
+      return Array.isArray(products) ? products : [];
     } catch (error) {
       console.error(`Error searching products for "${query}":`, error);
       return [];

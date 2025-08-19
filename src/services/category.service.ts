@@ -93,7 +93,7 @@ export class CategoryService {
    */
   static async getFeaturedCategories(): Promise<Category[]> {
     try {
-      const response = await fetch(`http://63.178.242.103/api/categories?featured=true`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories?featured=true`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch featured categories');

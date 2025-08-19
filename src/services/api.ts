@@ -51,6 +51,15 @@ export const api = {
       const { data } = await apiClient.get('/popular-products/');
       return data;
     },
+    search: async (query: string, params?: any) => {
+      const { data } = await apiClient.get('/products/', {
+        params: {
+          search: query,
+          ...params,
+        },
+      });
+      return data;
+    },
   },
 
   // Categories
