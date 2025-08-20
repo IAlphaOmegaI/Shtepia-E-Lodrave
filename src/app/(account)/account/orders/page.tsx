@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDownIcon } from '@/components/icons/chevron-down';
 import { ChevronUpIcon } from '@/components/icons/chevron-up';
 import { BoxIcon } from 'lucide-react';
@@ -12,7 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Routes } from '@/config/routes';
 import { useCart } from '@/store/quick-cart/cart.context';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/contexts/toast-context';
 
 interface Product {
@@ -104,16 +104,22 @@ interface Order {
 
 export default function OrdersPage() {
   const [expandedOrders, setExpandedOrders] = useState<number[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const { addItem, clearCart } = useCart();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
+  
+  // Get current page from URL params, default to 1
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
   
   const { data: ordersResponse, isLoading } = useQuery({
     queryKey: ['orders', currentPage],
     queryFn: async () => {
-      const response = await api.orders.list();
+      const response = await api.orders.list({ 
+        page: currentPage, 
+        limit: itemsPerPage 
+      });
       return response;
     },
   });
@@ -279,8 +285,8 @@ export default function OrdersPage() {
                 }`}
                 onClick={() => toggleOrderExpanded(order.id)}
               >
-                <div className="flex items-center justify-between">
-                  <div className="grid grid-cols-3 gap-12">
+                <div className="flex items-center justify-between ">
+                  <div className="flex justify-between items-center flex-1">
                     <div>
                       <div className="text-sm text-gray-600 font-albertsans mb-1">Porosia</div>
                       <div className="font-albertsans font-semibold">{order.order_number}</div>
@@ -298,7 +304,7 @@ export default function OrdersPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center min-w-[80px] justify-end">
                     {isExpanded ? (
                       <ChevronUpIcon className="w-5 h-5 text-gray-600" />
                     ) : (
@@ -464,7 +470,10 @@ export default function OrdersPage() {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 p-6 border-t">
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => {
+              const newPage = Math.max(1, currentPage - 1);
+              router.push(`/account/orders?page=${newPage}`);
+            }}
             disabled={currentPage === 1}
             className={`p-2 rounded ${
               currentPage === 1
@@ -485,7 +494,7 @@ export default function OrdersPage() {
               return (
                 <button
                   key={page}
-                  onClick={() => setCurrentPage(page)}
+                  onClick={() => router.push(`/account/orders?page=${page}`)}
                   className={`min-w-[40px] h-10 rounded font-medium ${
                     page === currentPage
                       ? 'bg-blue-600 text-white'
@@ -506,7 +515,10 @@ export default function OrdersPage() {
           })}
           
           <button
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            onClick={() => {
+              const newPage = Math.min(totalPages, currentPage + 1);
+              router.push(`/account/orders?page=${newPage}`);
+            }}
             disabled={currentPage === totalPages}
             className={`p-2 rounded ${
               currentPage === totalPages

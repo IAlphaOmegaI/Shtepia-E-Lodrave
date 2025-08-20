@@ -8,6 +8,7 @@ interface Address {
   zip: string;
   street_address: string;
   contact_number?: string;
+  phone_number?: string;  // Backend returns this field
 }
 
 interface Props {
@@ -26,9 +27,9 @@ const AddressCard: React.FC<Props> = ({
   onDelete 
 }) => {
   return (
-    <div 
+    <div
       className={`bg-white border ${
-        isSelected ? 'border-blue-500' : 'border-gray-300'
+        isSelected ? "border-blue-500" : "border-gray-300"
       } rounded-lg p-4 cursor-pointer transition-all`}
       onClick={onSelect}
     >
@@ -42,16 +43,21 @@ const AddressCard: React.FC<Props> = ({
             onClick={(e) => e.stopPropagation()}
           />
           <div className="flex-1">
-            <h4 className="font-medium text-gray-900">Adresa e përdoruesit</h4>
+            <h4 className="font-medium text-gray-900">{"Adresa e dërgesës"}</h4>
             <p className="text-sm text-gray-600 mt-1">
-              {address.state}, {address.city}
+              {address.street_address}
             </p>
             <p className="text-sm text-gray-600">
-              {address.zip || 'Kodi postar'}
+              {[address.city, address.state].filter(Boolean).join(", ")}
             </p>
-            {address.contact_number && (
+            <p className="text-sm text-gray-600">
+              {address.country}
+              {address.zip ? `, ${address.zip}` : ""}
+            </p>
+            {(address.contact_number || address.phone_number) && (
               <p className="text-sm text-gray-600 mt-2">
-                Numri i kontaktit: {address.contact_number}
+                <span className="font-medium">Tel:</span>{" "}
+                {address.contact_number || address.phone_number}
               </p>
             )}
           </div>

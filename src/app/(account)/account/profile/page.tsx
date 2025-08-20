@@ -8,6 +8,13 @@ import { parsePhoneNumber, isValidPhoneNumber, AsYouType, isPossiblePhoneNumber 
 import AddressModal from '@/components/checkout/address-modal';
 import { PlusIcon, PencilIcon, TrashIcon } from 'lucide-react';
 import { useToast } from '@/contexts/toast-context';
+import dynamic from 'next/dynamic';
+
+// Dynamically import PasswordStrengthBar to avoid SSR issues
+const PasswordStrengthBar = dynamic(
+  () => import('react-password-strength-bar'),
+  { ssr: false }
+);
 
 interface ProfileFormData {
   first_name: string;
@@ -26,7 +33,7 @@ interface Address {
 }
 
 interface PasswordChangeData {
-  current_password: string;
+  old_password: string;
   new_password: string;
 }
 
@@ -38,11 +45,12 @@ export default function ProfilePage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwordData, setPasswordData] = useState({
-    current_password: '',
+    old_password: '',
     new_password: '',
     confirm_password: '',
   });
   const [passwordError, setPasswordError] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -123,11 +131,12 @@ export default function ProfilePage() {
       setSuccessMessage('Fjalëkalimi u ndryshua me sukses!');
       setShowPasswordForm(false);
       setPasswordData({
-        current_password: '',
+        old_password: '',
         new_password: '',
         confirm_password: '',
       });
       setPasswordError('');
+      setPasswordStrength(0);
       setTimeout(() => setSuccessMessage(''), 3000);
     },
     onError: (error: Error & { response?: { data?: { message?: string } } }) => {
@@ -332,6 +341,11 @@ export default function ProfilePage() {
       [e.target.name]: e.target.value,
     });
     setPasswordError('');
+    
+    // Reset password strength when new password is cleared
+    if (e.target.name === 'new_password' && e.target.value === '') {
+      setPasswordStrength(0);
+    }
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -348,8 +362,15 @@ export default function ProfilePage() {
       return;
     }
     
+    // Check for common passwords
+    const commonPasswords = ['password', '12345678', 'qwerty', 'abc123', 'password123', '123456789'];
+    if (commonPasswords.includes(passwordData.new_password.toLowerCase())) {
+      setPasswordError('Ky fjalëkalim është shumë i zakonshëm. Ju lutemi zgjidhni një fjalëkalim më të fortë.');
+      return;
+    }
+    
     changePasswordMutation.mutate({
-      current_password: passwordData.current_password,
+      old_password: passwordData.old_password,
       new_password: passwordData.new_password,
     });
   };
@@ -718,14 +739,14 @@ export default function ProfilePage() {
             )}
             
             <div>
-              <label htmlFor="current_password" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 font-albertsans">
+              <label htmlFor="old_password" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 font-albertsans">
                 Fjalëkalimi aktual
               </label>
               <input
                 type="password"
-                id="current_password"
-                name="current_password"
-                value={passwordData.current_password}
+                id="old_password"
+                name="old_password"
+                value={passwordData.old_password}
                 onChange={handlePasswordChange}
                 required
                 className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent font-albertsans text-sm sm:text-base"
@@ -745,6 +766,22 @@ export default function ProfilePage() {
                 required
                 className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent font-albertsans text-sm sm:text-base"
               />
+              {passwordData.new_password && (
+                <>
+                  <PasswordStrengthBar 
+                    password={passwordData.new_password}
+                    minLength={8}
+                    scoreWords={['shumë i dobët', 'i dobët', 'i pranueshëm', 'i mirë', 'i fortë']}
+                    shortScoreWord="shumë i shkurtër"
+                    onChangeScore={(score: number) => setPasswordStrength(score)}
+                  />
+                  {passwordStrength < 2 && (
+                    <p className="text-xs text-amber-600 mt-1 font-albertsans">
+                      Fjalëkalimi duhet të jetë të paktën "i pranueshëm" për të vazhduar
+                    </p>
+                  )}
+                </>
+              )}
             </div>
             
             <div>
@@ -765,8 +802,21 @@ export default function ProfilePage() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
               <button
                 type="submit"
-                disabled={changePasswordMutation.isPending}
-                className="bg-red-600 text-white px-6 py-2.5 sm:py-3 rounded-lg hover:bg-red-700 transition-colors font-albertsans font-medium disabled:opacity-50 text-sm sm:text-base"
+                disabled={
+                  changePasswordMutation.isPending || 
+                  !passwordData.old_password || 
+                  !passwordData.new_password || 
+                  !passwordData.confirm_password ||
+                  (passwordData.new_password && passwordStrength < 2)
+                }
+                className="bg-red-600 text-white px-6 py-2.5 sm:py-3 rounded-lg hover:bg-red-700 transition-colors font-albertsans font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                title={
+                  !passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password 
+                    ? 'Ju lutemi plotësoni të gjitha fushat' 
+                    : passwordData.new_password && passwordStrength < 2 
+                      ? 'Fjalëkalimi duhet të jetë të paktën "i pranueshëm"' 
+                      : ''
+                }
               >
                 {changePasswordMutation.isPending ? 'Duke ndryshuar...' : 'Ndrysho fjalëkalimin'}
               </button>
@@ -776,11 +826,12 @@ export default function ProfilePage() {
                 onClick={() => {
                   setShowPasswordForm(false);
                   setPasswordData({
-                    current_password: '',
+                    old_password: '',
                     new_password: '',
                     confirm_password: '',
                   });
                   setPasswordError('');
+                  setPasswordStrength(0);
                 }}
                 className="border border-gray-300 text-gray-700 px-6 py-2.5 sm:py-3 rounded-lg hover:bg-gray-50 transition-colors font-albertsans font-medium text-sm sm:text-base"
               >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { PrimitiveAtom } from 'jotai';
 import AddressModal from './address-modal';
@@ -15,6 +15,7 @@ interface Address {
   zip: string;
   street_address: string;
   contact_number?: string;
+  phone_number?: string;  // Backend returns this field
 }
 
 interface Props {
@@ -39,9 +40,19 @@ const AddressGrid: React.FC<Props> = ({
   const [showModal, setShowModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses || []);
+  
+  // Update addresses when initialAddresses prop changes
+  useEffect(() => {
+    setAddresses(initialAddresses || []);
+  }, [initialAddresses]);
 
   const handleSelectAddress = (address: Address) => {
-    setSelectedAddress(address);
+    // Normalize phone field - backend returns phone_number but we need contact_number
+    const normalizedAddress = {
+      ...address,
+      contact_number: address.contact_number || address.phone_number
+    };
+    setSelectedAddress(normalizedAddress);
   };
 
   const handleEdit = (address: Address) => {
@@ -86,6 +97,8 @@ const AddressGrid: React.FC<Props> = ({
     setEditingAddress(null);
   };
 
+  console.log('AddressGrid rendering with addresses:', addresses); // Debug log
+  
   return (
     <div className={`bg-white rounded-lg shadow-sm ${className || ''}`}>
       {/* Title inside white card */}
@@ -127,7 +140,7 @@ const AddressGrid: React.FC<Props> = ({
           street_address: editingAddress.street_address,
           city: editingAddress.city,
           zip: editingAddress.zip,
-          contact_number: editingAddress.contact_number || '',
+          contact_number: editingAddress.contact_number || editingAddress.phone_number || '',
         } : undefined}
       />
     </div>

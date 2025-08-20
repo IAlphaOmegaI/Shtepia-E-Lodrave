@@ -19,9 +19,12 @@ export default function CheckoutPage() {
   const { items } = useCart();
   const router = useRouter();
 
-  // Redirect to cart if empty
+  // Redirect to cart if empty (unless we just completed an order)
   useEffect(() => {
-    if (items.length === 0) {
+    // Check if we have a completed order in session storage
+    const hasCompletedOrder = sessionStorage.getItem('lastOrder');
+    
+    if (items.length === 0 && !hasCompletedOrder) {
       router.push(Routes.cart);
     }
   }, [items, router]);

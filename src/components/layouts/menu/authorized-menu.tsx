@@ -72,11 +72,11 @@ const AuthorizedMenu: React.FC = () => {
                   {userData?.email || "user@example.com"}
                 </p>
                 <a
-                  href="/account/profile"
+                  href={userData?.role === 'admin' ? '/admin/dashboard' : '/account/profile'}
                   className="text-sm text-gray-700 hover:text-gray-900 flex items-center mt-1 group"
                   onClick={() => setIsOpen(false)}
                 >
-                  <span>Profili Im</span>
+                  <span>{userData?.role === 'admin' ? 'Admin Dashboard' : 'Profili Im'}</span>
                   <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -84,22 +84,24 @@ const AuthorizedMenu: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="py-1">
-            <a
-              href="/account/loyalty-card"
-              className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Karta ime e besnikërisë
-            </a>
-            <a
-              href="/account/orders"
-              className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Porositë
-            </a>
-          </div>
+          {userData?.role !== 'admin' && (
+            <div className="py-1">
+              <a
+                href="/account/loyalty-card"
+                className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Karta ime e besnikërisë
+              </a>
+              <a
+                href="/account/orders"
+                className="block px-4 py-3 text-sm text-gray-900 hover:bg-gray-50 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Porositë
+              </a>
+            </div>
+          )}
           <div className="border-t border-gray-100">
             <button
               onClick={handleLogout}

@@ -102,8 +102,8 @@ export const api = {
       return data;
     },
 
-    changePassword: async (passwordData: { current_password: string; new_password: string }) => {
-      const { data } = await apiClient.post('/change-password/', passwordData);
+    changePassword: async (passwordData: { old_password: string; new_password: string }) => {
+      const { data } = await apiClient.post('/password/change/', passwordData);
       return data;
     },
 
@@ -112,8 +112,8 @@ export const api = {
 
   // Orders
   orders: {
-    list: async () => {
-      const { data } = await apiClient.get('/orders/');
+    list: async (params?: { page?: number; limit?: number }) => {
+      const { data } = await apiClient.get('/orders/', { params });
       return data;
     },
     getAll: async (): Promise<OrderListResponse> => {

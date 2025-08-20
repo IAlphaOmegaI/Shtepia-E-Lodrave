@@ -34,6 +34,7 @@ export const Routes = {
   checkout: '/checkout',
   orders: '/orders',
   order: (tracking_number: string) => `/orders/${tracking_number}`,
+  orderThankYou: (tracking_number: string) => `/orders/${tracking_number}/thank-you`,
   orderReceived: '/order-received',
   profile: '/profile',
   changePassword: '/change-password',

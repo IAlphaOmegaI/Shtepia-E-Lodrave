@@ -30,10 +30,37 @@ export default function LoginPage() {
       
       if (response.user) {
         authorize();
-        router.push(Routes.home);
+        // Redirect based on user role
+        if (response.user.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push(Routes.home);
+        }
       }
     } catch (err: any) {
-      setError(err.message || 'Email ose fjalëkalimi është gabim');
+      // Check for specific error messages from the API
+      let errorMessage = 'Email-i ose fjalëkalimi është i gabuar';
+      
+      if (err.response?.data?.error) {
+        const apiError = err.response.data.error.toLowerCase();
+        if (apiError.includes('invalid credentials') || apiError.includes('invalid')) {
+          errorMessage = 'Email-i ose fjalëkalimi është i gabuar. Ju lutemi kontrolloni të dhënat tuaja.';
+        } else if (apiError.includes('not found')) {
+          errorMessage = 'Ky përdorues nuk ekziston.';
+        } else if (apiError.includes('blocked') || apiError.includes('disabled')) {
+          errorMessage = 'Llogaria juaj është bllokuar. Ju lutemi kontaktoni mbështetjen.';
+        }
+      } else if (err.response?.status === 401) {
+        errorMessage = 'Email-i ose fjalëkalimi është i gabuar. Ju lutemi provoni përsëri.';
+      } else if (err.response?.status === 400) {
+        errorMessage = 'Të dhënat e dërguara nuk janë të sakta. Ju lutemi kontrolloni fushat.';
+      } else if (err.response?.status >= 500) {
+        errorMessage = 'Ndodhi një gabim në server. Ju lutemi provoni më vonë.';
+      } else if (err.message && !err.message.includes('status code')) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

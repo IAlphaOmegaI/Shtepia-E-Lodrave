@@ -8,7 +8,6 @@ import dynamic from 'next/dynamic';
 import { useUser } from '@/hooks/use-user';
 import GuestInfoForm from '@/components/checkout/guest-info-form';
 import CheckoutSummary from '@/components/checkout/checkout-summary';
-import { AuthService } from '@/services/auth.service';
 import { OrderService } from '@/services/order.service';
 import { useCart } from '@/store/quick-cart/cart.context';
 import { useRouter } from 'next/navigation';
@@ -36,39 +35,20 @@ export default function CheckoutContent() {
     address?: string;
   }>({});
 
-  // Fetch user data on mount
+  // Use cached user data from React Query
   useEffect(() => {
-    const fetchUserData = async () => {
-      setIsLoading(true);
+    if (user && isAuthenticated) {
+      console.log('User data from hook:', user); // Debug log
+      setUserData(user);
       
-      // Only fetch user data if authenticated
-      if (isAuthenticated) {
-        try {
-          const currentUser = await AuthService.getCurrentUser();
-          if (currentUser) {
-            setUserData(currentUser);
-            
-            // Auto-fill guest info from user data
-            setGuestInfo({
-              firstName: currentUser.first_name || '',
-              lastName: currentUser.last_name || '',
-              email: currentUser.email || ''
-            });
-            
-            // Don't block the page if user has no addresses
-            // They can add addresses through the form
-          }
-        } catch (error) {
-          console.error('Error fetching user:', error);
-        }
-      }
-      // For guest users, address will be null initially (no localStorage)
-      
-      setIsLoading(false);
-    };
-
-    fetchUserData();
-  }, [isAuthenticated]);
+      // Auto-fill guest info from user data
+      setGuestInfo({
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        email: user.email || ''
+      });
+    }
+  }, [user, isAuthenticated]);
 
   // Calculate order when shipping address, items, or points usage changes
   useEffect(() => {
@@ -88,7 +68,7 @@ export default function CheckoutContent() {
               city: shippingAddress.city || '',
               country: shippingAddress.country || 'Albania',
               zip_code: shippingAddress.zip || '',
-              contact_phone: shippingAddress.contact_number || '',
+              contact_phone: shippingAddress.contact_number || shippingAddress.phone_number || '',
               address: shippingAddress.street_address || ''
             },
             use_points: usePoints && isAuthenticated,
@@ -120,6 +100,7 @@ export default function CheckoutContent() {
   }, [shippingAddress, items, userData, usePoints, isAuthenticated]);
 
   const userAddresses = userData?.addresses || [];
+  console.log('User addresses for AddressGrid:', userAddresses); // Debug log
 
   const handlePlaceOrder = async () => {
     // Reset errors
@@ -173,7 +154,7 @@ export default function CheckoutContent() {
           city: shippingAddress.city || '',
           country: shippingAddress.country || 'Albania',
           zip_code: shippingAddress.zip || '',
-          contact_phone: shippingAddress.contact_number || '',
+          contact_phone: shippingAddress.contact_number || shippingAddress.phone_number || '',
           address: shippingAddress.street_address || ''
         },
         payment_method: 'cash',
@@ -191,13 +172,18 @@ export default function CheckoutContent() {
         // Clear cart after successful order
         clearCart();
         
+        // Store order data in sessionStorage for the thank you page
+        sessionStorage.setItem('lastOrder', JSON.stringify(response));
+        
         // Log the order response for debugging
         console.log('Order created successfully:', response);
         
-        // Redirect to success page or show success message
-        if (response.id) {
-          // Redirect to order confirmation page
-          router.push(`/orders/${response.id}/success`);
+        // Redirect to thank you page with tracking code
+        if (response.tracking_code) {
+          router.push(`/orders/${response.tracking_code}/thank-you`);
+        } else if (response.id) {
+          // Fallback to order ID if no tracking code
+          router.push(`/orders/${response.id}/thank-you`);
         } else {
           alert('Porosia u krijua me sukses!');
         }
@@ -210,8 +196,8 @@ export default function CheckoutContent() {
     }
   };
 
-  // Show loading state
-  if (isLoading) {
+  // Show loading state only for initial user data fetch
+  if (isAuthenticated && !user && !isLoading) {
     return (
       <div className="bg-[#FFF8F0] min-h-screen px-4 py-8 flex items-center justify-center">
         <div className="text-center">
