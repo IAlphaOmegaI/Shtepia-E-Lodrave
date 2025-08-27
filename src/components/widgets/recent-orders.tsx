@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface RecentOrdersProps {
   className?: string;
@@ -68,9 +69,9 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({ className }) => {
     <div className={`rounded-lg bg-white p-6 ${className}`}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-        <a href="/admin/orders" className="text-sm text-blue-600 hover:text-blue-800">
+        <Link href="/admin/orders" className="text-sm text-blue-600 hover:text-blue-800">
           View all →
-        </a>
+        </Link>
       </div>
       
       <div className="overflow-x-auto">

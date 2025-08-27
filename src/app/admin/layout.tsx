@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import Link from 'next/link';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,18 +11,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
           </div>
           <nav className="mt-8">
-            <a href="/admin" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+            <Link href="/admin" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
               Dashboard
-            </a>
-            <a href="/admin/products" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+            </Link>
+            <Link href="/admin/products" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
               Products
-            </a>
-            <a href="/admin/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+            </Link>
+            <Link href="/admin/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
               Orders
-            </a>
-            <a href="/admin/users" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+            </Link>
+            <Link href="/admin/users" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
               Users
-            </a>
+            </Link>
           </nav>
         </aside>
         
