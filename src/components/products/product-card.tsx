@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useCart } from '@/store/quick-cart/cart.context';
 import { useWishlist } from '@/framework/rest/wishlist';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -16,7 +16,6 @@ type ProductCardProps = {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = false }) => {
-  const router = useRouter();
   const { addItem } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { showToast } = useToast();
@@ -53,19 +52,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
     imageUrl = (image as any).url || (image as any).src || '/product-placeholder.jpg';
   }
   
-  // Use placeholder if there's an image error
+  // Use placeholder if there's an image error  
   if (imageError) {
     imageUrl = '/product-placeholder.jpg';
   } else if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('//')) {
-    // Prepend NEXT_PUBLIC_URL if the image is a relative path
-    imageUrl = `${process.env.NEXT_PUBLIC_URL || 'http://63.178.242.103'}${imageUrl}`;
-  }
-
-  function handleProductClick() {
-    router.push(`/products/${product.id}`);
+    // For media files, we need the base domain without the /api path
+    // NEXT_PUBLIC_API_URL is https://api.shtepialodrave.com/api
+    // We need https://api.shtepialodrave.com for media files
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.shtepialodrave.com/api';
+    
+    // Remove only the trailing /api (not the 'api' in the domain)
+    let baseUrl = apiUrl;
+    if (apiUrl.endsWith('/api')) {
+      baseUrl = apiUrl.substring(0, apiUrl.length - 4);
+    }
+    
+    imageUrl = `${baseUrl}${imageUrl}`;
   }
 
   async function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault();
     e.stopPropagation();
     setIsAddingToCart(true);
     
@@ -90,6 +96,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
   }
 
   function handleToggleWishlist(e: React.MouseEvent) {
+    e.preventDefault();
     e.stopPropagation();
     const isInList = isInWishlist(product.id);
     
@@ -144,18 +151,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
         />
       </button>
       
-      <div
-        className="relative h-[210px] mb-4 cursor-pointer"
-        onClick={handleProductClick}
+      <Link
+        href={`/products/${product.id}`}
+        className="relative h-[210px] mb-4 cursor-pointer block"
       >
         <Image
           src={imageUrl}
           alt={`${name} image`}
           fill
-          className="object-contain"
+          className="object-cover object-top"
           onError={() => setImageError(true)}
         />
-      </div>
+      </Link>
       <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2 min-h-[52px]">
         {name}
       </h3>

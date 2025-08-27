@@ -6,7 +6,7 @@ export interface OrderItem {
   product_id: number;
   product?: Product;
   quantity: number;
-  price: string;
+  price?: string;
   image?: string;
   total?: string;
   variant_id?: number;
@@ -31,6 +31,7 @@ export interface OrderAddress {
 export interface Order {
   id: number;
   tracking_number: string;
+  tracking_code?: string;
   customer_id?: number;
   customer?: User;
   customer_name?: string;

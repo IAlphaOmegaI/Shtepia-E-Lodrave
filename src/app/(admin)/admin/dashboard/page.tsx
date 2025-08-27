@@ -1,177 +1,313 @@
 'use client';
 
-import { useState } from 'react';
-import { Package, ShoppingBag, Users, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/services/api';
+import { Package, ShoppingBag, Users, TrendingUp, DollarSign, Calendar } from 'lucide-react';
+
+interface AnalyticsData {
+  totalRevenue: number;
+  totalShops: number;
+  totalVendors: number;
+  todaysRevenue: number;
+  totalOrders: number;
+  newCustomers: number;
+  todayTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  weeklyTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  monthlyTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  yearlyTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  totalYearSaleByMonth: Array<{
+    month: string;
+    total: number;
+  }>;
+}
 
 export default function AdminDashboard() {
-  // Mock data - will be replaced with API calls later
-  const [stats] = useState({
-    products: 100,
-    orders: 100,
-    customers: 100,
-    revenue: 100,
-    orderStatus: {
-      pending: 100,
-      processing: 100,
-      completed: 100,
-      cancelled: 100
-    }
+  const [activeTimeFrame, setActiveTimeFrame] = useState<'today' | 'weekly' | 'monthly' | 'yearly'>('today');
+  
+  // Fetch analytics data from API
+  const { data: analyticsData, isLoading, error } = useQuery<AnalyticsData>({
+    queryKey: ['analytics'],
+    queryFn: () => api.analytics.getDashboard(),
+    refetchInterval: 60000, // Refresh every minute
   });
 
-  const [products] = useState([
-    { id: 1, name: 'Text', price: 'Text', stock: 'Text', status: 'Text' },
-    { id: 2, name: 'Text', price: 'Text', stock: 'Text', status: 'Text' },
-    { id: 3, name: 'Text', price: 'Text', stock: 'Text', status: 'Text' },
-    { id: 4, name: 'Text', price: 'Text', stock: 'Text', status: 'Text' },
-    { id: 5, name: 'Text', price: 'Text', stock: 'Text', status: 'Text' },
-  ]);
+  const getOrderStatusByTimeframe = () => {
+    if (!analyticsData) return null;
+    
+    switch (activeTimeFrame) {
+      case 'today':
+        return analyticsData.todayTotalOrderByStatus;
+      case 'weekly':
+        return analyticsData.weeklyTotalOrderByStatus;
+      case 'monthly':
+        return analyticsData.monthlyTotalOrderByStatus;
+      case 'yearly':
+        return analyticsData.yearlyTotalOrderByStatus;
+      default:
+        return analyticsData.todayTotalOrderByStatus;
+    }
+  };
+
+  const orderStatus = getOrderStatusByTimeframe();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-lg">Duke ngarkuar...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-lg text-red-600">Gabim në ngarkim të të dhënave</div>
+      </div>
+    );
+  }
+
+  if (!analyticsData) {
+    return null;
+  }
+
+  // Calculate highest selling month
+  const highestSellingMonth = analyticsData.totalYearSaleByMonth.reduce((prev, current) => 
+    (prev.total > current.total) ? prev : current
+  , { month: '', total: 0 });
 
   return (
     <div>
       {/* Page Title */}
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">My profile</h1>
+      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h1>
 
       {/* Top Stats Cards */}
-      <div className="grid grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <div className="bg-gray-100 p-3 rounded">
-              <Package className="w-6 h-6 text-gray-600" />
+            <div className="bg-green-100 p-3 rounded">
+              <DollarSign className="w-6 h-6 text-green-600" />
             </div>
           </div>
-          <div className="text-gray-600 text-sm mb-1">Total</div>
-          <div className="text-3xl font-bold">{stats.products}</div>
+          <div className="text-gray-600 text-sm mb-1">Total të Ardhurat</div>
+          <div className="text-3xl font-bold"> {analyticsData.totalRevenue.toLocaleString()} LEK</div>
+          <div className="text-sm text-gray-500 mt-1">Të gjitha kohët</div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <div className="bg-gray-100 p-3 rounded">
-              <ShoppingBag className="w-6 h-6 text-gray-600" />
+            <div className="bg-blue-100 p-3 rounded">
+              <ShoppingBag className="w-6 h-6 text-blue-600" />
             </div>
           </div>
-          <div className="text-gray-600 text-sm mb-1">Total</div>
-          <div className="text-3xl font-bold">{stats.orders}</div>
+          <div className="text-gray-600 text-sm mb-1">Total Porositë</div>
+          <div className="text-3xl font-bold">{analyticsData.totalOrders}</div>
+          <div className="text-sm text-gray-500 mt-1">Të gjitha kohët</div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <div className="bg-gray-100 p-3 rounded">
-              <Users className="w-6 h-6 text-gray-600" />
+            <div className="bg-purple-100 p-3 rounded">
+              <Users className="w-6 h-6 text-purple-600" />
             </div>
           </div>
-          <div className="text-gray-600 text-sm mb-1">Total</div>
-          <div className="text-3xl font-bold">{stats.customers}</div>
+          <div className="text-gray-600 text-sm mb-1">Klientë të Rinj</div>
+          <div className="text-3xl font-bold">{analyticsData.newCustomers}</div>
+          <div className="text-sm text-gray-500 mt-1">Sot</div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <div className="bg-gray-100 p-3 rounded">
-              <TrendingUp className="w-6 h-6 text-gray-600" />
+            <div className="bg-orange-100 p-3 rounded">
+              <Calendar className="w-6 h-6 text-orange-600" />
             </div>
           </div>
-          <div className="text-gray-600 text-sm mb-1">Total</div>
-          <div className="text-3xl font-bold">{stats.revenue}</div>
+          <div className="text-gray-600 text-sm mb-1">Të Ardhurat e Sotme</div>
+          <div className="text-3xl font-bold"> {analyticsData.todaysRevenue.toLocaleString()} LEK</div>
+          <div className="text-sm text-gray-500 mt-1">Sot</div>
         </div>
       </div>
 
       {/* Order Status Section */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Order status</h2>
-        <div className="grid grid-cols-4 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="bg-gray-100 p-3 rounded">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-            <div className="text-gray-600 text-sm mb-1">Pending</div>
-            <div className="text-3xl font-bold">{stats.orderStatus.pending}</div>
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg font-semibold text-gray-800">Statusi i Porosive</h2>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setActiveTimeFrame('today')}
+              className={`px-4 py-2 rounded ${
+                activeTimeFrame === 'today' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Sot
+            </button>
+            <button
+              onClick={() => setActiveTimeFrame('weekly')}
+              className={`px-4 py-2 rounded ${
+                activeTimeFrame === 'weekly' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Javore
+            </button>
+            <button
+              onClick={() => setActiveTimeFrame('monthly')}
+              className={`px-4 py-2 rounded ${
+                activeTimeFrame === 'monthly' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Mujore
+            </button>
+            <button
+              onClick={() => setActiveTimeFrame('yearly')}
+              className={`px-4 py-2 rounded ${
+                activeTimeFrame === 'yearly' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Vjetore
+            </button>
           </div>
+        </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="bg-gray-100 p-3 rounded">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
+        {orderStatus && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center p-4 bg-yellow-50 rounded">
+              <div className="text-2xl font-bold text-yellow-600">{orderStatus.pending}</div>
+              <div className="text-sm text-gray-600 mt-1">Në Pritje</div>
             </div>
-            <div className="text-gray-600 text-sm mb-1">Processing</div>
-            <div className="text-3xl font-bold">{stats.orderStatus.processing}</div>
+            <div className="text-center p-4 bg-blue-50 rounded">
+              <div className="text-2xl font-bold text-blue-600">{orderStatus.processing}</div>
+              <div className="text-sm text-gray-600 mt-1">Në Përpunim</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded">
+              <div className="text-2xl font-bold text-green-600">{orderStatus.complete}</div>
+              <div className="text-sm text-gray-600 mt-1">Të Përfunduara</div>
+            </div>
+            <div className="text-center p-4 bg-red-50 rounded">
+              <div className="text-2xl font-bold text-red-600">{orderStatus.cancelled}</div>
+              <div className="text-sm text-gray-600 mt-1">Të Anuluara</div>
+            </div>
           </div>
+        )}
+      </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="bg-gray-100 p-3 rounded">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+      {/* Sales by Month */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Shitjet Sipas Muajit</h2>
+          <div className="space-y-3">
+            {analyticsData.totalYearSaleByMonth.slice(0, 6).map((monthData) => (
+              <div key={monthData.month} className="flex justify-between items-center">
+                <span className="text-gray-600">{monthData.month}</span>
+                <span className="font-semibold">{monthData.total} porosi</span>
               </div>
-            </div>
-            <div className="text-gray-600 text-sm mb-1">Completed</div>
-            <div className="text-3xl font-bold">{stats.orderStatus.completed}</div>
+            ))}
           </div>
+        </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="bg-gray-100 p-3 rounded">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Statistika të Shpejta</h2>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center pb-3 border-b">
+              <span className="text-gray-600">Total Dyqane</span>
+              <span className="font-semibold text-lg">{analyticsData.totalShops}</span>
             </div>
-            <div className="text-gray-600 text-sm mb-1">Cancelled</div>
-            <div className="text-3xl font-bold">{stats.orderStatus.cancelled}</div>
+            <div className="flex justify-between items-center pb-3 border-b">
+              <span className="text-gray-600">Total Shitës</span>
+              <span className="font-semibold text-lg">{analyticsData.totalVendors}</span>
+            </div>
+            <div className="flex justify-between items-center pb-3 border-b">
+              <span className="text-gray-600">Muaji më i mirë</span>
+              <span className="font-semibold text-lg">{highestSellingMonth.month}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Shitjet e muajit më të mirë</span>
+              <span className="font-semibold text-lg">{highestSellingMonth.total} porosi</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Products Table */}
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Products</h2>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add more
-          </button>
-        </div>
-
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+      {/* Monthly Sales Details */}
+      <div className="bg-white rounded-lg shadow p-6 mt-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Detajet e Shitjeve Mujore</h2>
+        <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-[#FEC949]">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Text <button className="ml-1">⬆</button>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Muaji
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Text <button className="ml-1">⬆</button>
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Porosi
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Text <button className="ml-1">⬆</button>
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Text <button className="ml-1">⬆</button>
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Statusi
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.name}
+              {analyticsData.totalYearSaleByMonth.map((monthData) => (
+                <tr key={monthData.month}>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {monthData.month}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.price}
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                    {monthData.total}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.stock}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {product.status}
+                  <td className="px-4 py-4 whitespace-nowrap text-right">
+                    {monthData.total > 0 ? (
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        Aktiv
+                      </span>
+                    ) : (
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Pa aktivitet
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

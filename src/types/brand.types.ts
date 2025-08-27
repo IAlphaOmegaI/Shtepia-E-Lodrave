@@ -4,6 +4,7 @@ export interface Brand {
   logo?: string | null;
   slug: string;
   parent?: number | null;
+  products_count?: number;
   children: Brand[];
   is_parent: boolean;
   is_child: boolean;

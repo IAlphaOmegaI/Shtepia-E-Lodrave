@@ -28,6 +28,8 @@ export const Routes = {
   }) => `/products${buildQueryString(filters || {})}`,
   categories: '/categories',
   category: (slug: string) => `/category/${slug}`,
+  brands: '/brands',
+  brand: (slug: string) => `/brands/${slug}`,
   shops: '/shops',
   shop: (slug: string) => `/shops/${slug}`,
   cart: '/cart',

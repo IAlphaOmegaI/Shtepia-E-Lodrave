@@ -3,6 +3,7 @@ import { SearchIcon } from '@/components/icons/search';
 import { CloseIcon } from '@/components/icons/close';
 import cn from 'classnames';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductService } from '@/services/product.service';
@@ -39,6 +40,7 @@ const Search: React.FC<SearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -138,8 +140,8 @@ const Search: React.FC<SearchProps> = ({
   const handleProductClick = (product: SearchResult) => {
     setShowDropdown(false);
     setSearchText('');
-    // Always use ID for product navigation
-    router.push(`/products/${product.id}`);
+    // Navigate to product page using ID
+    window.location.href = `/products/${product.id}`;
   };
 
   const clearSearch = () => {
@@ -217,29 +219,40 @@ const Search: React.FC<SearchProps> = ({
             ) : searchResults.length > 0 ? (
               <div className="py-2">
                 {searchResults.map((product, index) => (
-                  <motion.button
+                  <Link
                     key={product.id}
-                    type="button"
-                    onClick={() => handleProductClick(product)}
+                    href={`/products/${product.id}`}
+                    onClick={() => {
+                      setShowDropdown(false);
+                      setSearchText('');
+                    }}
                     className={cn(
                       "flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors",
                       {
                         "bg-gray-100": selectedIndex === index,
                       }
                     )}
-                    whileHover={{ backgroundColor: "#f9fafb" }}
-                    whileTap={{ scale: 0.98 }}
                   >
-                  
                     {/* Product Image */}
                     <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      {product.image ? (
+                      {product.image && !imageErrors[product.id] ? (
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_URL}${product.image}`}
+                          src={(() => {
+                            // For media files, we need the base domain without the /api path
+                            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.shtepialodrave.com/api';
+                            let baseUrl = apiUrl;
+                            if (apiUrl.endsWith('/api')) {
+                              baseUrl = apiUrl.substring(0, apiUrl.length - 4);
+                            }
+                            return `${baseUrl}${product.image}`;
+                          })()}
                           alt={product.name}
                           fill
                           className="object-cover"
                           sizes="48px"
+                          onError={() => {
+                            setImageErrors(prev => ({ ...prev, [product.id]: true }));
+                          }}
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-gray-100">
@@ -276,24 +289,8 @@ const Search: React.FC<SearchProps> = ({
                         )}
                       </div>
                     </div>
-                  </motion.button>
+                  </Link>
                 ))}
-
-                {/* View All Results */}
-                <div className="border-t border-gray-200 mt-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowDropdown(false);
-                      router.push(
-                        `/search?q=${encodeURIComponent(searchText)}`
-                      );
-                    }}
-                    className="w-full px-4 py-2 text-sm text-[#F44535] hover:bg-gray-50 transition-colors text-center font-medium"
-                  >
-                    View all results for "{searchText}"
-                  </button>
-                </div>
               </div>
             ) : (
               <div className="px-4 py-8 text-center text-sm text-gray-500">

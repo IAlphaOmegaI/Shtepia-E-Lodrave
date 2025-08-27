@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import cn from 'classnames';
@@ -44,6 +44,36 @@ const DynamicMenu: React.FC = () => {
     fetchData();
   }, []);
 
+  // Handle scroll lock when menu is open
+  useEffect(() => {
+    if (openMenu) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [openMenu]);
+
+  // Handle clicks outside of menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const isMenuClick = target.closest('.menuItem') || target.closest('.mega-menu-dropdown');
+      
+      if (openMenu && !isMenuClick) {
+        setOpenMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openMenu]);
+
   const toggleMenu = (key: string) => {
     setOpenMenu(openMenu === key ? null : key);
   };
@@ -82,12 +112,12 @@ const DynamicMenu: React.FC = () => {
             {hasChildren ? (
               <>
                 <div
-                  className="flex items-center gap-2 hover:text-accent cursor-pointer"
+                  className="flex items-center gap-2 hover:text-[#ff6b5c] cursor-pointer transition-colors"
                   onClick={() => toggleMenu(menuKey)}
                 >
                   <span
                     className={cn(
-                      'text-[#F11602] relative inline-flex items-center py-2 text-[18px] font-semibold leading-[24px] not-italic capitalize',
+                      'text-[#F11602] relative inline-flex items-center py-2 text-[18px] font-semibold leading-[24px] not-italic capitalize hover:text-[#ff6b5c] transition-colors',
                       {
                         'underline underline-offset-4': isOpen,
                       }
@@ -107,7 +137,7 @@ const DynamicMenu: React.FC = () => {
 
                 {/* Dropdown Menu */}
                 {isOpen && (
-                  <div className="fixed left-0 right-0 top-[149px] z-50 h-[calc(100vh-150px)] bg-white py-[24px] px-[100px] overflow-auto shadow-xl">
+                  <div className="mega-menu-dropdown fixed left-0 right-0 top-[149px] z-30 h-[calc(100vh-150px)] bg-white py-[24px] px-[100px] overflow-auto shadow-xl">
                     <div className="mx-auto max-w-7xl">
                       <div className="grid grid-cols-4 gap-x-20">
                         {/* Categories Column */}
@@ -117,8 +147,9 @@ const DynamicMenu: React.FC = () => {
                             {category.children.slice(0, 6).map((child) => (
                               <li key={child.id}>
                                 <Link
-                                  href={`/categories/${child.slug}`}
-                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4"
+                                  href={`/category/${child.slug}`}
+                                  onClick={() => setOpenMenu(null)}
+                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
                                 >
                                   {child.name}
                                 </Link>
@@ -134,8 +165,9 @@ const DynamicMenu: React.FC = () => {
                             {brands.slice(0, 6).map((brand) => (
                               <li key={brand.id}>
                                 <Link 
-                                  href={`/brands/${brand.slug}`} 
-                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4"
+                                  href={`/brands/${brand.slug}`}
+                                  onClick={() => setOpenMenu(null)}
+                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
                                 >
                                   {brand.name}
                                 </Link>
@@ -145,36 +177,30 @@ const DynamicMenu: React.FC = () => {
                         </div>
 
                         {/* LEGO Column - Show specific brand categories if available */}
-                        <div className="px-8 border-r border-[#E8E8E8]">
-                          <h3 className="text-[#F44535] font-semibold mb-4">LEGO</h3>
-                          <ul className="space-y-2">
-                            {(() => {
-                              const legoBrand = brands.find(b => b.slug === 'lego' || b.name.toLowerCase() === 'lego');
-                              if (legoBrand && legoBrand.children && legoBrand.children.length > 0) {
-                                return legoBrand.children.map((child) => (
-                                  <li key={child.id}>
-                                    <Link
-                                      href={`/brands/${child.slug}`}
-                                      className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4"
-                                    >
-                                      {child.name}
-                                    </Link>
-                                  </li>
-                                ));
-                              } else {
-                                // Fallback to showing some predefined LEGO categories
-                                return (
-                                  <>
-                                    <li><Link href="/brands/lego-city" className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4">City</Link></li>
-                                    <li><Link href="/brands/lego-duplo" className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4">Duplo</Link></li>
-                                    <li><Link href="/brands/lego-friends" className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4">Friends</Link></li>
-                                    <li><Link href="/brands/lego-ninjago" className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4">Ninjago</Link></li>
-                                  </>
-                                );
-                              }
-                            })()}
-                          </ul>
-                        </div>
+                        {(() => {
+                          const legoBrand = brands.find(b => b.slug === 'lego' || b.name.toLowerCase() === 'lego');
+                          if (legoBrand && legoBrand.children && legoBrand.children.length > 0) {
+                            return (
+                              <div className="px-8 border-r border-[#E8E8E8]">
+                                <h3 className="text-[#F44535] font-semibold mb-4">LEGO</h3>
+                                <ul className="space-y-2">
+                                  {legoBrand.children.map((child) => (
+                                    <li key={child.id}>
+                                      <Link
+                                        href={`/brands/${child.slug}`}
+                                        onClick={() => setOpenMenu(null)}
+                                        className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
+                                      >
+                                        {child.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          }
+                          return null; // Don't show LEGO column if no LEGO brand exists
+                        })()}
 
                         {/* Age Column */}
                         <div className="pl-8">
@@ -184,7 +210,8 @@ const DynamicMenu: React.FC = () => {
                               <li key={age.id}>
                                 <Link
                                   href={`/age/${age.slug}`}
-                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-accent transition capitalize mb-4"
+                                  onClick={() => setOpenMenu(null)}
+                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
                                 >
                                   {age.name}
                                 </Link>
@@ -199,8 +226,8 @@ const DynamicMenu: React.FC = () => {
               </>
             ) : (
               <Link
-                href={`/categories/${category.slug}`}
-                className="text-[#F11602] relative inline-flex items-center py-2 text-[18px] font-semibold leading-[24px] not-italic capitalize hover:text-accent"
+                href={`/category/${category.slug}`}
+                className="text-[#F11602] relative inline-flex items-center py-2 text-[18px] font-semibold leading-[24px] not-italic capitalize hover:text-[#ff6b5c] transition-colors"
               >
                 {category.name}
               </Link>

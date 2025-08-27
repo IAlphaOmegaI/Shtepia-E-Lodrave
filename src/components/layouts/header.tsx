@@ -179,7 +179,7 @@ const Header = ({ layout }: { layout?: string }) => {
 
         <div
           className={cn(
-            "flex w-full transform-gpu items-center justify-between px-3 sm:px-5 py-2 sm:py-0 transition-transform duration-300 h-16 sm:h-18 lg:h-22 lg:px-6 2xl:px-8"
+            "flex w-full transform-gpu items-center justify-between px-3 sm:px-5 py-2 sm:py-0 transition-transform duration-300 h-16 sm:h-18 lg:h-22 lg:px-6 2xl:px-8 relative z-[100]"
           )}
           style={{
             backgroundColor: "#F44535",
@@ -212,7 +212,7 @@ const Header = ({ layout }: { layout?: string }) => {
             </div>
             
             {/* Right Section - User Actions */}
-            <div className="flex items-center justify-end space-x-3 text-white">
+            <div className="flex items-center justify-end space-x-3 text-white relative z-[50]">
                 {isClient && isAuthorize ? (
                   <AuthorizedMenu />
                 ) : (
@@ -310,7 +310,7 @@ const Header = ({ layout }: { layout?: string }) => {
           </div>
         )}
         
-        <div className="relative z--1">
+        <div className="relative z-[5]">
           <ul className="hidden items-center space-x-7 rtl:space-x-reverse md:flex 2xl:space-x-10 md:justify-evenly bg-[#fff] relative">
             <DynamicMenu />
           </ul>

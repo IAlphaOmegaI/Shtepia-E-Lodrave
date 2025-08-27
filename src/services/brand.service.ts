@@ -51,8 +51,8 @@ export class BrandService {
    */
   static async getBySlug(slug: string): Promise<Brand | null> {
     try {
-      const brands = await this.getAll();
-      return brands.find(brand => brand.slug === slug) || null;
+      const response = await api.brands.getBySlug(slug);
+      return response;
     } catch (error) {
       console.error(`Error fetching brand by slug ${slug}:`, error);
       return null;

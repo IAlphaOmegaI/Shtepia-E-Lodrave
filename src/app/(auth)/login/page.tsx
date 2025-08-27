@@ -1,24 +1,39 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AuthService } from '@/services';
 import { Routes } from '@/config/routes';
 import { useAuthStore } from '@/store/use-auth';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { authorize } = useAuthStore();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    // Check if user was redirected from registration
+    const isRegistered = searchParams.get('registered');
+    const email = searchParams.get('email');
+    
+    if (isRegistered === 'true') {
+      setSuccessMessage('Regjistrimi u krye me sukses! Ju lutemi identifikohuni me të dhënat tuaja.');
+      if (email) {
+        setFormData(prev => ({ ...prev, email: decodeURIComponent(email) }));
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +89,13 @@ export default function LoginPage() {
       </h1>
       
      
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg mb-4 text-sm font-albertsans">
+          {successMessage}
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
@@ -154,5 +176,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginPageContent />
+    </Suspense>
   );
 }

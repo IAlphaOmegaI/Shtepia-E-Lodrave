@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { FilteredRoutes } from '@/config/routes';
 import type { Brand } from '@/types';
 
+const BASE_IMAGE_URL = 'https://api.shtepialodrave.com';
+
 interface SponsorsProps {
   brands: Brand[];
 }
@@ -59,7 +61,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
               >
                 {brand.logo ? (
                   <Image
-                    src={brand.logo}
+                    src={brand.logo.startsWith('http') ? brand.logo : `${BASE_IMAGE_URL}${brand.logo}`}
                     alt={`${brand.name} logo`}
                     width={120}
                     height={60}

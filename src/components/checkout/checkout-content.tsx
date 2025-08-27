@@ -61,15 +61,15 @@ export default function CheckoutContent() {
         try {
           const orderData = {
             items: items.map(item => ({
-              product_id: item.id,
+              product_id: Number(item.id),
               quantity: item.quantity
             })),
             shipping_info: {
-              city: shippingAddress.city || '',
-              country: shippingAddress.country || 'Albania',
-              zip_code: shippingAddress.zip || '',
-              contact_phone: shippingAddress.contact_number || shippingAddress.phone_number || '',
-              address: shippingAddress.street_address || ''
+              city: shippingAddress!.city || '',
+              country: shippingAddress!.country || 'Albania',
+              zip_code: shippingAddress!.zip || '',
+              contact_phone: shippingAddress!.contact_number || shippingAddress!.phone_number || '',
+              address: shippingAddress!.street_address || ''
             },
             use_points: usePoints && isAuthenticated,
             user_id: userData?.id || null
@@ -147,15 +147,15 @@ export default function CheckoutContent() {
       
       const orderData = {
         items: items.map(item => ({
-          product_id: item.id,
+          product_id: Number(item.id),
           quantity: item.quantity
         })),
         shipping_info: {
-          city: shippingAddress.city || '',
-          country: shippingAddress.country || 'Albania',
-          zip_code: shippingAddress.zip || '',
-          contact_phone: shippingAddress.contact_number || shippingAddress.phone_number || '',
-          address: shippingAddress.street_address || ''
+          city: shippingAddress!.city || '',
+          country: shippingAddress!.country || 'Albania',
+          zip_code: shippingAddress!.zip || '',
+          contact_phone: shippingAddress!.contact_number || shippingAddress!.phone_number || '',
+          address: shippingAddress!.street_address || ''
         },
         payment_method: 'cash',
         shipping_notes: '',

@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { AuthService } from '@/services/auth.service';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/services/api';
+import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, 
   Package, 
@@ -13,8 +16,12 @@ import {
   Tag, 
   Settings,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  LogOut,
+  User as UserIcon,
+  Award
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export default function AdminLayout({
   children,
@@ -26,6 +33,19 @@ export default function AdminLayout({
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  
+  // Fetch user data
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: async () => {
+      const data = await api.auth.me();
+      console.log('User data from API:', data);
+      return data;
+    },
+    enabled: !!user,
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -46,57 +66,76 @@ export default function AdminLayout({
     checkAuth();
   }, [router]);
 
+  // Handle click outside for user menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    AuthService.logout();
+    router.push('/login');
+    window.location.reload();
+  };
+
   const toggleMenu = (menu: string) => {
     setExpandedMenu(expandedMenu === menu ? null : menu);
   };
 
-  const menuItems = [
+  type MenuItem = {
+    label: string;
+    icon: LucideIcon;
+    href: string;
+    active: boolean;
+    expandable?: boolean;
+    subItems?: { label: string; href: string }[];
+  };
+
+  const menuItems: MenuItem[] = [
     {
-      label: 'Dashboard',
+      label: 'Paneli Kryesor',
       icon: LayoutDashboard,
       href: '/admin/dashboard',
       active: pathname === '/admin/dashboard'
     },
     {
-      label: 'Category Management',
+      label: 'Menaxhimi i Kategorive',
       icon: Tag,
       href: '/admin/categories',
       active: pathname.includes('/admin/categories')
     },
     {
-      label: 'Products',
+      label: 'Produktet',
       icon: Package,
       href: '/admin/products',
       active: pathname.includes('/admin/products')
     },
     {
-      label: 'Order Management',
+      label: 'Porositë',
       icon: ShoppingBag,
       href: '/admin/orders',
-      active: pathname.includes('/admin/orders'),
-      expandable: true,
-      subItems: [
-        { label: 'All Orders', href: '/admin/orders' },
-        { label: 'Pending', href: '/admin/orders?status=pending' },
-        { label: 'Processing', href: '/admin/orders?status=processing' },
-        { label: 'Completed', href: '/admin/orders?status=completed' },
-        { label: 'Cancelled', href: '/admin/orders?status=cancelled' },
-      ]
+      active: pathname.includes('/admin/orders')
     },
     {
-      label: 'Customer Management',
+      label: 'Brendet',
+      icon: Award,
+      href: '/admin/brands',
+      active: pathname.includes('/admin/brands')
+    },
+    {
+      label: 'Menaxhimi i Klientëve',
       icon: Users,
       href: '/admin/customers',
       active: pathname.includes('/admin/customers')
     },
     {
-      label: 'Promotional Management',
-      icon: Tag,
-      href: '/admin/promotions',
-      active: pathname.includes('/admin/promotions')
-    },
-    {
-      label: 'Site settings',
+      label: 'Konfigurimet e Faqes',
       icon: Settings,
       href: '/admin/settings',
       active: pathname.includes('/admin/settings')
@@ -114,8 +153,8 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Header */}
-      <div className="bg-[#E94B3C] h-16 flex items-center px-6">
-        <div className="flex items-center flex-1">
+      <div className="bg-[#E94B3C] h-16 flex items-center justify-between px-6">
+        <div className="flex items-center">
           <Link href="/admin/dashboard" className="flex items-center">
             <div className="bg-[#FEC949] rounded-full p-2 mr-3">
               <svg className="w-6 h-6 text-[#E94B3C]" viewBox="0 0 24 24" fill="currentColor">
@@ -125,34 +164,76 @@ export default function AdminLayout({
             <span className="text-white font-bold text-lg">Shtëpia e Lodrave</span>
           </Link>
         </div>
-        
-        {/* Search Bar */}
-        <div className="flex-1 max-w-xl mx-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full px-4 py-2 rounded-lg text-gray-700 bg-white"
-            />
-            <button className="absolute right-2 top-2">
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-          </div>
-        </div>
 
         {/* User Info */}
-        <div className="flex items-center">
-          <div className="bg-white rounded-full p-2 mr-3">
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          <div className="text-white">
-            <div className="text-sm">User's name</div>
-            <div className="text-xs opacity-75">Super Admin</div>
-          </div>
+        <div className="relative" ref={userMenuRef}>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            <div className="bg-white rounded-full p-2 mr-3">
+              <UserIcon className="w-6 h-6 text-gray-600" />
+            </div>
+            <div className="text-white text-left">
+              <div className="text-sm font-medium">
+                {(() => {
+                  // Check if we have valid name data (not "string" placeholder)
+                  const firstName = userData?.first_name;
+                  const lastName = userData?.last_name;
+                  
+                  if (firstName && firstName !== 'string' && lastName && lastName !== 'string') {
+                    return `${firstName} ${lastName}`;
+                  } else if (firstName && firstName !== 'string') {
+                    return firstName;
+                  } else if (lastName && lastName !== 'string') {
+                    return lastName;
+                  } else {
+                    return userData?.email || user?.email || 'Administrator';
+                  }
+                })()}
+              </div>
+              <div className="text-xs opacity-75">Administrator</div>
+            </div>
+            <ChevronDown className="w-4 h-4 text-white ml-2" />
+          </motion.button>
+
+          {/* User Dropdown Menu */}
+          {showUserMenu && (
+            <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden z-50">
+              <div className="px-4 py-3 border-b border-gray-200">
+                <p className="text-sm font-medium text-gray-900">
+                  {(() => {
+                    const firstName = userData?.first_name;
+                    const lastName = userData?.last_name;
+                    
+                    if (firstName && firstName !== 'string' && lastName && lastName !== 'string') {
+                      return `${firstName} ${lastName}`;
+                    } else if (firstName && firstName !== 'string') {
+                      return firstName;
+                    } else if (lastName && lastName !== 'string') {
+                      return lastName;
+                    } else {
+                      return 'Administrator';
+                    }
+                  })()}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {userData?.email || user?.email || 'admin@shtepialodrave.com'}
+                </p>
+              </div>
+              
+              <div className="py-1">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Dilni
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

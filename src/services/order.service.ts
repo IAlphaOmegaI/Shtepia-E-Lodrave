@@ -5,7 +5,8 @@ import type {
   CreateOrderData, 
   OrderListResponse,
   OrderFilters,
-  OrderStatus 
+  OrderStatus,
+  PaymentGateway 
 } from '@/types';
 
 export class OrderService {
@@ -100,7 +101,10 @@ export class OrderService {
    * Calculate order total from items
    */
   static calculateTotal(items: OrderItem[]): number {
-    return items.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0);
+    return items.reduce((total, item) => {
+      const price = parseFloat(item.price ?? '0');
+      return total + price * item.quantity;
+    }, 0);
   }
 
   /**
@@ -161,7 +165,7 @@ export class OrderService {
       const payload = {
         shop: 2, // hardcoded for now
         vendor: 1, // hardcoded for now
-        payment_method: data.payment_method || "cash",
+        payment_method: (data.payment_method as PaymentGateway) || "cash_on_delivery",
         shipping_notes: data.shipping_notes || "",
         order_notes: data.order_notes || "",
         items: data.items,

@@ -12,6 +12,7 @@ interface Address {
   zip: string;
   street_address: string;
   contact_number?: string;
+  phone_number?: string;
 }
 
 interface DeliveryTime {

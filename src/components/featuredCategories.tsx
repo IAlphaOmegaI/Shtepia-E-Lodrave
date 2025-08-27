@@ -7,6 +7,8 @@ import { CategoryService } from '@/services';
 import { Routes } from '@/config/routes';
 import type { Category } from '@/types';
 
+const BASE_IMAGE_URL = 'https://api.shtepialodrave.com';
+
 const stripesSVG = (
   <svg
     width="100%"
@@ -40,14 +42,15 @@ const cardBgColors = [
 const FeaturedCategories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const data = await CategoryService.getFeaturedCategories();
-        // Filter to only show parent categories (not children)
-        const parentCategories = data.filter((cat: Category) => cat.is_parent && !cat.is_child);
-        setCategories(parentCategories);
+        // Take only the first 3 featured categories
+        // The API already filters by is_featured=true
+        setCategories(data.slice(0, 3));
       } catch (error) {
         console.error('Error fetching featured categories:', error);
       } finally {
@@ -63,8 +66,8 @@ const FeaturedCategories = () => {
     return (
       <div className="bg-[#FFF8EC] mb-10 sm:mb-0 sm:py-40">
         <div className="container mx-auto px-10 sm:px-0">
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
               <div
                 key={i}
                 className="relative flex items-center rounded-2xl shadow-lg w-full h-[200px] overflow-hidden bg-gray-200 animate-pulse"
@@ -84,8 +87,8 @@ const FeaturedCategories = () => {
   return (
     <div className="bg-[#FFF8EC] mb-10 sm:mb-0sm:py-40">
       <div className="container mx-auto  px-10 sm:px-0">
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-          {categories.slice(0, 6).map((cat, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+          {categories.map((cat, idx) => (
             <div
               key={cat.id}
               style={{
@@ -96,6 +99,7 @@ const FeaturedCategories = () => {
               <Link
                 href={Routes.category(cat.slug)}
                 className="absolute inset-0 z-20"
+                prefetch={true}
               />
               {/* SVG background stripes */}
               <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
@@ -104,14 +108,22 @@ const FeaturedCategories = () => {
               {/* Category image */}
               <Image
                 src={
-                  cat.featured_image && cat.featured_image.trim() !== '' 
-                    ? `${process.env.NEXT_PUBLIC_URL || 'http://63.178.242.103'}${cat.featured_image}`
-                    : "/featured_category.png"
+                  imageErrors[cat.id] 
+                    ? "/featured_category.png"
+                    : (cat.featured_image && cat.featured_image.trim() !== '' 
+                        ? (cat.featured_image.startsWith('http') 
+                            ? cat.featured_image 
+                            : `${BASE_IMAGE_URL}${cat.featured_image}`)
+                        : "/featured_category.png")
                 }
                 alt={cat.name}
                 width={230}
                 height={230}
-                className="absolute w-[230px] h-[230px] object-contain left-0 bottom-0 top-[-30px] z-10"
+                className="absolute w-[230px] h-full object-contain left-0 top-0 z-10"
+                priority={idx < 3} // Load first 3 images with priority
+                onError={() => {
+                  setImageErrors(prev => ({ ...prev, [cat.id]: true }));
+                }}
               />
               {/* Category name */}
               <div className="flex-1 flex items-center justify-end h-full z-10 pr-10 ">

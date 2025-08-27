@@ -49,9 +49,9 @@ export class CategoryService {
   static async getParentCategories() {
     try {
       const response = await api.categories.getAll();
-      const categories = response.data || [];
-      // Assuming parent categories have no parent_id or parent_id is null
-      return categories.filter((cat: any) => !cat.parent_id);
+      const categories = response.data || response || [];
+      // Filter for parent categories (those with no parent field or parent is null)
+      return categories.filter((cat: any) => !cat.parent || cat.parent === null);
     } catch (error) {
       console.error('Error fetching parent categories:', error);
       return [];
@@ -64,8 +64,8 @@ export class CategoryService {
   static async getSubcategories(parentId: number) {
     try {
       const response = await api.categories.getAll();
-      const categories = response.data || [];
-      return categories.filter((cat: any) => cat.parent_id === parentId);
+      const categories = response.data || response || [];
+      return categories.filter((cat: any) => cat.parent === parentId);
     } catch (error) {
       console.error(`Error fetching subcategories for parent ${parentId}:`, error);
       return [];
@@ -93,7 +93,13 @@ export class CategoryService {
    */
   static async getFeaturedCategories(): Promise<Category[]> {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories?featured=true`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/?is_featured=true`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (!response.ok) {
         throw new Error('Failed to fetch featured categories');

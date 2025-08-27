@@ -165,7 +165,7 @@ export default function ProfilePage() {
     }
     
     // Prepare data to send
-    const dataToSend = { ...formData };
+    const dataToSend: any = { ...formData };
     
     // Add +355 prefix to phone before sending
     if (dataToSend.phone_number) {
@@ -807,13 +807,13 @@ export default function ProfilePage() {
                   !passwordData.old_password || 
                   !passwordData.new_password || 
                   !passwordData.confirm_password ||
-                  (passwordData.new_password && passwordStrength < 2)
+                  (!!passwordData.new_password && passwordStrength < 2)
                 }
                 className="bg-red-600 text-white px-6 py-2.5 sm:py-3 rounded-lg hover:bg-red-700 transition-colors font-albertsans font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 title={
                   !passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password 
                     ? 'Ju lutemi plotësoni të gjitha fushat' 
-                    : passwordData.new_password && passwordStrength < 2 
+                    : (!!passwordData.new_password && passwordStrength < 2) 
                       ? 'Fjalëkalimi duhet të jetë të paktën "i pranueshëm"' 
                       : ''
                 }

@@ -7,7 +7,7 @@ import { WishlistProvider } from "@/framework/rest/wishlist";
 import { SettingsProvider } from "@/framework/settings";
 import { Provider as JotaiProvider } from "jotai";
 import ManagedDrawer from "@/components/ui/drawer/managed-drawer";
-import CartCounterButton from "@/components/cart/cart-counter-button";
+// import ConditionalCartButton from "@/components/cart/conditional-cart-button";
 import { ToastProvider } from "@/contexts/toast-context";
 import { AuthProvider } from "@/providers/auth-provider";
 
@@ -35,7 +35,7 @@ export default function RootLayout({
                     <WishlistProvider>
                       {children}
                       <ManagedDrawer />
-                      <CartCounterButton />
+                      {/* <ConditionalCartButton /> */}
                     </WishlistProvider>
                   </ToastProvider>
                 </CartProvider>

@@ -83,6 +83,7 @@ export interface ProductListResponse {
 export interface ProductFilters {
   category_id?: number;
   brand_id?: number;
+  brand?: number;
   min_price?: number;
   max_price?: number;
   search?: string;

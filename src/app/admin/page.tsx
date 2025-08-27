@@ -1,55 +1,70 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/services/api';
 import StickerCard from '@/components/widgets/sticker-card';
 import OrderStatusWidget from '@/components/widgets/order-status-widget';
 import TopRatedProducts from '@/components/widgets/top-rated-products';
 import ProductCountByCategory from '@/components/widgets/product-count-by-category';
 import RecentOrders from '@/components/widgets/recent-orders';
 
+interface AnalyticsData {
+  totalRevenue: number;
+  totalShops: number;
+  totalVendors: number;
+  todaysRevenue: number;
+  totalOrders: number;
+  newCustomers: number;
+  todayTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  weeklyTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  monthlyTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  yearlyTotalOrderByStatus: {
+    pending: number;
+    processing: number;
+    complete: number;
+    cancelled: number;
+    refunded: number;
+    failed: number;
+    localFacility: number;
+    outForDelivery: number;
+  };
+  totalYearSaleByMonth: Array<{
+    month: string;
+    total: number;
+  }>;
+}
+
 export default function AdminDashboard() {
   const [activeTimeFrame, setActiveTimeFrame] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  // Mock data - replace with actual API calls
-  const mockData = {
-    totalRevenue: 125000,
-    totalOrders: 345,
-    totalVendors: 28,
-    totalShops: 15,
-    todayTotalOrderByStatus: {
-      pending: 12,
-      processing: 8,
-      complete: 15,
-      cancel: 2,
-    },
-    weeklyTotalOrderByStatus: {
-      pending: 45,
-      processing: 32,
-      complete: 89,
-      cancel: 12,
-    },
-    monthlyTotalOrderByStatus: {
-      pending: 156,
-      processing: 98,
-      complete: 342,
-      cancel: 45,
-    },
-    yearlyTotalOrderByStatus: {
-      pending: 890,
-      processing: 678,
-      complete: 2341,
-      cancel: 234,
-    },
-    totalYearSaleByMonth: [
-      { total: 12000 }, { total: 15000 }, { total: 18000 },
-      { total: 14000 }, { total: 22000 }, { total: 19000 },
-      { total: 25000 }, { total: 28000 }, { total: 24000 },
-      { total: 21000 }, { total: 18000 }, { total: 16000 },
-    ],
-  };
-
-  const [orderDataRange, setOrderDataRange] = useState(mockData.todayTotalOrderByStatus);
+  const [orderDataRange, setOrderDataRange] = useState<any>(null);
 
   const timeFrame = [
     { name: 'Today', day: 1 },
@@ -58,40 +73,65 @@ export default function AdminDashboard() {
     { name: 'Yearly', day: 365 },
   ];
 
-  useEffect(() => {
-    // Simulate loading
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
+  // Fetch analytics data from API
+  const { data: analyticsData, isLoading, error } = useQuery<AnalyticsData>({
+    queryKey: ['analytics'],
+    queryFn: () => api.analytics.getDashboard(),
+    refetchInterval: 60000, // Refresh every minute
+  });
 
   useEffect(() => {
-    switch (activeTimeFrame) {
-      case 1:
-        setOrderDataRange(mockData.todayTotalOrderByStatus);
-        break;
-      case 7:
-        setOrderDataRange(mockData.weeklyTotalOrderByStatus);
-        break;
-      case 30:
-        setOrderDataRange(mockData.monthlyTotalOrderByStatus);
-        break;
-      case 365:
-        setOrderDataRange(mockData.yearlyTotalOrderByStatus);
-        break;
-      default:
-        setOrderDataRange(mockData.todayTotalOrderByStatus);
-        break;
+    if (analyticsData) {
+      // Map the order status data based on selected timeframe
+      // Note: API uses 'cancelled' instead of 'cancel'
+      const mapOrderStatus = (status: any) => ({
+        pending: status.pending || 0,
+        processing: status.processing || 0,
+        complete: status.complete || 0,
+        cancel: status.cancelled || 0, // Map cancelled to cancel for widget compatibility
+      });
+
+      switch (activeTimeFrame) {
+        case 1:
+          setOrderDataRange(mapOrderStatus(analyticsData.todayTotalOrderByStatus));
+          break;
+        case 7:
+          setOrderDataRange(mapOrderStatus(analyticsData.weeklyTotalOrderByStatus));
+          break;
+        case 30:
+          setOrderDataRange(mapOrderStatus(analyticsData.monthlyTotalOrderByStatus));
+          break;
+        case 365:
+          setOrderDataRange(mapOrderStatus(analyticsData.yearlyTotalOrderByStatus));
+          break;
+        default:
+          setOrderDataRange(mapOrderStatus(analyticsData.todayTotalOrderByStatus));
+          break;
+      }
     }
-  }, [activeTimeFrame]);
+  }, [activeTimeFrame, analyticsData]);
 
-  const salesByYear = mockData.totalYearSaleByMonth.map((item) => item.total);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-lg">Loading...</div>
+        <div className="text-lg">Duke ngarkuar...</div>
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg text-red-600">Gabim në ngarkim të të dhënave</div>
+      </div>
+    );
+  }
+
+  if (!analyticsData) {
+    return null;
+  }
+
+  const salesByYear = analyticsData.totalYearSaleByMonth.map((item) => item.total);
 
   return (
     <div className="grid gap-7 md:gap-8 lg:grid-cols-2 2xl:grid-cols-12">
@@ -110,7 +150,7 @@ export default function AdminDashboard() {
               </svg>
             }
             color="#1EAE98"
-            price={`$${mockData.totalRevenue.toLocaleString()}`}
+            price={`ALL ${analyticsData.totalRevenue.toLocaleString()}`}
           />
           <StickerCard
             title="Total Orders"
@@ -120,27 +160,27 @@ export default function AdminDashboard() {
               </svg>
             }
             color="#865DFF"
-            price={mockData.totalOrders}
+            price={analyticsData.totalOrders}
           />
           <StickerCard
-            title="Active Vendors"
+            title="New Customers"
             icon={
               <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
             }
             color="#D74EFF"
-            price={mockData.totalVendors}
+            price={analyticsData.newCustomers}
           />
           <StickerCard
-            title="Total Shops"
+            title="Today's Revenue"
             icon={
               <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             }
             color="#E157A0"
-            price={mockData.totalShops}
+            price={`ALL ${analyticsData.todaysRevenue.toLocaleString()}`}
           />
         </div>
       </div>
@@ -171,7 +211,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <OrderStatusWidget order={orderDataRange} />
+        {orderDataRange && <OrderStatusWidget order={orderDataRange} />}
       </div>
 
      

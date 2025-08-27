@@ -56,7 +56,7 @@ const AuthorizedMenu: React.FC = () => {
       </motion.button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-2xl overflow-hidden z-[100]">
+        <div className="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-2xl overflow-hidden z-[9999]">
           <div className="absolute -top-2 right-8 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white"></div>
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center space-x-3">
