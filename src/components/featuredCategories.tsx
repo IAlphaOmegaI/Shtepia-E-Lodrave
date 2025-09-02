@@ -94,7 +94,7 @@ const FeaturedCategories = () => {
               style={{
                 backgroundColor: cardBgColors[idx % cardBgColors.length],
               }}
-              className="relative flex items-center rounded-2xl shadow-lg w-full h-[200px] overflow-hidden"
+              className="relative flex flex-col sm:flex-row items-center rounded-2xl shadow-lg w-full h-auto sm:h-[200px] overflow-hidden"
             >
               <Link
                 href={Routes.category(cat.slug)}
@@ -105,7 +105,7 @@ const FeaturedCategories = () => {
               <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
                 {stripesSVG}
               </div>
-              {/* Category image */}
+              {/* Category image - centered on mobile, left aligned on desktop */}
               <Image
                 src={
                   imageErrors[cat.id] 
@@ -119,15 +119,15 @@ const FeaturedCategories = () => {
                 alt={cat.name}
                 width={230}
                 height={230}
-                className="absolute w-[230px] h-full object-contain left-0 top-0 z-10"
+                className="relative sm:absolute w-[150px] sm:w-[230px] h-[150px] sm:h-full object-contain sm:left-0 sm:top-0 z-10 mx-auto sm:mx-0 mt-10 sm:mt-0"
                 priority={idx < 3} // Load first 3 images with priority
                 onError={() => {
                   setImageErrors(prev => ({ ...prev, [cat.id]: true }));
                 }}
               />
-              {/* Category name */}
-              <div className="flex-1 flex items-center justify-end h-full z-10 pr-10 ">
-                <span className="text-white text-3xl font-bold  px-4 py-2 rounded-xl font-grandstander font-extrabol max-w-[170px] capitalize">
+              {/* Category name - below image on mobile, right side on desktop */}
+              <div className="flex-1 flex items-center justify-center sm:justify-end h-auto sm:h-full z-10 pb-4 sm:pb-0 sm:pr-10 w-full">
+                <span className="text-white text-2xl sm:text-3xl font-bold px-4 py-2 rounded-xl font-grandstander font-extrabol max-w-full sm:max-w-[170px] capitalize text-center sm:text-left">
                   {cat.name}
                 </span>
               </div>

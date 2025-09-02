@@ -245,33 +245,33 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
+        <div className="flex items-start sm:items-center gap-3 sm:gap-4">
           <Link
             href="/admin/orders"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors mt-0.5 sm:mt-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Link>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-800">
+          <div className="flex-1">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800">
               Porosia #{orderData.order_number}
             </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <StatusIcon className="w-4 h-4" />
-              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusConfig.color}`}>
+            <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+              <StatusIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className={`inline-flex px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-semibold rounded-full ${statusConfig.color}`}>
                 {statusConfig.label}
               </span>
             </div>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             onClick={handleSubmit}
             disabled={updateMutation.isPending}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 bg-blue-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex-1 sm:flex-initial text-sm sm:text-base"
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             {updateMutation.isPending ? 'Duke ruajtur...' : 'Ruaj Ndryshimet'}
           </button>
         </div>
@@ -291,18 +291,18 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6 order-2 lg:order-1">
           {/* Order Details */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5" />
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+              <Package className="w-4 h-4 md:w-5 md:h-5" />
               Detajet e Porosisë
             </h2>
             
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Numri i Porosisë
@@ -346,7 +346,7 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Statusi i Porosisë *
@@ -411,13 +411,14 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
           </div>
 
           {/* Order Items */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5" />
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+              <Package className="w-4 h-4 md:w-5 md:h-5" />
               Artikujt e Porosisë
             </h2>
 
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
@@ -505,29 +506,88 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
                 </tfoot>
               </table>
             </div>
+
+            {/* Mobile Stacked View */}
+            <div className="md:hidden space-y-4">
+              {orderData.items?.map((item: OrderItem) => (
+                <div key={item.id} className="border-b pb-4 last:border-b-0">
+                  <div className="mb-2">
+                    <div className="text-sm font-medium text-gray-900">
+                      {item.product.name}
+                    </div>
+                    {item.product.brand && (
+                      <div className="text-xs text-gray-500">
+                        Brendi: {item.product.brand}
+                      </div>
+                    )}
+                    {item.discount_info && (
+                      <div className="text-xs text-red-600">
+                        {item.discount_info}
+                      </div>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div>
+                      <span className="text-xs text-gray-500 block">Çmimi</span>
+                      <span className="text-gray-900">{formatPrice(item.price)}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500 block">Sasia</span>
+                      <span className="text-gray-900">{item.quantity}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500 block">Totali</span>
+                      <span className="font-medium text-gray-900">{formatPrice(item.total_price)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Mobile Totals */}
+              <div className="bg-gray-50 p-3 rounded-lg space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-700">Nëntotali:</span>
+                  <span className="font-semibold">{formatPrice(orderData.subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-700">Transporti:</span>
+                  <span className="font-semibold">{formatPrice(orderData.shipping_cost)}</span>
+                </div>
+                {parseFloat(orderData.tax_amount) > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700">Taksa:</span>
+                    <span className="font-semibold">{formatPrice(orderData.tax_amount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-base font-bold pt-2 border-t">
+                  <span className="text-gray-900">Totali:</span>
+                  <span className="text-blue-600">{formatPrice(orderData.total_price)}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Tracking Tool */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Truck className="w-5 h-5" />
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+              <Truck className="w-4 h-4 md:w-5 md:h-5" />
               Gjurmimi i Porosisë
             </h2>
             
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={trackingCode}
                 onChange={(e) => setTrackingCode(e.target.value)}
                 placeholder="Vendos kodin e gjurmimit..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
               <button
                 onClick={handleTrackOrder}
                 disabled={trackMutation.isPending}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-blue-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm sm:text-base"
               >
-                <Eye className="w-4 h-4" />
+                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {trackMutation.isPending ? 'Duke kërkuar...' : 'Gjurmo'}
               </button>
             </div>
@@ -564,11 +624,11 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-4 md:space-y-6 order-1 lg:order-2">
           {/* Customer Info */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-              <User className="w-5 h-5" />
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+              <User className="w-4 h-4 md:w-5 md:h-5" />
               Informacioni i Klientit
             </h3>
             {orderData.customer ? (
@@ -603,9 +663,9 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
 
           {/* Shipping Address */}
           {orderData.shipping_address && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
+              <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+                <MapPin className="w-4 h-4 md:w-5 md:h-5" />
                 Adresa e Dërgimit
               </h3>
               <div className="space-y-2 text-sm text-gray-900">
@@ -625,9 +685,9 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
           )}
 
           {/* Payment Info */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-              <CreditCard className="w-5 h-5" />
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+              <CreditCard className="w-4 h-4 md:w-5 md:h-5" />
               Informacioni i Pagesës
             </h3>
             <div className="space-y-3">
@@ -655,9 +715,9 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
           </div>
 
           {/* Order Timeline */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
+              <Calendar className="w-4 h-4 md:w-5 md:h-5" />
               Historia e Porosisë
             </h3>
             <div className="space-y-3">

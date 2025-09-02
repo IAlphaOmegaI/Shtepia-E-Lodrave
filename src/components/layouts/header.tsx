@@ -186,7 +186,7 @@ const Header = ({ layout }: { layout?: string }) => {
           }}
         >
           {/* Desktop Layout */}
-          <div className="hidden md:grid md:grid-cols-3 w-full items-center">
+          <div className="hidden lg:grid lg:grid-cols-3 w-full items-center">
             {/* Left Section - Logo & Stores Link */}
             <div className="flex items-center">
               <Logo
@@ -197,7 +197,7 @@ const Header = ({ layout }: { layout?: string }) => {
               />
               <Link
                 href="/stores"
-                className="hidden lg:flex items-center gap-1 text-white ltr:ml-6 rtl:mr-6 whitespace-nowrap"
+                className="hidden xl:flex items-center gap-1 text-white ltr:ml-6 rtl:mr-6 whitespace-nowrap"
               >
                 <MapPinNew className="w-4 h-4" />
                 <span className="hover:underline font-bold text-sm">Dyqanet tona</span>
@@ -258,7 +258,7 @@ const Header = ({ layout }: { layout?: string }) => {
           </div>
           
           {/* Mobile Layout */}
-          <div className="flex md:hidden w-full items-center justify-between">
+          <div className="flex lg:hidden w-full items-center justify-between">
             {/* Left - Menu Button */}
             <motion.button
               onClick={() => handleSidebar("MAIN_MENU_VIEW")}
@@ -311,7 +311,7 @@ const Header = ({ layout }: { layout?: string }) => {
         )}
         
         <div className="relative z-[5]">
-          <ul className="hidden items-center space-x-7 rtl:space-x-reverse md:flex 2xl:space-x-10 md:justify-evenly bg-[#fff] relative">
+          <ul className="hidden items-center space-x-7 rtl:space-x-reverse lg:flex 2xl:space-x-10 lg:justify-evenly bg-[#fff] relative">
             <DynamicMenu />
           </ul>
         </div>
@@ -331,7 +331,7 @@ const Header = ({ layout }: { layout?: string }) => {
                 <SearchLucide className="w-5 h-5 text-gray-700" />
               </div>
             </div>
-            <span className="text-xs text-gray-700 font-medium">Search</span>
+            <span className="text-xs text-gray-700 font-medium">Kërko</span>
           </motion.button>
 
           {/* Favorites */}
@@ -350,7 +350,7 @@ const Header = ({ layout }: { layout?: string }) => {
                 </span>
               )}
             </div>
-            <span className="text-xs text-gray-700 font-medium">Wishlist</span>
+            <span className="text-xs text-gray-700 font-medium">Dëshirat</span>
           </motion.button>
 
           {/* Cart */}
@@ -369,7 +369,7 @@ const Header = ({ layout }: { layout?: string }) => {
                 </span>
               )}
             </div>
-            <span className="text-xs text-gray-700 font-medium">Cart</span>
+            <span className="text-xs text-gray-700 font-medium">Shporta</span>
           </motion.button>
         </div>
       </div>

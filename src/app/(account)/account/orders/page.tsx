@@ -285,26 +285,33 @@ export default function OrdersPage() {
                 }`}
                 onClick={() => toggleOrderExpanded(order.id)}
               >
-                <div className="flex items-center justify-between ">
-                  <div className="flex justify-between items-center flex-1">
-                    <div>
-                      <div className="text-sm text-gray-600 font-albertsans mb-1">Porosia</div>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-center flex-1 space-y-3 md:space-y-0">
+                    {/* Order Number - Always at top on mobile */}
+                    <div className="flex justify-between md:block">
+                      <div className="text-sm text-gray-600 font-albertsans md:mb-1">Porosia</div>
                       <div className="font-albertsans font-semibold">{order.order_number}</div>
                     </div>
-                    <div>
-                      <div className="text-sm text-gray-600 font-albertsans mb-1">Çmimi total</div>
+                    
+                    {/* Total Price */}
+                    <div className="flex justify-between md:block">
+                      <div className="text-sm text-gray-600 font-albertsans md:mb-1">Çmimi total</div>
                       <div className="font-albertsans font-semibold">
                         {parseFloat(order.total_price).toFixed(0)} Lekë
                       </div>
                     </div>
-                    <div>
-                      <div className="text-sm text-gray-600 font-albertsans mb-1">Statusi</div>
+                    
+                    {/* Status - Centered on mobile */}
+                    <div className="flex justify-between md:block items-center">
+                      <div className="text-sm text-gray-600 font-albertsans md:mb-1">Statusi</div>
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-albertsans bg-blue-100 text-blue-800">
                         {getStatusText(order.status)}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center min-w-[80px] justify-end">
+                  
+                  {/* Chevron Icon */}
+                  <div className="flex items-center min-w-[40px] md:min-w-[80px] justify-end ml-4">
                     {isExpanded ? (
                       <ChevronUpIcon className="w-5 h-5 text-gray-600" />
                     ) : (
@@ -385,9 +392,9 @@ export default function OrdersPage() {
                     <div className="space-y-4">
                       {order.items.map((item: OrderItem) => (
                         <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4">
-                          <div className="flex items-start gap-4">
+                          <div className="flex flex-col sm:flex-row items-start gap-4">
                             {/* Product Image */}
-                            <div className="relative w-[120px] h-[120px] flex-shrink-0">
+                            <div className="relative w-full sm:w-[120px] h-[150px] sm:h-[120px] flex-shrink-0">
                               <Image
                                 src={getImageUrl(item.product.image)}
                                 alt={item.product.name}
@@ -397,10 +404,10 @@ export default function OrdersPage() {
                             </div>
                             
                             {/* Product Details */}
-                            <div className="flex-1">
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <h4 className="text-[#252323] font-albertsans text-[18px] font-bold leading-[24px]">
+                            <div className="flex-1 w-full">
+                              <div className="flex flex-col sm:flex-row justify-between items-start">
+                                <div className="flex-1 w-full">
+                                  <h4 className="text-[#252323] font-albertsans text-[16px] sm:text-[18px] font-bold leading-[24px]">
                                     {item.product.name}
                                   </h4>
                                   {item.product.brand && (
@@ -409,29 +416,29 @@ export default function OrdersPage() {
                                     </p>
                                   )}
                                   
-                                  <div className="flex items-center gap-3 mt-3">
+                                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3">
                                     {item.product.sale_price && (
-                                      <span className="text-[#c1c1c1] font-albertsans text-[16px] font-medium line-through">
+                                      <span className="text-[#c1c1c1] font-albertsans text-[14px] sm:text-[16px] font-medium line-through">
                                         {parseFloat(item.product.price).toFixed(0)} Lekë
                                       </span>
                                     )}
-                                    <span className="text-[#1A66EA] font-albertsans text-[20px] font-bold">
+                                    <span className="text-[#1A66EA] font-albertsans text-[18px] sm:text-[20px] font-bold">
                                       {parseFloat(item.product.sale_price || item.product.price).toFixed(0)} Lekë
                                     </span>
                                     {item.product.sale_price && (
-                                      <span className="text-[14px] text-[#1A66EA] font-albertsans font-semibold bg-[#D1E0FB] px-3 py-1 rounded-full">
+                                      <span className="text-[12px] sm:text-[14px] text-[#1A66EA] font-albertsans font-semibold bg-[#D1E0FB] px-2 sm:px-3 py-1 rounded-full">
                                         {Math.round(((parseFloat(item.product.price) - parseFloat(item.product.sale_price)) / parseFloat(item.product.price)) * 100)}% OFF
                                       </span>
                                     )}
                                   </div>
                                 </div>
                                 
-                                {/* Quantity and See Product */}
-                                <div className="text-right ml-4">
+                                {/* Quantity and See Product - Below on mobile, right on desktop */}
+                                <div className="w-full sm:w-auto text-left sm:text-right mt-4 sm:mt-0 sm:ml-4">
                                   <p className="text-gray-600 font-albertsans text-sm mb-3">Sasia: {item.quantity}</p>
                                   <Link
                                     href={`/products/${item.product.id}`}
-                                    className="inline-block px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-albertsans font-medium"
+                                    className="inline-block px-4 sm:px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-albertsans font-medium w-full sm:w-auto text-center"
                                   >
                                     Shiko produktin
                                   </Link>

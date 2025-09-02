@@ -40,6 +40,10 @@ body{
   border: 1px solid #f11602;
   background: #fff;
   left: 40px;
+
+  @media (max-width: 420px) {
+    left: -10px;
+  }
 }
 
 .swiperButtonNext {
@@ -54,6 +58,10 @@ body{
   border: 1px solid #f11602;
   background: #fff;
   right: 40px;
+
+  @media (max-width: 420px) {
+    right: -10px;
+  }
 }
 
 /* Custom Filter Styles */

@@ -231,12 +231,7 @@ export default function OrderThankYouPage({ params }: { params: Promise<{ tracki
                     {orderData.tracking_code}
                   </span>
                 </div>
-                <div>
-                  <span className="text-gray-600">Emri:</span>
-                  <span className="ml-2 font-medium">
-                    {orderData.customer.first_name} {orderData.customer.last_name}
-                  </span>
-                </div>
+               
                 <div>
                   <span className="text-gray-600">Metoda e pagesës:</span>
                   <span className="ml-2 font-medium">

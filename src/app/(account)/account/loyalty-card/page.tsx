@@ -8,7 +8,9 @@ import { sq } from 'date-fns/locale';
 
 interface LoyaltyPoint {
   from_order: string;
-  points: number;
+  total_points: number;
+  used_points: number;
+  remaining_points: number;
   used: boolean;
   expiry: string;
   created_at: string;
@@ -157,28 +159,32 @@ export default function LoyaltyCardPage() {
               
               return (
                 <div key={index} className="border-b pb-4 last:border-b-0">
-                  <div className="grid grid-cols-4 gap-4 items-center">
-                    <div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 md:items-center">
+                    {/* Order Number - Always visible on mobile */}
+                    <div className="flex justify-between md:block">
                       <div className="text-sm text-gray-600 font-albertsans">Porosia</div>
                       <div className="font-albertsans font-semibold">{orderNumber}</div>
                     </div>
                     
-                    <div>
+                    {/* Order Date */}
+                    <div className="flex justify-between md:block">
                       <div className="text-sm text-gray-600 font-albertsans">Data e porosisë</div>
                       <div className="font-albertsans">
                         {format(orderDate, 'MMM d yyyy', { locale: sq })}
                       </div>
                     </div>
                     
-                    <div>
+                    {/* Total Price */}
+                    <div className="flex justify-between md:block">
                       <div className="text-sm text-gray-600 font-albertsans">Çmimi total</div>
                       <div className="font-albertsans font-semibold">
                         {/* Calculate approximate price from points (assuming 1% cashback) */}
-                        {(point.points * 100).toFixed(0)} Lekë
+                        {(point.total_points * 100).toFixed(0)} Lekë
                       </div>
                     </div>
                     
-                    <div className="text-right">
+                    {/* Points Badge - Centered on mobile, right-aligned on desktop */}
+                    <div className="flex flex-col items-center md:items-end mt-2 md:mt-0">
                       <div className={`inline-flex items-center px-4 py-2 rounded-full font-albertsans font-medium ${
                         point.used 
                           ? 'bg-gray-100 text-gray-500'  // Already spent/used points
@@ -186,10 +192,10 @@ export default function LoyaltyCardPage() {
                             ? 'bg-red-100 text-red-600'   // Expired, can't use anymore
                             : 'bg-green-100 text-green-700' // Available to use
                       }`}>
-                        {`+${point.points.toFixed(0)} pts`}
+                        {`+${point.total_points.toFixed(0)} pts`}
                       </div>
                       
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-1 text-center md:text-right">
                         {point.used 
                           ? 'Pikët u përdorën'  // Points were spent
                           : point.is_expired
