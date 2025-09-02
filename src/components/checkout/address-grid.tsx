@@ -40,11 +40,23 @@ const AddressGrid: React.FC<Props> = ({
   const [showModal, setShowModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses || []);
+  const [guestAddresses, setGuestAddresses] = useState<Address[]>([]);
+  const [isGuest, setIsGuest] = useState(false);
   
-  // Update addresses when initialAddresses prop changes
+  // Update addresses when initialAddresses prop changes (only for authenticated users)
   useEffect(() => {
-    setAddresses(initialAddresses || []);
-  }, [initialAddresses]);
+    // Check if this is a guest user (no initial addresses and empty array)
+    const isGuestUser = !initialAddresses || (Array.isArray(initialAddresses) && initialAddresses.length === 0);
+    setIsGuest(isGuestUser);
+    
+    if (!isGuestUser) {
+      // Only update addresses for authenticated users
+      setAddresses(initialAddresses || []);
+    } else {
+      // For guest users, use guestAddresses
+      setAddresses(guestAddresses);
+    }
+  }, [initialAddresses, guestAddresses]);
 
   const handleSelectAddress = (address: Address) => {
     // Normalize phone field - backend returns phone_number but we need contact_number
@@ -61,8 +73,13 @@ const AddressGrid: React.FC<Props> = ({
   };
 
   const handleDelete = (addressId: string) => {
-    // Remove from local state
-    setAddresses(prev => prev.filter(addr => addr.id !== addressId));
+    if (isGuest) {
+      // For guest users, update guestAddresses
+      setGuestAddresses(prev => prev.filter(addr => addr.id !== addressId));
+    } else {
+      // For authenticated users, update addresses directly
+      setAddresses(prev => prev.filter(addr => addr.id !== addressId));
+    }
     // If the deleted address was selected, clear selection
     if (selectedAddress?.id === addressId) {
       setSelectedAddress(null);
@@ -78,7 +95,12 @@ const AddressGrid: React.FC<Props> = ({
         country: 'Albania',
         state: formData.city, // Use city as state for Albania
       };
-      setAddresses(prev => prev.map(addr => addr.id === editingAddress.id ? updatedAddress : addr));
+      
+      if (isGuest) {
+        setGuestAddresses(prev => prev.map(addr => addr.id === editingAddress.id ? updatedAddress : addr));
+      } else {
+        setAddresses(prev => prev.map(addr => addr.id === editingAddress.id ? updatedAddress : addr));
+      }
       setSelectedAddress(updatedAddress);
     } else {
       // Add new address
@@ -90,7 +112,12 @@ const AddressGrid: React.FC<Props> = ({
         country: 'Albania',
         state: formData.city, // Use city as state for Albania
       };
-      setAddresses(prev => [...prev, newAddress]);
+      
+      if (isGuest) {
+        setGuestAddresses(prev => [...prev, newAddress]);
+      } else {
+        setAddresses(prev => [...prev, newAddress]);
+      }
       setSelectedAddress(newAddress);
     }
     setShowModal(false);

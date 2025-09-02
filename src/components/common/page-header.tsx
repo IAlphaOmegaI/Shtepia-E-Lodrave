@@ -15,9 +15,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   className = '' 
 }) => {
   return (
-    <div className={`relative bg-[#FEC949] min-h-[208px]  ${className} mb-50`}>
+    <div className={`relative bg-[#FEC949] min-h-[208px]  ${className} mb-50 overflow-hidden sm:overflow-visible`}>
       {/* Left illustration */}
-      <div className="absolute left-0 top-0 h-full">
+      <div className="absolute left-[-190px] md:-left-20 lg:-left-32 top-0 h-full ">
         <Image
           src="/pageHeader_Illustration_Left.svg"
           alt="Left decoration"
@@ -29,7 +29,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       {/* Right illustration */}
-      <div className="absolute right-0 top-0 h-full">
+      <div className="absolute right-[-167px] md:-right-20 lg:-right-32 top-0 h-full">
         <Image
           src="/pageHeader_Illustration_Right.svg"
           alt="Right decoration"

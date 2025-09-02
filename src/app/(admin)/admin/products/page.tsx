@@ -173,18 +173,18 @@ export default function ProductsPage() {
   return (
     <div>
       {/* Page Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Menaxhimi i Produkteve</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">Menaxhimi i Produkteve</h1>
+          <p className="text-xs md:text-sm text-gray-600 mt-1">
             Total: {totalCount} produkte
           </p>
         </div>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto justify-center"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 md:w-5 md:h-5" />
           Shto Produkt
         </Link>
       </div>
@@ -192,7 +192,8 @@ export default function ProductsPage() {
 
       {/* Products Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
@@ -357,6 +358,130 @@ export default function ProductsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Stacked View */}
+        <div className="md:hidden">
+          {isLoading ? (
+            <div className="p-4 text-center">
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="p-4 text-center text-gray-500">
+              Nuk u gjetën produkte
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {products.map((product) => {
+                const productImage = getProductImage(product);
+                
+                return (
+                  <div key={product.id} className="p-4 hover:bg-gray-50">
+                    {/* Product Header with Image */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start flex-1">
+                        {productImage ? (
+                          <div className="relative w-16 h-16 mr-3 flex-shrink-0">
+                            <Image 
+                              src={productImage} 
+                              alt={product.name}
+                              fill
+                              className="rounded-lg object-cover"
+                              sizes="64px"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0">
+                            <Package className="w-8 h-8 text-gray-400" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <h3 className="text-sm font-semibold text-gray-900">
+                            {product.name}
+                            {product.is_featured && (
+                              <Star className="w-3 h-3 inline ml-1 text-yellow-500 fill-current" />
+                            )}
+                          </h3>
+                          {product.code && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Code: {product.code}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 font-mono mt-1">
+                            SKU: {product.code || product.sku || '—'}
+                          </p>
+                        </div>
+                      </div>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 ml-2">
+                        <Link
+                          href={`/products/${product.id}`}
+                          target="_blank"
+                          className="p-2 text-gray-600 hover:bg-gray-100 rounded"
+                          title="Shiko në faqe"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                        <Link
+                          href={`/admin/products/${product.id}/edit`}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                          title="Ndrysho"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                    
+                    {/* Product Details */}
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      {/* Price */}
+                      <div>
+                        <span className="text-gray-500">Çmimi:</span>
+                        <div className="mt-1">
+                          {product.sale_price && product.sale_price < product.price ? (
+                            <>
+                              <div className="font-semibold text-gray-900">
+                                {formatPrice(product.sale_price)}
+                              </div>
+                              <div className="text-gray-500 line-through">
+                                {formatPrice(product.price)}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="font-semibold text-gray-900">
+                              {formatPrice(product.price)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Sales */}
+                      <div>
+                        <span className="text-gray-500">Shitje:</span>
+                        <div className="font-semibold text-gray-900 mt-1">
+                          {product.sales_count || 0}
+                        </div>
+                      </div>
+                      
+                      {/* Categories - Full Width */}
+                      {product.categories && product.categories.length > 0 && (
+                        <div className="col-span-2">
+                          <span className="text-gray-500">Kategoria:</span>
+                          <div className="text-gray-700 mt-1">
+                            {product.categories.map(cat => 
+                              cat.parent_name ? `${cat.parent_name} > ${cat.name}` : cat.name
+                            ).join(', ')}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

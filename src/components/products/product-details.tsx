@@ -391,13 +391,13 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 {product.name}
               </h1>
 
-              <div className="mb-8">
+              <div className="mb-8 text-center sm:text-left">
                 {hasDiscount && (
                   <div className="text-[#C1C1C1] line-through text-[20px] font-normal font-albertsans mb-1">
                     {originalPrice.toFixed(0)} Lekë
                   </div>
                 )}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center sm:flex-row flex-col gap-4">
                   <span className="text-[36px] font-bold text-[#1A66EA] font-albertsans">
                     {salePrice.toFixed(0)} Lekë
                   </span>
@@ -438,7 +438,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </span>
               </div>
 
-              <div className="flex gap-4 ">
+              <div className="flex flex-col sm:flex-row gap-4 items-center ">
                 <button
                   onClick={handleAddToCart}
                   disabled={product.quantity === 0}

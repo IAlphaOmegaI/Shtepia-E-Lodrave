@@ -314,23 +314,23 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     return (
       <div className="max-w-7xl mx-auto">
         {/* Header Skeleton */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-lg animate-pulse"></div>
             <div>
-              <div className="h-7 w-48 bg-gray-200 rounded animate-pulse"></div>
-              <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mt-2"></div>
+              <div className="h-5 sm:h-7 w-32 sm:w-48 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-3 sm:h-4 w-20 sm:w-24 bg-gray-200 rounded animate-pulse mt-1 sm:mt-2"></div>
             </div>
           </div>
-          <div className="flex gap-3">
-            <div className="w-32 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
-            <div className="w-36 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+          <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="flex-1 sm:flex-initial w-full sm:w-32 h-8 sm:h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+            <div className="flex-1 sm:flex-initial w-full sm:w-36 h-8 sm:h-10 bg-gray-200 rounded-lg animate-pulse"></div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Main Content Skeleton */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-2 lg:order-1">
             <div className="bg-white rounded-lg shadow">
               <div className="border-b p-3">
                 <div className="flex gap-4">
@@ -340,11 +340,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   <div className="h-6 w-28 bg-gray-200 rounded animate-pulse"></div>
                 </div>
               </div>
-              <div className="p-6 space-y-6">
+              <div className="p-4 md:p-6 space-y-4 md:space-y-6">
                 <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
                 <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
                 <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
                   <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
                 </div>
@@ -353,21 +353,21 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </div>
 
           {/* Sidebar Skeleton */}
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="h-6 w-24 bg-gray-200 rounded animate-pulse mb-4"></div>
+          <div className="lg:col-span-1 space-y-4 md:space-y-6 order-1 lg:order-2">
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
+              <div className="h-5 md:h-6 w-20 md:w-24 bg-gray-200 rounded animate-pulse mb-3 md:mb-4"></div>
               <div className="space-y-2">
                 <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
                 <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
                 <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="h-6 w-20 bg-gray-200 rounded animate-pulse mb-4"></div>
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
+              <div className="h-5 md:h-6 w-16 md:w-20 bg-gray-200 rounded animate-pulse mb-3 md:mb-4"></div>
               <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="h-6 w-32 bg-gray-200 rounded animate-pulse mb-4"></div>
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
+              <div className="h-5 md:h-6 w-28 md:w-32 bg-gray-200 rounded animate-pulse mb-3 md:mb-4"></div>
               <div className="h-48 bg-gray-200 rounded-lg animate-pulse"></div>
             </div>
           </div>
@@ -379,37 +379,39 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link
             href="/admin/products"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-800">Ndrysho Produktin</h1>
-            <p className="text-sm text-gray-600 mt-1">ID: {productId}</p>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800">Ndrysho Produktin</h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">ID: {productId}</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <Link
             href={`/products/${productId}`}
             target="_blank"
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex-1 sm:flex-initial text-sm sm:text-base"
           >
-            <Eye className="w-4 h-4" />
-            Shiko në Faqe
+            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">Shiko në Faqe</span>
+            <span className="xs:hidden">Shiko</span>
           </Link>
           <button
             onClick={handleSubmit}
             disabled={updateMutation.isPending}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 relative group"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 bg-blue-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 relative group flex-1 sm:flex-initial text-sm sm:text-base"
             title="Ruaj Ndryshimet (Ctrl+S / ⌘+S)"
           >
-            <Save className="w-4 h-4" />
-            {updateMutation.isPending ? 'Duke ruajtur...' : 'Ruaj Ndryshimet'}
-            <span className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">{updateMutation.isPending ? 'Duke ruajtur...' : 'Ruaj Ndryshimet'}</span>
+            <span className="xs:hidden">Ruaj</span>
+            <span className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none hidden sm:block">
               Ctrl+S / ⌘+S
             </span>
           </button>
@@ -430,13 +432,13 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 order-2 lg:order-1">
           {/* Tabs */}
           <div className="bg-white rounded-lg shadow mb-6">
 
-            <form onSubmit={handleSubmit} className="p-6">
+            <form onSubmit={handleSubmit} className="p-4 md:p-6">
               {/* General Tab */}
               {activeTab === 'general' && (
                 <div className="space-y-6">
@@ -466,7 +468,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Hidden for now - SKU */}
                     {/* <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -493,7 +495,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Çmimi Regular (LEK) *
@@ -588,7 +590,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               {/* Shipping Tab */}
               {activeTab === 'shipping' && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Gjatësia (cm)
@@ -634,7 +636,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               {/* Attributes Tab */}
               {activeTab === 'attributes' && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Mosha e Rekomanduar
@@ -684,10 +686,10 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-4 md:space-y-6 order-1 lg:order-2">
           {/* Categories */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Kategoritë</h3>
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4">Kategoritë</h3>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {categoriesData?.map((category: any) => (
                 <label key={category.id} className="flex items-center">
@@ -710,8 +712,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </div>
 
           {/* Brand */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Brendi</h3>
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4">Brendi</h3>
             <select
               value={formData.brand || ''}
               onChange={(e) => setFormData({ ...formData, brand: e.target.value ? parseInt(e.target.value) : null })}
@@ -727,8 +729,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </div>
 
           {/* Product Images */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Imazhet e Produktit</h3>
+          <div className="bg-white rounded-lg shadow p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-3 md:mb-4">Imazhet e Produktit</h3>
             <div className="space-y-4">
               {/* Main Image */}
               {getMainImage() ? (
@@ -786,7 +788,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               {/* Gallery Images */}
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-2">Galeria</p>
-                <div className="grid grid-cols-2 gap-2 mb-3">
+                <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-2 gap-2 mb-3">
                   {getGalleryImages().map((image) => (
                     <div key={image.id} className="relative w-full h-24">
                       <Image

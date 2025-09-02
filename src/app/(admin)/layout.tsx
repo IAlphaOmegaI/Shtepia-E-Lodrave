@@ -19,7 +19,9 @@ import {
   ChevronUp,
   LogOut,
   User as UserIcon,
-  Award
+  Award,
+  Menu,
+  X
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -34,7 +36,9 @@ export default function AdminLayout({
   const [isLoading, setIsLoading] = useState(true);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
   
   // Fetch user data
   const { data: userData } = useQuery({
@@ -66,17 +70,26 @@ export default function AdminLayout({
     checkAuth();
   }, [router]);
 
-  // Handle click outside for user menu
+  // Handle click outside for user menu and sidebar
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setShowUserMenu(false);
+      }
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node) && 
+          !(event.target as HTMLElement).closest('.mobile-menu-trigger')) {
+        setShowMobileSidebar(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Close mobile sidebar when route changes
+  useEffect(() => {
+    setShowMobileSidebar(false);
+  }, [pathname]);
 
   const handleLogout = () => {
     AuthService.logout();
@@ -134,12 +147,6 @@ export default function AdminLayout({
       href: '/admin/customers',
       active: pathname.includes('/admin/customers')
     },
-    {
-      label: 'Konfigurimet e Faqes',
-      icon: Settings,
-      href: '/admin/settings',
-      active: pathname.includes('/admin/settings')
-    },
   ];
 
   if (isLoading) {
@@ -153,15 +160,24 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Header */}
-      <div className="bg-[#E94B3C] h-16 flex items-center justify-between px-6">
+      <div className="bg-[#E94B3C] h-16 flex items-center justify-between px-4 md:px-6">
         <div className="flex items-center">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setShowMobileSidebar(!showMobileSidebar)}
+            className="mobile-menu-trigger md:hidden mr-3 text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            {showMobileSidebar ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+          
           <Link href="/admin/dashboard" className="flex items-center">
-            <div className="bg-[#FEC949] rounded-full p-2 mr-3">
-              <svg className="w-6 h-6 text-[#E94B3C]" viewBox="0 0 24 24" fill="currentColor">
+            <div className="bg-[#FEC949] rounded-full p-2 mr-2 md:mr-3">
+              <svg className="w-5 h-5 md:w-6 md:h-6 text-[#E94B3C]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
               </svg>
             </div>
-            <span className="text-white font-bold text-lg">Shtëpia e Lodrave</span>
+            <span className="text-white font-bold text-base md:text-lg hidden sm:inline">Shtëpia e Lodrave</span>
+            <span className="text-white font-bold text-base md:text-lg sm:hidden">Admin</span>
           </Link>
         </div>
 
@@ -172,11 +188,11 @@ export default function AdminLayout({
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center hover:opacity-90 transition-opacity cursor-pointer"
           >
-            <div className="bg-white rounded-full p-2 mr-3">
-              <UserIcon className="w-6 h-6 text-gray-600" />
+            <div className="bg-white rounded-full p-1.5 md:p-2 mr-2 md:mr-3">
+              <UserIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
             </div>
-            <div className="text-white text-left">
-              <div className="text-sm font-medium">
+            <div className="hidden sm:block text-white text-left">
+              <div className="text-xs md:text-sm font-medium">
                 {(() => {
                   // Check if we have valid name data (not "string" placeholder)
                   const firstName = userData?.first_name;
@@ -195,12 +211,12 @@ export default function AdminLayout({
               </div>
               <div className="text-xs opacity-75">Administrator</div>
             </div>
-            <ChevronDown className="w-4 h-4 text-white ml-2" />
+            <ChevronDown className="w-4 h-4 text-white ml-1 md:ml-2 hidden sm:block" />
           </motion.button>
 
           {/* User Dropdown Menu */}
           {showUserMenu && (
-            <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden z-50">
+            <div className="absolute right-0 top-full mt-2 w-48 sm:w-64 bg-white rounded-lg shadow-lg overflow-hidden z-50">
               <div className="px-4 py-3 border-b border-gray-200">
                 <p className="text-sm font-medium text-gray-900">
                   {(() => {
@@ -237,9 +253,22 @@ export default function AdminLayout({
         </div>
       </div>
 
+      {/* Mobile Overlay */}
+      {showMobileSidebar && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setShowMobileSidebar(false)}
+        />
+      )}
+
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-md min-h-[calc(100vh-4rem)]">
+        <div 
+          ref={sidebarRef}
+          className={`fixed md:relative w-64 bg-white shadow-md min-h-[calc(100vh-4rem)] z-50 md:z-auto transition-transform duration-300 md:transition-none ${
+            showMobileSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
+        >
           <nav className="p-4">
             {menuItems.map((item) => (
               <div key={item.label} className="mb-2">
@@ -296,7 +325,7 @@ export default function AdminLayout({
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-4 md:p-6">
           {children}
         </div>
       </div>

@@ -33,10 +33,10 @@ const CartSidebarView = () => {
       <header className="flex w-full items-center justify-between px-6 py-4 border-b border-gray-200">
         <div className="flex items-baseline space-x-2">
           <h2 className="text-xl font-grandstander font-bold text-[#F11602]">
-            Cart
+            Shporta
           </h2>
           <span className="text-sm text-gray-500 font-albertsans">
-            ({totalUniqueItems} products)
+            ({totalUniqueItems} produkt)
           </span>
         </div>
         <button
@@ -65,7 +65,7 @@ const CartSidebarView = () => {
           >
             <EmptyCartIcon width={140} height={176} className="text-[#F44535]"/>
             <h4 className="mt-6 text-base font-semibold text-[#F44535]">
-              No products in cart
+               Nuk keni produkt në shportë
             </h4>
           </motion.div>
         )}
@@ -74,7 +74,7 @@ const CartSidebarView = () => {
 
       <footer className="border-t border-gray-200 bg-gray-50 px-6 py-4">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-lg font-medium text-gray-900 font-albertsans">Order Total</span>
+          <span className="text-lg font-medium text-gray-900 font-albertsans">Totali i porosisë</span>
           <span className="text-lg font-bold text-blue-600 font-albertsans">{totalPrice}</span>
         </div>
         <button
@@ -82,7 +82,7 @@ const CartSidebarView = () => {
           onClick={handleCheckout}
           disabled={items.length === 0}
         >
-          Checkout
+          Bëje Porosinë
         </button>
       </footer>
       {/* End of footer */}

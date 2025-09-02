@@ -1,13 +1,49 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FacebookIcon } from '@/components/icons/social/facebook';
 import { InstagramIcon } from '@/components/icons/social/instagram';
 import { MapPin } from '@/components/icons/map-pin';
 import { PhoneIcon } from '@/components/icons/phone';
+import { Routes } from '@/config/routes';
+import type { Brand } from '@/types';
+
+// Simple in-memory cache for brands
+let brandsCache: Brand[] | null = null;
 
 export default function Footer() {
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      // Check if brands are already cached
+      if (brandsCache) {
+        setBrands(brandsCache.slice(0, 8)); // Use first 8 brands for footer
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('https://api.shtepialodrave.com/api/brands/');
+        const data = await response.json();
+        brandsCache = data; // Cache the brands
+        setBrands(data.slice(0, 8)); // Use first 8 brands for footer
+      } catch (error) {
+        console.error('Error fetching brands for footer:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBrands();
+  }, []);
+
+  // Split brands into two columns
+  const firstColumnBrands = brands.slice(0, 4);
+  const secondColumnBrands = brands.slice(4, 8);
   return (
     <footer className="relative mt-auto">
       {/* Cloud SVG Background */}
@@ -37,43 +73,60 @@ export default function Footer() {
                   className="w-full h-auto"
                 />
               </div>
-              <p className="text-sm leading-relaxed">
-                Lorem ipsu mnnmdsfknksdjnnxmcxvxcnvnskjndkjsn
-                kdnjsjndjsndknsdkjnskdnj
+              <p className="text-md leading-relaxed">
+               Nga lodrat edukative deri tek surprizat më argëtuese, Shtepia e Lodrave është vendi ku fëmijët zbulojnë botën e fantazisë. Loja fillon këtu!
               </p>
             </div>
             
             {/* Brands Column 1 */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Brands</h3>
+              <h3 className="text-xl font-semibold mb-4">Brandet</h3>
               <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="hover:underline transition-all">
-                    Brand
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline transition-all">
-                    Brand
-                  </Link>
-                </li>
+                {loading ? (
+                  <>                    
+                    <li className="h-4 bg-white/20 rounded animate-pulse w-20"></li>
+                    <li className="h-4 bg-white/20 rounded animate-pulse w-24"></li>
+                  </>
+                ) : firstColumnBrands.length > 0 ? (
+                  firstColumnBrands.map((brand) => (
+                    <li key={brand.id}>
+                      <Link 
+                        href={Routes.brand(brand.slug)} 
+                        className="hover:underline transition-all"
+                      >
+                        {brand.name}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-white/60">Nuk ka brande</li>
+                )}
               </ul>
             </div>
             
             {/* Brands Column 2 */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Brands</h3>
+              <h3 className="text-xl font-semibold mb-4">Më shumë Brande</h3>
               <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="hover:underline transition-all">
-                    Brand
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:underline transition-all">
-                    Brand
-                  </Link>
-                </li>
+                {loading ? (
+                  <>                    
+                    <li className="h-4 bg-white/20 rounded animate-pulse w-20"></li>
+                    <li className="h-4 bg-white/20 rounded animate-pulse w-24"></li>
+                  </>
+                ) : secondColumnBrands.length > 0 ? (
+                  secondColumnBrands.map((brand) => (
+                    <li key={brand.id}>
+                      <Link 
+                        href={Routes.brand(brand.slug)} 
+                        className="hover:underline transition-all"
+                      >
+                        {brand.name}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-white/60">Nuk ka brande</li>
+                )}
               </ul>
             </div>
             
@@ -88,9 +141,9 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <Link href="/our-stores" className="flex items-center gap-2 hover:underline">
+                  <Link href="/stores" className="flex items-center gap-2 hover:underline">
                     <MapPin className="w-4 h-4" />
-                    <span>Our stores</span>
+                    <span>Dyqanet tona</span>
                   </Link>
                 </li>
               </ul>
@@ -100,7 +153,7 @@ export default function Footer() {
                 <h4 className="text-lg font-medium mb-3">Follow us</h4>
                 <div className="flex gap-3">
                   <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/profile.php?id=100057516696717"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center   transition-all"
@@ -109,7 +162,7 @@ export default function Footer() {
                     <FacebookIcon className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://instagram.com"
+                    href="https://www.instagram.com/shtepia_e_lodrave/?hl=en"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10flex items-center justify-center  transition-all"
