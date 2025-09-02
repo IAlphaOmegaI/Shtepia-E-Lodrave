@@ -18,9 +18,9 @@ export default function CartPage() {
     return (
       <div className="bg-[#FFF8F0] min-h-screen px-4 py-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-8">Shopping Cart</h1>
+          <h1 className="text-2xl font-bold mb-8">Shporta</h1>
           <div className="bg-white rounded-lg shadow-sm p-12">
-            <p className="text-gray-600 mb-4">Your cart is empty</p>
+            <p className="text-gray-600 mb-4">Nuk keni produkt në shportë</p>
             <Link 
               href={Routes.products}
               className="inline-block bg-orange-400 text-white px-6 py-3 rounded-lg hover:bg-orange-500 transition-colors"
@@ -36,7 +36,7 @@ export default function CartPage() {
   return (
     <div className="bg-[#FFF8F0] min-h-screen px-4 py-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8">Shopping Cart</h1>
+        <h1 className="text-2xl font-bold mb-8">Shporta</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
@@ -54,16 +54,16 @@ export default function CartPage() {
           
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+              <h2 className="text-lg font-semibold mb-4">Përmbledhja e porosisë</h2>
               
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600">Nëntotali</span>
                   <span className="font-medium">{formatPrice(total)} Lekë</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="text-gray-600">Calculated at checkout</span>
+                  <span className="text-gray-600">Dërgesa</span>
+                  <span className="text-gray-600">Kalkulohet në porosi</span>
                 </div>
               </div>
               
@@ -80,14 +80,14 @@ export default function CartPage() {
                 href={Routes.checkout}
                 className="block w-full bg-orange-400 text-white text-center py-3 px-4 rounded-lg font-medium hover:bg-orange-500 transition-colors"
               >
-                Proceed to Checkout
+                Bëje Porosinë
               </Link>
               
               <Link
                 href={Routes.products}
                 className="block text-center text-sm text-gray-600 hover:text-gray-800 mt-4"
               >
-                Continue Shopping
+                 Shiko produktet tjera
               </Link>
             </div>
           </div>

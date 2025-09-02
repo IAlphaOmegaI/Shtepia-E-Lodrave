@@ -148,19 +148,19 @@ export default function OrdersPage() {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Porositë</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">Porositë</h1>
+          <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
             Menaxho dhe shiko të gjitha porositë
           </p>
         </div>
       </div>
 
 
-      {/* Orders Table */}
+      {/* Orders Table - Desktop */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -285,26 +285,127 @@ export default function OrdersPage() {
           </table>
         </div>
 
+        {/* Orders Cards - Mobile */}
+        <div className="md:hidden">
+          {isLoading ? (
+            <div className="p-4 text-center">
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            </div>
+          ) : ordersData?.data.length === 0 ? (
+            <div className="p-4 text-center text-gray-500">
+              Nuk u gjetën porosi
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {ordersData?.data.map((order) => (
+                <div key={order.id} className="p-4 hover:bg-gray-50">
+                  {/* Order Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        #{order.order_number}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        Kodi: {order.tracking_code}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {order.items_count || 0} artikuj
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="text-blue-600 hover:text-blue-800 transition-colors p-1"
+                        title="Shiko Detajet"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
+                      <Link
+                        href={`/admin/orders/${order.id}/edit`}
+                        className="text-green-600 hover:text-green-800 transition-colors p-1"
+                        title="Ndrysho"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Customer Info */}
+                  {order.customer && (
+                    <div className="mb-3 pb-3 border-b border-gray-100">
+                      <div className="text-sm font-medium text-gray-900">
+                        {order.customer.first_name} {order.customer.last_name}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {order.customer.email}
+                      </div>
+                      {order.customer.phone_number && (
+                        <div className="text-xs text-gray-500">
+                          {order.customer.phone_number}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Order Details Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <div className="text-xs text-gray-500 mb-0.5">Data</div>
+                      <div className="text-gray-900">
+                        {formatDate(order.created_at)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500 mb-0.5">Totali</div>
+                      <div className="font-medium text-gray-900">
+                        {formatPrice(order.total_price)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Status Badges */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <div className="flex items-center gap-1.5">
+                      {getStatusIcon(order.status)}
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[order.status]?.color || 'bg-gray-100 text-gray-800'}`}>
+                        {statusConfig[order.status]?.label || order.status}
+                      </span>
+                    </div>
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${paymentStatusConfig[order.payment_status]?.color || 'bg-gray-100 text-gray-800'}`}>
+                      Pagesa: {paymentStatusConfig[order.payment_status]?.label || order.payment_status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Pagination */}
         {ordersData && ordersData.paginatorInfo.total > ordersData.paginatorInfo.per_page && (
-          <div className="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
+          <div className="bg-gray-50 px-3 md:px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div className="flex-1 flex justify-between md:hidden">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={!ordersData.paginatorInfo.prev_page_url}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Mbrapa
               </button>
+              <span className="text-xs text-gray-700 self-center">
+                Faqe {currentPage} / {totalPages}
+              </span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={!ordersData.paginatorInfo.next_page_url}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Para
               </button>
             </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div className="hidden md:flex-1 md:flex md:items-center md:justify-between">
               <div>
                 <p className="text-sm text-gray-700">
                   Duke shfaqur{' '}

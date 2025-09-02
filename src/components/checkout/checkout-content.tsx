@@ -245,7 +245,7 @@ export default function CheckoutContent() {
                 className=""
                 label="Zgjidhni adresën e dërgesës"
                 count={isAuthenticated ? 1 : 2}
-                addresses={isAuthenticated ? userAddresses : []}
+                addresses={isAuthenticated && userAddresses ? userAddresses : []}
                 atom={shippingAddressAtom}
                 type="shipping"
               />

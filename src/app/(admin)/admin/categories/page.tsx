@@ -279,24 +279,24 @@ export default function CategoriesPage() {
   return (
     <div>
       {/* Page Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Menaxhimi i Kategorive</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-800">Menaxhimi i Kategorive</h1>
         <button
           onClick={() => {
             setEditingCategory(null);
             resetForm();
             setShowModal(true);
           }}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto justify-center"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 md:w-5 md:h-5" />
           Shto Kategori të Re
         </button>
       </div>
 
       {/* Stats */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <div className="text-sm text-gray-600">
+      <div className="bg-white rounded-lg shadow p-3 md:p-4 mb-4 md:mb-6">
+        <div className="text-xs md:text-sm text-gray-600">
           {categoriesData && (
             <span>
               Duke shfaqur {categories.length} nga {totalCount} kategori
@@ -307,7 +307,8 @@ export default function CategoriesPage() {
 
       {/* Categories Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
@@ -461,6 +462,103 @@ export default function CategoriesPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Stacked View */}
+        <div className="md:hidden">
+          {isLoading ? (
+            <div className="p-4 text-center">
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="p-4 text-center text-gray-500">
+              Nuk u gjetën kategori
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {categories.map((category) => (
+                <div key={category.id} className="p-4 hover:bg-gray-50">
+                  {/* Category Header with Image */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center flex-1">
+                      {(category.banner || category.featured_image) ? (
+                        <div className="relative w-12 h-12 mr-3 flex-shrink-0">
+                          <Image 
+                            src={getImageUrl(category.banner || category.featured_image)} 
+                            alt={category.name}
+                            fill
+                            className="rounded-lg object-cover"
+                            sizes="48px"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0">
+                          <Tag className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900">{category.name}</h3>
+                        <p className="text-xs text-gray-500 font-mono mt-1">{category.slug}</p>
+                      </div>
+                    </div>
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(category)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setShowDeleteConfirm(category.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Category Details */}
+                  <div className="space-y-2 text-xs">
+                    {category.description && (
+                      <div className="text-gray-600">
+                        <span className="font-medium">Përshkrimi:</span> {category.description}
+                      </div>
+                    )}
+                    
+                    {category.parent_name && (
+                      <div className="flex items-center text-gray-600">
+                        <FolderTree className="w-3 h-3 mr-1" />
+                        <span className="font-medium">Prind:</span> {category.parent_name}
+                      </div>
+                    )}
+                    
+                    {/* Badges */}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {category.is_featured && (
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                          <Star className="w-3 h-3 mr-1 fill-current" />
+                          Featured
+                        </span>
+                      )}
+                      {category.banner && (
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          Banner
+                        </span>
+                      )}
+                      {category.featured_image && (
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                          Featured Image
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

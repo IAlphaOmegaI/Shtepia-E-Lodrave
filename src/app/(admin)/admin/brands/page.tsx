@@ -210,25 +210,25 @@ export default function BrandsPage() {
   return (
     <div>
       {/* Page Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Brendet</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">Brendet</h1>
+          <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
             Total: {totalCount} brende
           </p>
         </div>
         <button
           onClick={() => openModal()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+          className="bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-blue-700 flex items-center text-sm md:text-base w-full sm:w-auto justify-center"
         >
-          <Plus className="w-5 h-5 mr-2" />
+          <Plus className="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2" />
           Shto Brend
         </button>
       </div>
 
-      {/* Brands Table */}
+      {/* Brands Table - Desktop */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
@@ -354,28 +354,120 @@ export default function BrandsPage() {
           </table>
         </div>
 
+        {/* Brands Cards - Mobile */}
+        <div className="md:hidden">
+          {isLoading ? (
+            <div className="p-4 text-center">
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            </div>
+          ) : brands.length === 0 ? (
+            <div className="p-4 text-center text-gray-500">
+              Nuk u gjetën brende
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {brands.map((brand) => (
+                <div key={brand.id} className="p-4 hover:bg-gray-50">
+                  {/* Brand Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center flex-1">
+                      {brand.logo_url && !imageErrors[brand.id] ? (
+                        <div className="w-12 h-12 relative mr-3 flex-shrink-0">
+                          <Image
+                            src={
+                              brand.logo_url.startsWith("http")
+                                ? brand.logo_url
+                                : `${BASE_IMAGE_URL}${brand.logo_url}`
+                            }
+                            alt={brand.name}
+                            fill
+                            className="object-contain rounded"
+                            onError={() => {
+                              setImageErrors(prev => ({ ...prev, [brand.id]: true }));
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0">
+                          <Package className="w-6 h-6 text-gray-500" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">
+                          {brand.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          ID: #{brand.id}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 ml-2">
+                      <button
+                        onClick={() => openModal(brand)}
+                        className="text-blue-600 hover:text-blue-900 p-1"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(brand)}
+                        className="text-red-600 hover:text-red-900 p-1"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Brand Details Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <span className="text-xs text-gray-500 block mb-0.5">Slug</span>
+                      <span className="text-gray-600">{brand.slug}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500 block mb-0.5">Prindi</span>
+                      <span className="text-gray-900">{brand.parent_name || "—"}</span>
+                    </div>
+                  </div>
+
+                  {/* Products Count */}
+                  <div className="mt-3">
+                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                      {brand.products_count || 0} produkte
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="bg-gray-50 px-4 py-3 border-t flex items-center justify-between">
-            <div className="flex-1 flex justify-between sm:hidden">
+          <div className="bg-gray-50 px-3 md:px-4 py-3 border-t flex items-center justify-between">
+            <div className="flex-1 flex justify-between md:hidden">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Mbrapa
               </button>
+              <span className="text-xs text-gray-700 self-center">
+                Faqe {currentPage} / {totalPages}
+              </span>
               <button
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Para
               </button>
             </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div className="hidden md:flex-1 md:flex md:items-center md:justify-between">
               <div>
                 <p className="text-sm text-gray-700">
                   Duke shfaqur{" "}

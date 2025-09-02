@@ -5,7 +5,7 @@ import { Routes } from '@/config/routes';
 
 const LoyaltyCard = () => {
   return (
-    <div className="bg-[#fff] py-20 px-16">
+    <div className="bg-[#fff] py-20 px-2 sm:px-16">
       <Link href={Routes.register} className="block cursor-pointer hover:opacity-90 transition-opacity">
         <Image
           src={'/icons/loyalty-card.svg'}

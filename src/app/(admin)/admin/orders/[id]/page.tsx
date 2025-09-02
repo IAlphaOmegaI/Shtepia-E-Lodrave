@@ -175,51 +175,53 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
+        <div className="flex items-start sm:items-center gap-3 sm:gap-4">
           <Link
             href="/admin/orders"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors mt-0.5 sm:mt-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Link>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-gray-800">
+          <div className="flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800">
                 Porosia #{orderData.order_number}
               </h1>
-              <StatusIcon className="w-5 h-5" />
-              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${statusConfig[orderData.status]?.color}`}>
-                {statusConfig[orderData.status]?.label}
-              </span>
+              <div className="flex items-center gap-2">
+                <StatusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className={`inline-flex px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-semibold rounded-full ${statusConfig[orderData.status]?.color}`}>
+                  {statusConfig[orderData.status]?.label}
+                </span>
+              </div>
             </div>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">
               Krijuar më {formatDate(orderData.created_at)}
             </p>
           </div>
         </div>
         <Link
           href={`/admin/orders/${orderId}/edit`}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center justify-center gap-1.5 sm:gap-2 bg-blue-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto text-sm sm:text-base"
         >
-          <Edit className="w-4 h-4" />
+          <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           Ndrysho Porosinë
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6 order-2 lg:order-1">
           {/* Order Info */}
           <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <FileText className="w-5 h-5" />
+            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+              <h2 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <FileText className="w-4 h-4 md:w-5 md:h-5" />
                 Informacioni i Porosisë
               </h2>
             </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 gap-6">
+            <div className="p-4 md:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <p className="text-sm font-medium text-gray-500 mb-1">Numri i Porosisë</p>
                   <div className="flex items-center gap-2">
@@ -281,13 +283,14 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
 
           {/* Order Items */}
           <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Package className="w-5 h-5" />
+            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+              <h2 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Package className="w-4 h-4 md:w-5 md:h-5" />
                 Artikujt e Porosisë ({orderData.items_count || orderData.items?.length || 0})
               </h2>
             </div>
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
@@ -340,8 +343,45 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
               </table>
             </div>
 
+            {/* Mobile Stacked View */}
+            <div className="md:hidden divide-y divide-gray-200">
+              {orderData.items?.map((item) => (
+                <div key={item.id} className="p-4">
+                  <div className="mb-2">
+                    <p className="text-sm font-medium text-gray-900">
+                      {item.product.name}
+                    </p>
+                    {item.product.brand && (
+                      <p className="text-xs text-gray-500">
+                        Brendi: {item.product.brand}
+                      </p>
+                    )}
+                    {item.discount_info && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {item.discount_info}
+                      </p>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div>
+                      <span className="text-xs text-gray-500 block">Çmimi</span>
+                      <span className="text-gray-900">{formatPrice(item.price)}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500 block">Sasia</span>
+                      <span className="text-gray-900">{item.quantity}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500 block">Totali</span>
+                      <span className="font-medium text-gray-900">{formatPrice(item.total_price)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             {/* Order Totals */}
-            <div className="bg-gray-50 px-6 py-4">
+            <div className="bg-gray-50 px-4 md:px-6 py-3 md:py-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Nëntotali:</span>
@@ -373,16 +413,16 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-4 md:space-y-6 order-1 lg:order-2">
           {/* Customer Info */}
           <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <User className="w-5 h-5" />
+            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <User className="w-4 h-4 md:w-5 md:h-5" />
                 Klienti
               </h3>
             </div>
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {orderData.customer ? (
                 <div className="space-y-3">
                   <div>
@@ -417,13 +457,13 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
           {/* Shipping Address */}
           {orderData.shipping_address && (
             <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
+              <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 md:w-5 md:h-5" />
                   Adresa e Dërgimit
                 </h3>
               </div>
-              <div className="p-6 space-y-2">
+              <div className="p-4 md:p-6 space-y-2">
                 <p className="text-sm text-gray-900">{orderData.shipping_address.street_address}</p>
                 <p className="text-sm text-gray-900">
                   {orderData.shipping_address.city}
@@ -444,13 +484,13 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
           {/* Billing Address */}
           {orderData.billing_address && (
             <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
+              <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 md:w-5 md:h-5" />
                   Adresa e Faturimit
                 </h3>
               </div>
-              <div className="p-6 space-y-2">
+              <div className="p-4 md:p-6 space-y-2">
                 <p className="text-sm text-gray-900">{orderData.billing_address.street_address}</p>
                 <p className="text-sm text-gray-900">
                   {orderData.billing_address.city}
@@ -470,13 +510,13 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
 
           {/* Order Timeline */}
           <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
+            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Calendar className="w-4 h-4 md:w-5 md:h-5" />
                 Historia e Porosisë
               </h3>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-4 md:p-6 space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
                 <div className="flex-1">
@@ -528,10 +568,10 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
           {/* Order Actions */}
           {(orderData.can_be_cancelled || orderData.can_be_refunded) && (
             <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Veprime</h3>
+              <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900">Veprime</h3>
               </div>
-              <div className="p-6 space-y-3">
+              <div className="p-4 md:p-6 space-y-3">
                 {orderData.can_be_cancelled && (
                   <p className="text-sm text-gray-600 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500" />
