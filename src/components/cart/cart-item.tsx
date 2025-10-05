@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import Counter from '@/components/ui/counter';
 import { CloseIcon } from '@/components/icons/close-icon';
 import { fadeInOut } from '@/lib/motion/fade-in-out';
@@ -14,6 +15,7 @@ interface CartItemProps {
 
 const CartItem = ({ item }: CartItemProps) => {
   const { removeItem, updateItem } = useCart();
+  const [imageError, setImageError] = useState(false);
 
   const { price } = usePrice({
     amount: item.price,
@@ -60,13 +62,22 @@ const CartItem = ({ item }: CartItemProps) => {
       <div className="flex items-start space-x-4">
         {/* Product Image */}
         <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden bg-gray-100 rounded-lg">
-          <Image
-            src={item?.image || '/icons/newCollection-card.svg'}
-            alt={item.name}
-            fill
-            sizes="64px"
-            className="object-contain"
-          />
+          {item?.image && !imageError ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_IMAGE_URL || 'https://api.shtepialodrave.com'}${item.image}`}
+              alt={item.name}
+              fill
+              sizes="64px"
+              className="object-contain"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gray-100">
+              <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          )}
         </div>
         
         {/* Product Info */}

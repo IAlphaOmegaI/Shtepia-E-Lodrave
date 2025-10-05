@@ -114,8 +114,8 @@ export const api = {
 
   // Categories
   categories: {
-    getAll: async () => {
-      const { data } = await apiClient.get('/categories/');
+    getAll: async (params?: any) => {
+      const { data } = await apiClient.get('/categories/', { params });
       return data;
     },
     // Admin categories management with full query params support
