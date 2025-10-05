@@ -10,18 +10,10 @@ import cn from 'classnames';
 import { CategoryService, BrandService } from '@/services';
 import type { Category, Brand } from '@/types';
 
-// Age groups - these might come from API or config
-const ageGroups = [
-  { id: 1, name: '0 - 1 Years', slug: '0-1-years' },
-  { id: 2, name: '1 - 3 Years', slug: '1-3-years' },
-  { id: 3, name: '4 - 8 Years', slug: '4-8-years' },
-  { id: 4, name: '8+ Years', slug: '8-plus-years' },
-];
-
 const MobileMainMenu: React.FC = () => {
   const [_, setDrawerState] = useAtom(drawerAtom);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  const [subMenuView, setSubMenuView] = useState<'main' | 'category' | 'brand' | 'lego' | 'age'>('main');
+  const [subMenuView, setSubMenuView] = useState<'main' | 'category' | 'brand' | 'lego'>('main');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -148,9 +140,9 @@ const MobileMainMenu: React.FC = () => {
               <ul className="space-y-2">
                 {brands.slice(0, 10).map((brand) => (
                   <li key={brand.id}>
-                    <Link 
-                      href={`/brands/${brand.slug}`} 
-                      onClick={closeDrawer} 
+                    <Link
+                      href={`/brands/${brand.slug}`}
+                      onClick={closeDrawer}
                       className="block py-2 text-base text-gray-700 hover:text-[#F44535]"
                     >
                       {brand.name}
@@ -160,24 +152,6 @@ const MobileMainMenu: React.FC = () => {
               </ul>
             </div>
           )}
-
-          {/* Age Section */}
-          <div className="px-5 py-4 border-t border-gray-200">
-            <h3 className="text-sm font-semibold text-[#F44535] mb-3">Age</h3>
-            <ul className="space-y-2">
-              {ageGroups.map((age) => (
-                <li key={age.id}>
-                  <Link
-                    href={`/age/${age.slug}`}
-                    onClick={closeDrawer}
-                    className="block py-2 text-base text-gray-700 hover:text-[#F44535]"
-                  >
-                    {age.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
       </div>
     </div>

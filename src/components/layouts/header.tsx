@@ -101,15 +101,28 @@ const Header = ({ layout }: { layout?: string }) => {
   const [isScrolling] = useAtom(checkIsScrollingStart);
   const { width } = useWindowSize();
   
+  const isTestingMode = process.env.NEXT_PUBLIC_TESTING_MODE === 'true';
+
   return (
     <>
+      {/* Testing Mode Banner */}
+      {isTestingMode && (
+        <div className="fixed top-0 left-0 right-0 z-[100] bg-[#FF6B00] text-white py-3 px-4 text-center shadow-lg">
+          <p className="text-sm md:text-base font-semibold">
+            ⚠️ Kjo faqe është në fazë të testimit dhe nuk do të pranohen porosi deri në njoftim të mëtejshëm
+          </p>
+        </div>
+      )}
+
       <header
         id="site-header"
         ref={siteHeaderRef}
         className={twMerge(
           cn(
-            "site-header-with-search top-0 z-50 w-full transition-all lg:fixed",
+            "site-header-with-search z-50 w-full transition-all lg:fixed",
             {
+              "top-0": !isTestingMode,
+              "top-[52px] md:top-[56px]": isTestingMode,
               "": isFlattenHeader,
               "sticky lg:sticky": isHomePage,
               "sticky border-b border-border-200 shadow-sm": !isHomePage,

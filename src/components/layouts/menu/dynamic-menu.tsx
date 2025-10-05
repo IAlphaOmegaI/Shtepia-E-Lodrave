@@ -8,14 +8,6 @@ import { ArrowDownIcon } from '@/components/icons/arrow-down';
 import { CategoryService, BrandService } from '@/services';
 import type { Category, Brand } from '@/types';
 
-// Age groups - these might come from API or config
-const ageGroups = [
-  { id: 1, name: '0 - 1 years', slug: '0-1-years' },
-  { id: 2, name: '1 - 3 years', slug: '1-3-years' },
-  { id: 3, name: '4 - 8 years', slug: '4-8-years' },
-  { id: 4, name: '8+ years', slug: '8-plus-years' },
-];
-
 const DynamicMenu: React.FC = () => {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -139,7 +131,7 @@ const DynamicMenu: React.FC = () => {
                 {isOpen && (
                   <div className="mega-menu-dropdown fixed left-0 right-0 top-[149px] z-30 h-[calc(100vh-150px)] bg-white py-[24px] px-[100px] overflow-auto shadow-xl">
                     <div className="mx-auto max-w-7xl">
-                      <div className="grid grid-cols-4 gap-x-20">
+                      <div className="grid grid-cols-3 gap-x-20">
                         {/* Categories Column */}
                         <div className="pr-8 border-r border-[#E8E8E8]">
                           <h3 className="text-[#F44535] font-semibold mb-4">Kategoritë</h3>
@@ -164,7 +156,7 @@ const DynamicMenu: React.FC = () => {
                           <ul className="space-y-2">
                             {brands.slice(0, 6).map((brand) => (
                               <li key={brand.id}>
-                                <Link 
+                                <Link
                                   href={`/brands/${brand.slug}`}
                                   onClick={() => setOpenMenu(null)}
                                   className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
@@ -181,7 +173,7 @@ const DynamicMenu: React.FC = () => {
                           const legoBrand = brands.find(b => b.slug === 'lego' || b.name.toLowerCase() === 'lego');
                           if (legoBrand && legoBrand.children && legoBrand.children.length > 0) {
                             return (
-                              <div className="px-8 border-r border-[#E8E8E8]">
+                              <div className="pl-8">
                                 <h3 className="text-[#F44535] font-semibold mb-4">LEGO</h3>
                                 <ul className="space-y-2">
                                   {legoBrand.children.map((child) => (
@@ -201,24 +193,6 @@ const DynamicMenu: React.FC = () => {
                           }
                           return null; // Don't show LEGO column if no LEGO brand exists
                         })()}
-
-                        {/* Age Column */}
-                        <div className="pl-8">
-                          <h3 className="text-[#F44535] font-semibold mb-4">Age</h3>
-                          <ul className="space-y-2">
-                            {ageGroups.map((age) => (
-                              <li key={age.id}>
-                                <Link
-                                  href={`/age/${age.slug}`}
-                                  onClick={() => setOpenMenu(null)}
-                                  className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
-                                >
-                                  {age.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
                       </div>
                     </div>
                   </div>
