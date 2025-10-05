@@ -49,14 +49,14 @@ const NewCollections: React.FC<NewCollectionsProps> = ({ products }) => {
           Zbulo koleksionet e reja
         </p>
 
-        <div className="mx-auto my-5 w-72 h-20 relative">
+        {/* <div className="mx-auto my-5 w-72 h-20 relative">
           <Image
             src="/icons/newCollections.svg"
             alt="New Collection"
             width={560}
             height={58}
           />
-        </div>
+        </div> */}
 
         <div className="relative pl-0 pr-0 md:pl-32 md:pr-32">
           <Swiper
