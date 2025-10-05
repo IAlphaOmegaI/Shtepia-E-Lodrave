@@ -433,15 +433,15 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                   </button>
                 </div>
 
-                <span className="text-[#777] text-[16px] font-albertsans">
+                {/* <span className="text-[#777] text-[16px] font-albertsans">
                   ({product.quantity} copë në dispozicion)
-                </span>
+                </span> */}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center ">
                 <button
                   onClick={handleAddToCart}
-                  disabled={product.quantity === 0}
+                 
                   className="cursor-pointer flex-1 bg-[#FEBC1B] hover:bg-[#FEB000] text-[#252323] font-semibold py-4 px-8 rounded-[8px] transition-colors flex items-center justify-center gap-3 text-[18px] font-albertsans h-[56px]"
                 >
                   <ShoppingCartIcon className="w-5 h-5 text-[#252323]" />

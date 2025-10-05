@@ -48,7 +48,7 @@ export class CategoryService {
    */
   static async getParentCategories() {
     try {
-      const response = await api.categories.getAll();
+      const response = await api.categories.getAll({ is_main: true });
       const categories = response.data || response || [];
       // Filter for parent categories (those with no parent field or parent is null)
       return categories.filter((cat: any) => !cat.parent || cat.parent === null);

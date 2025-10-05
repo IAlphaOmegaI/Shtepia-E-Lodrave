@@ -163,8 +163,8 @@ export class OrderService {
   }) {
     try {
       const payload = {
-        shop: 2, // hardcoded for now
-        vendor: 1, // hardcoded for now
+        shop: Number(process.env.NEXT_PUBLIC_SHOP_ID) || 18,
+        vendor: Number(process.env.NEXT_PUBLIC_VENDOR_ID) || 3838,
         payment_method: (data.payment_method as PaymentGateway) || "cash_on_delivery",
         shipping_notes: data.shipping_notes || "",
         order_notes: data.order_notes || "",
