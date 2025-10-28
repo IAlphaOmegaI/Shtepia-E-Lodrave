@@ -4,11 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import Image from 'next/image';
-import { 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  ChevronLeft, 
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  ChevronLeft,
   ChevronRight,
   ArrowUpDown,
   ArrowUp,
@@ -20,7 +20,8 @@ import {
   EyeOff,
   Upload,
   X,
-  Star
+  Star,
+  Search
 } from 'lucide-react';
 
 const BASE_IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || 'https://api.shtepialodrave.com';
@@ -63,12 +64,13 @@ export default function CategoriesPage() {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [ordering, setOrdering] = useState<string>('name');
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
   const [uploadingBanner, setUploadingBanner] = useState(false);
   const [uploadingFeatured, setUploadingFeatured] = useState(false);
-  
+
   const pageSize = 10;
 
   // Form state for create/edit
@@ -83,11 +85,12 @@ export default function CategoriesPage() {
 
   // Fetch categories with params
   const { data: categoriesData, isLoading, error } = useQuery<CategoriesResponse>({
-    queryKey: ['admin-categories', currentPage, ordering],
+    queryKey: ['admin-categories', currentPage, ordering, searchTerm],
     queryFn: () => api.categories.getForAdmin({
       page: currentPage,
       page_size: pageSize,
       ordering: ordering,
+      search: searchTerm || undefined,
     }),
   });
 
@@ -103,7 +106,7 @@ export default function CategoriesPage() {
 
   // Update category mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => 
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
       api.categories.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
@@ -135,7 +138,7 @@ export default function CategoriesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (editingCategory) {
       updateMutation.mutate({ id: editingCategory.id, data: formData });
     } else {
@@ -146,36 +149,36 @@ export default function CategoriesPage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, imageType: 'banner' | 'featured_image', categoryId?: number) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
+
     // Only allow upload if we have a category ID (editing existing category)
     if (!categoryId) {
       alert('Ju lutem ruani kategorinë së pari para se të ngarkoni imazhet');
       e.target.value = '';
       return;
     }
-    
+
     const file = files[0];
     const formData = new FormData();
     formData.append('image', file);
     formData.append('image_type', imageType);
-    
+
     if (imageType === 'banner') {
       setUploadingBanner(true);
     } else {
       setUploadingFeatured(true);
     }
-    
+
     try {
       const response = await api.categories.uploadImage(categoryId, formData);
-      
+
       // Update the editing category with fresh data (handle data wrapper)
       if (editingCategory && response) {
         const categoryData = response.data || response;
         setEditingCategory(categoryData);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      
+
       // Clear the input
       e.target.value = '';
     } catch (error: any) {
@@ -203,7 +206,7 @@ export default function CategoriesPage() {
       const response = await api.categories.getByIdForAdmin(category.id);
       // Extract data from the wrapper
       const freshData = response.data || response;
-      
+
       setEditingCategory(freshData);
       setFormData({
         name: freshData.name,
@@ -263,6 +266,11 @@ export default function CategoriesPage() {
     }
   }, [formData.name, editingCategory]);
 
+  // Reset to page 1 when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   if (error) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -294,14 +302,39 @@ export default function CategoriesPage() {
         </button>
       </div>
 
-      {/* Stats */}
+      {/* Search and Stats */}
       <div className="bg-white rounded-lg shadow p-3 md:p-4 mb-4 md:mb-6">
-        <div className="text-xs md:text-sm text-gray-600">
-          {categoriesData && (
-            <span>
-              Duke shfaqur {categories.length} nga {totalCount} kategori
-            </span>
-          )}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Kërko kategori..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full pl-9 md:pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm md:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
+          </div>
+
+          {/* Stats */}
+          <div className="text-xs md:text-sm text-gray-600">
+            {categoriesData && (
+              <span>
+                Duke shfaqur {categories.length} nga {totalCount} kategori
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -374,8 +407,8 @@ export default function CategoriesPage() {
                       <div className="flex items-center">
                         {(category.banner || category.featured_image) ? (
                           <div className="relative w-10 h-10 mr-3">
-                            <Image 
-                              src={getImageUrl(category.banner || category.featured_image)} 
+                            <Image
+                              src={getImageUrl(category.banner || category.featured_image)}
                               alt={category.name}
                               fill
                               className="rounded-lg object-cover"
@@ -485,8 +518,8 @@ export default function CategoriesPage() {
                     <div className="flex items-center flex-1">
                       {(category.banner || category.featured_image) ? (
                         <div className="relative w-12 h-12 mr-3 flex-shrink-0">
-                          <Image 
-                            src={getImageUrl(category.banner || category.featured_image)} 
+                          <Image
+                            src={getImageUrl(category.banner || category.featured_image)}
                             alt={category.name}
                             fill
                             className="rounded-lg object-cover"
@@ -519,7 +552,7 @@ export default function CategoriesPage() {
                       </button>
                     </div>
                   </div>
-                  
+
                   {/* Category Details */}
                   <div className="space-y-2 text-xs">
                     {category.description && (
@@ -527,14 +560,14 @@ export default function CategoriesPage() {
                         <span className="font-medium">Përshkrimi:</span> {category.description}
                       </div>
                     )}
-                    
+
                     {category.parent_name && (
                       <div className="flex items-center text-gray-600">
                         <FolderTree className="w-3 h-3 mr-1" />
                         <span className="font-medium">Prind:</span> {category.parent_name}
                       </div>
                     )}
-                    
+
                     {/* Badges */}
                     <div className="flex flex-wrap gap-2 mt-2">
                       {category.is_featured && (
@@ -605,7 +638,7 @@ export default function CategoriesPage() {
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  
+
                   {/* Page Numbers */}
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                     let pageNum;
@@ -618,22 +651,21 @@ export default function CategoriesPage() {
                     } else {
                       pageNum = currentPage - 2 + i;
                     }
-                    
+
                     return (
                       <button
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          currentPage === pageNum
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        }`}
+                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
+                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          }`}
                       >
                         {pageNum}
                       </button>
                     );
                   })}
-                  
+
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}
@@ -656,7 +688,7 @@ export default function CategoriesPage() {
               <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
                 {editingCategory ? 'Ndrysho Kategorinë' : 'Shto Kategori të Re'}
               </h3>
-              
+
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
@@ -725,8 +757,8 @@ export default function CategoriesPage() {
                         </label>
                         {editingCategory.banner && (
                           <div className="mb-2 relative w-full h-32">
-                            <Image 
-                              src={getImageUrl(editingCategory.banner)} 
+                            <Image
+                              src={getImageUrl(editingCategory.banner)}
                               alt="Banner"
                               fill
                               className="object-cover rounded"
@@ -756,8 +788,8 @@ export default function CategoriesPage() {
                         </label>
                         {editingCategory.featured_image && (
                           <div className="mb-2 relative w-full h-32">
-                            <Image 
-                              src={getImageUrl(editingCategory.featured_image)} 
+                            <Image
+                              src={getImageUrl(editingCategory.featured_image)}
                               alt="Featured"
                               fill
                               className="object-cover rounded"
@@ -805,7 +837,7 @@ export default function CategoriesPage() {
                         </span>
                       </label>
                     </div>
-                    
+
                     <div>
                       <label className="flex items-center">
                         <input
@@ -842,8 +874,8 @@ export default function CategoriesPage() {
                     disabled={createMutation.isPending || updateMutation.isPending}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                   >
-                    {createMutation.isPending || updateMutation.isPending 
-                      ? 'Duke ruajtur...' 
+                    {createMutation.isPending || updateMutation.isPending
+                      ? 'Duke ruajtur...'
                       : editingCategory ? 'Përditëso' : 'Krijo'}
                   </button>
                 </div>

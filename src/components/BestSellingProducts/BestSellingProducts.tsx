@@ -67,7 +67,7 @@ const breakpoints = {
 };
 
 // Number of categories to display
-const MAX_CATEGORIES_TO_DISPLAY = 3;
+const MAX_CATEGORIES_TO_DISPLAY = 4;
 
 const BestSellingProducts = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -77,6 +77,8 @@ const BestSellingProducts = () => {
     queryKey: ['popularProducts'],
     queryFn: () => api.products.getPopular(),
   });
+
+
 
   useEffect(() => {
     if (data?.popular_products) {
@@ -116,8 +118,8 @@ const BestSellingProducts = () => {
         </div>
 
         <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">
-          {popularCategories.slice(0, MAX_CATEGORIES_TO_DISPLAY).map((cat) => (
-            <button
+          {popularCategories.slice(0, MAX_CATEGORIES_TO_DISPLAY).map((cat) => {
+            return (<button
               key={cat.category.id}
               onClick={() => setActiveTab(cat.category.name)}
               className={
@@ -134,8 +136,9 @@ const BestSellingProducts = () => {
                cat.category.name === 'puzzle' ? 'Puzzle' :
                cat.category.name === 'fustane' ? 'Fustane' :
                cat.category.name.charAt(0).toUpperCase() + cat.category.name.slice(1)}
-            </button>
-          ))}
+            </button>)
+          }
+          )}
         </div>
 
         {isLoading ? (

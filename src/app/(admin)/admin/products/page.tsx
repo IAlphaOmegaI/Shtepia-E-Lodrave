@@ -5,11 +5,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  Search, 
-  Plus, 
-  Edit2, 
-  ChevronLeft, 
+import {
+  Search,
+  Plus,
+  Edit2,
+  ChevronLeft,
   ChevronRight,
   ArrowUpDown,
   ArrowUp,
@@ -17,7 +17,8 @@ import {
   Package,
   Filter,
   Star,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 
@@ -86,7 +87,7 @@ export default function ProductsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  
+
   const pageSize = 20;
   const debouncedSearch = useDebounce(searchTerm, 500);
 
@@ -189,6 +190,37 @@ export default function ProductsPage() {
         </Link>
       </div>
 
+      {/* Search and Filter */}
+      <div className="bg-white rounded-lg shadow p-3 md:p-4 mb-4 md:mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Kërko produkte" //Kërko produkte sipas emrit, SKU, ose kodi...
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full max-w-106 pl-9 md:pl-10 pr-10 py-2 border border-gray-300 rounded-lg text-sm md:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
+          </div>
+        </div>
+        {debouncedSearch && (
+          <div className="mt-2 text-xs text-gray-600">
+            Duke kërkuar për: <span className="font-medium">{debouncedSearch}</span>
+          </div>
+        )}
+      </div>
 
       {/* Products Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -259,15 +291,15 @@ export default function ProductsPage() {
               ) : (
                 products.map((product) => {
                   const productImage = getProductImage(product);
-                  
+
                   return (
                     <tr key={product.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {productImage ? (
                             <div className="relative w-12 h-12 mr-3">
-                              <Image 
-                                src={productImage} 
+                              <Image
+                                src={productImage}
                                 alt={product.name}
                                 fill
                                 className="rounded-lg object-cover"
@@ -320,7 +352,7 @@ export default function ProductsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         {product.categories && product.categories.length > 0 ? (
                           <div className="text-sm text-gray-600">
-                            {product.categories.map(cat => 
+                            {product.categories.map(cat =>
                               cat.parent_name ? `${cat.parent_name} > ${cat.name}` : cat.name
                             ).join(', ')}
                           </div>
@@ -376,7 +408,7 @@ export default function ProductsPage() {
             <div className="divide-y divide-gray-200">
               {products.map((product) => {
                 const productImage = getProductImage(product);
-                
+
                 return (
                   <div key={product.id} className="p-4 hover:bg-gray-50">
                     {/* Product Header with Image */}
@@ -384,8 +416,8 @@ export default function ProductsPage() {
                       <div className="flex items-start flex-1">
                         {productImage ? (
                           <div className="relative w-16 h-16 mr-3 flex-shrink-0">
-                            <Image 
-                              src={productImage} 
+                            <Image
+                              src={productImage}
                               alt={product.name}
                               fill
                               className="rounded-lg object-cover"
@@ -433,7 +465,7 @@ export default function ProductsPage() {
                         </Link>
                       </div>
                     </div>
-                    
+
                     {/* Product Details */}
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       {/* Price */}
@@ -456,7 +488,7 @@ export default function ProductsPage() {
                           )}
                         </div>
                       </div>
-                      
+
                       {/* Sales */}
                       <div>
                         <span className="text-gray-500">Shitje:</span>
@@ -464,13 +496,13 @@ export default function ProductsPage() {
                           {product.sales_count || 0}
                         </div>
                       </div>
-                      
+
                       {/* Categories - Full Width */}
                       {product.categories && product.categories.length > 0 && (
                         <div className="col-span-2">
                           <span className="text-gray-500">Kategoria:</span>
                           <div className="text-gray-700 mt-1">
-                            {product.categories.map(cat => 
+                            {product.categories.map(cat =>
                               cat.parent_name ? `${cat.parent_name} > ${cat.name}` : cat.name
                             ).join(', ')}
                           </div>
@@ -528,7 +560,7 @@ export default function ProductsPage() {
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  
+
                   {/* Page Numbers */}
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                     let pageNum;
@@ -541,22 +573,21 @@ export default function ProductsPage() {
                     } else {
                       pageNum = currentPage - 2 + i;
                     }
-                    
+
                     return (
                       <button
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          currentPage === pageNum
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        }`}
+                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
+                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          }`}
                       >
                         {pageNum}
                       </button>
                     );
                   })}
-                  
+
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}

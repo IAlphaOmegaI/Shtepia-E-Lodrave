@@ -85,7 +85,7 @@ function LoginPageContent() {
     <div className="bg-white p-8 rounded-2xl shadow-sm max-w-md w-full">
       {/* Title */}
       <h1 className="text-3xl font-bold text-red-600 text-center mb-2">
-        Ju lutem kyquni
+        Login
       </h1>
       
      
@@ -164,7 +164,7 @@ function LoginPageContent() {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Kyqu...' : 'Kyqu'}
+          {loading ? 'Login...' : 'Login'}
         </button>
       </form>
 

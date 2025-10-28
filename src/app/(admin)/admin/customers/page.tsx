@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
-import { 
+import {
   Users,
   Mail,
-  ChevronLeft, 
+  ChevronLeft,
   ChevronRight,
   ArrowUpDown,
   ArrowUp,
@@ -24,6 +24,7 @@ interface Customer {
   address?: string;
   bio?: string;
   contact?: string | null;
+  points?: number;
 }
 
 interface CustomersResponse {
@@ -39,7 +40,7 @@ interface CustomersResponse {
 export default function CustomersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [ordering, setOrdering] = useState<string>('-id');
-  
+
   const pageSize = 20;
 
   // Fetch customers
@@ -85,6 +86,8 @@ export default function CustomersPage() {
   const totalCount = customersData?.count || customersData?.total || 0;
   const totalPages = customersData?.total_pages || Math.ceil(totalCount / pageSize);
 
+console.log('Customers Data:', customersData);
+
   return (
     <div>
       {/* Page Header */}
@@ -128,6 +131,15 @@ export default function CustomersPage() {
                   </span>
                 </th>
                 <th className="px-6 py-3 text-center">
+                  <button
+                    // onClick={() => toggleSorting('points')}
+                    className="text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
+                  >
+                    Pikët
+                    {getSortIcon('points')}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-center">
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Roli
                   </span>
@@ -137,7 +149,7 @@ export default function CustomersPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center">
+                  <td colSpan={6} className="px-6 py-4 text-center">
                     <div className="flex justify-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
@@ -145,7 +157,7 @@ export default function CustomersPage() {
                 </tr>
               ) : customers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                     Nuk u gjetën klientë
                   </td>
                 </tr>
@@ -186,6 +198,11 @@ export default function CustomersPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-900 truncate max-w-xs block" title={customer.address}>
                         {customer.address || '—'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className="text-sm font-semibold text-gray-900">
+                        {customer.points !== undefined && customer.points !== null ? customer.points.toLocaleString() : '0'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -278,6 +295,12 @@ export default function CustomersPage() {
                         <span className="truncate">{customer.address}</span>
                       </div>
                     )}
+                    <div className="text-gray-900">
+                      <span className="text-xs text-gray-500">Pikët: </span>
+                      <span className="font-semibold">
+                        {customer.points !== undefined && customer.points !== null ? customer.points.toLocaleString() : '0'}
+                      </span>
+                    </div>
                     {customer.bio && (
                       <div className="text-gray-500 text-xs truncate">
                         {customer.bio}
@@ -337,7 +360,7 @@ export default function CustomersPage() {
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  
+
                   {/* Page Numbers */}
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                     let pageNum;
@@ -350,22 +373,21 @@ export default function CustomersPage() {
                     } else {
                       pageNum = currentPage - 2 + i;
                     }
-                    
+
                     return (
                       <button
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          currentPage === pageNum
+                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
                             ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
                             : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        }`}
+                          }`}
                       >
                         {pageNum}
                       </button>
                     );
                   })}
-                  
+
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}

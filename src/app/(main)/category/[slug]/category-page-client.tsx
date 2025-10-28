@@ -91,7 +91,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 mt-20">
+      <div className="container mx-auto px-4 py-8 sm:mt-20 -mt-50">
         {/* Mobile Filter Button */}
         <div className="lg:hidden mb-4">
           <button
@@ -210,7 +210,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
                   <span className="text-gray-600 font-albertsans text-sm sm:text-base">
                     Produkte:
                   </span>
@@ -220,7 +220,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                       setItemsPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="border border-gray-300 rounded px-3 py-1 font-albertsans text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#FEBC1B] focus:border-[#FEBC1B] cursor-pointer flex-1 sm:flex-initial"
+                    className="border border-gray-300 rounded px-3 py-1 font-albertsans text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#FEBC1B] focus:border-[#FEBC1B] cursor-pointer sm:flex-initial"
                   >
                     <option value={12}>12</option>
                     <option value={24}>24</option>
@@ -228,14 +228,14 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
                   </select>
                 </div>
 
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
                   <span className="text-gray-600 font-albertsans text-sm sm:text-base">
                     Sort:
                   </span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="border border-gray-300 rounded px-3 py-1 font-albertsans text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#FEBC1B] focus:border-[#FEBC1B] cursor-pointer flex-1 sm:flex-initial"
+                    className="border border-gray-300 rounded px-3 py-1 font-albertsans text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#FEBC1B] focus:border-[#FEBC1B] cursor-pointer sm:flex-initial"
                   >
                     <option value="">Default</option>
                     <option value="sales">Sort by Sales</option>
