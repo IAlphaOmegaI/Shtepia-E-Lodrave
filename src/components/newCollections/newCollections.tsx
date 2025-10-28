@@ -58,7 +58,7 @@ const NewCollections: React.FC<NewCollectionsProps> = ({ products }) => {
           />
         </div> */}
 
-        <div className="relative pl-0 pr-0 md:pl-32 md:pr-32">
+        <div className="relative pl-0 pr-0 md:pl-32 pt-8 md:pr-32">
           <Swiper
             modules={[Navigation]}
             navigation={{

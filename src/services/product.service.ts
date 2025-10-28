@@ -55,7 +55,14 @@ export class ProductService {
    * Get new collection products
    */
   static async getNewCollections(limit: number = 20) {
-    return this.getByCategory(NEW_COLLECTIONS_CATEGORY_ID, limit);
+    // return this.getByCategory(NEW_COLLECTIONS_CATEGORY_ID, limit);
+     try {
+      const response = await api.products.getByCategorySlug("koleksioni-ri", limit);
+      return response.data || [];
+    } catch (error) {
+      console.error(`Error fetching products for category koleksioni-ri`, error);
+      return [];
+    }
   }
 
   /**

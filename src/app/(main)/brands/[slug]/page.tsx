@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
-import { BrandService, ProductService } from '@/services';
 import { PageHeader } from '@/components/common';
 import ProductCard from '@/components/products/product-card';
-import Image from 'next/image';
+import { BrandService, ProductService } from '@/services';
 import type { Brand, Product } from '@/types';
-import { ChevronDown, Grid3x3, List } from 'lucide-react';
+import Image from 'next/image';
+import { use, useEffect, useState } from 'react';
 
 const BASE_IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || 'https://api.shtepialodrave.com';
 

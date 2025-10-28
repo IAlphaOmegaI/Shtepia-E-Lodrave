@@ -24,7 +24,7 @@ interface Customer {
   address?: string;
   bio?: string;
   contact?: string | null;
-  points?: number;
+  loyalty_points?: number;
 }
 
 interface CustomersResponse {
@@ -52,6 +52,7 @@ export default function CustomersPage() {
       ordering: ordering,
     }),
   });
+
 
   const toggleSorting = (field: string) => {
     if (ordering === field) {
@@ -86,7 +87,7 @@ export default function CustomersPage() {
   const totalCount = customersData?.count || customersData?.total || 0;
   const totalPages = customersData?.total_pages || Math.ceil(totalCount / pageSize);
 
-console.log('Customers Data:', customersData);
+  console.log('Customers Data:', customersData);
 
   return (
     <div>
@@ -136,7 +137,7 @@ console.log('Customers Data:', customersData);
                     className="text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
                   >
                     Pikët
-                    {getSortIcon('points')}
+                    {/* {getSortIcon('points')} */}
                   </button>
                 </th>
                 <th className="px-6 py-3 text-center">
@@ -202,7 +203,7 @@ console.log('Customers Data:', customersData);
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <span className="text-sm font-semibold text-gray-900">
-                        {customer.points !== undefined && customer.points !== null ? customer.points.toLocaleString() : '0'}
+                        {customer.loyalty_points !== undefined && customer.loyalty_points !== null ? customer.loyalty_points.toLocaleString() : '0'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -298,7 +299,7 @@ console.log('Customers Data:', customersData);
                     <div className="text-gray-900">
                       <span className="text-xs text-gray-500">Pikët: </span>
                       <span className="font-semibold">
-                        {customer.points !== undefined && customer.points !== null ? customer.points.toLocaleString() : '0'}
+                        {customer.loyalty_points !== undefined && customer.loyalty_points !== null ? customer.loyalty_points.toLocaleString() : '0'}
                       </span>
                     </div>
                     {customer.bio && (
@@ -379,8 +380,8 @@ console.log('Customers Data:', customersData);
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
                         className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                           }`}
                       >
                         {pageNum}

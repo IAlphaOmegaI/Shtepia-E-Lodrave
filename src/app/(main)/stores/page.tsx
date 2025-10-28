@@ -114,13 +114,13 @@ export default function StoresPage() {
 
             {/* Right Side - Map */}
             <div className="relative  overflow-hidden ">
-              <div className="h-96 lg:h-[500px] relative ">
+              <div className="h-96 lg:h-[500px] relative">
                 {/* Real Map Background */}
                 <Image
-                  src="/map.jpg"
+                  src="/map-store-image.jpeg"
                   alt="Tirana Map"
                   fill
-                  className="object-contain"
+                  className="object-fill rounded-lg"
                 />
               </div>
             </div>
