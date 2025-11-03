@@ -152,6 +152,42 @@ const MobileMainMenu: React.FC = () => {
               </ul>
             </div>
           )}
+
+          {/* LEGO Section - Only show for lodra (toys) category */}
+          {(() => {
+            // Only show LEGO for lodra/toys category
+            const isLodraToys = selectedCategory?.slug === 'lodra' ||
+              selectedCategory?.name.toLowerCase() === 'lodra';
+
+            if (!isLodraToys) {
+              return null;
+            }
+
+            // Find LEGO brand in all brands (with children)
+            const legoBrand = brands.find(b => b.slug === 'lego' || b.name.toLowerCase() === 'lego');
+
+            if (legoBrand && legoBrand.children && legoBrand.children.length > 0) {
+              return (
+                <div className="px-5 py-4 border-t border-gray-200">
+                  <h3 className="text-sm font-semibold text-[#F44535] mb-3">LEGO</h3>
+                  <ul className="space-y-2">
+                    {legoBrand.children.map((child) => (
+                      <li key={child.id}>
+                        <Link
+                          href={`/brands/${child.slug}`}
+                          onClick={closeDrawer}
+                          className="block py-2 text-base text-gray-700 hover:text-[#F44535]"
+                        >
+                          {child.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
       </div>
     </div>

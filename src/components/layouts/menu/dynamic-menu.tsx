@@ -222,8 +222,17 @@ const DynamicMenu: React.FC = () => {
                           </ul>
                         </div>
 
-                        {/* Third Column - Show LEGO categories if available */}
+                        {/* Third Column - Show LEGO categories only for "lodra" (toys) category */}
                         {(() => {
+                          // Only show LEGO for lodra/toys category
+                          const isLodraToys = category.slug === 'lodra' ||
+                            category.name.toLowerCase() === 'lodra'
+
+
+                          if (!isLodraToys) {
+                            return null;
+                          }
+
                           // Find LEGO brand in all brands (with children)
                           const legoBrand = allBrands.find(b => b.slug === 'lego' || b.name.toLowerCase() === 'lego');
 
