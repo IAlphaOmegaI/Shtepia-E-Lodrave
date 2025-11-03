@@ -8,7 +8,7 @@ const LoyaltyCard = () => {
     <div className="bg-[#fff] py-20 px-2 sm:px-16">
       <Link href={Routes.register} className="block cursor-pointer hover:opacity-90 transition-opacity">
         <Image
-          src={'/icons/loyalty-card.svg'}
+          src={'/assets/shtepia lodrave.png'}
           alt="Loyalty Card"
           width={1920}
           height={1080}
