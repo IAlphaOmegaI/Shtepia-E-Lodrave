@@ -49,11 +49,10 @@ const FilterSection: React.FC<{ title: string; children: React.ReactNode }> = ({
   return (
     <div className="border-b border-[#D9D9D9]">
       <div
-        className={`flex items-center justify-between cursor-pointer ${
-          open
-            ? 'bg-[#FFF2D1] border-b border-[#FED776] pb-6 px-4 pt-[18px]'
-            : 'bg-white px-4 py-5'
-        }`}
+        className={`flex items-center justify-between cursor-pointer ${open
+          ? 'bg-[#FFF2D1] border-b border-[#FED776] pb-6 px-4 pt-[18px]'
+          : 'bg-white px-4 py-5'
+          }`}
         onClick={() => setOpen(!open)}
       >
         <span className="text-[#252323] font-albertsans text-[16px] font-medium leading-[22px]">
@@ -87,7 +86,7 @@ const FilterSection: React.FC<{ title: string; children: React.ReactNode }> = ({
 const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, onFiltersApplied, isShopPage = false }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [filterData, setFilterData] = useState<FilterData>({
     categories: [],
     brands: [],
@@ -96,12 +95,21 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
   const [offerData, setOfferData] = useState<OfferData[]>([]);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
-  
+
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
   const [selectedAge, setSelectedAge] = useState<number | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<number | null>(null);
+
+  // State for "see more" functionality
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [showAllBrands, setShowAllBrands] = useState(false);
+  const [showAllAges, setShowAllAges] = useState(false);
+  const [showAllOffers, setShowAllOffers] = useState(false);
+
+  // Default limit for filter items
+  const FILTER_ITEM_LIMIT = 20;
 
   // Pre-defined price ranges
   const priceRanges: PriceRange[] = [
@@ -115,11 +123,11 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
   // Fetch filter data
   useEffect(() => {
     if (!isShopPage && !categorySlug) return;
-    
+
     const fetchFilters = async () => {
       try {
         setLoading(true);
-        
+
         if (isShopPage) {
           // For shop page, fetch all filters
           const response = await api.filters.getAll();
@@ -128,12 +136,12 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
             const allCategories: { id: number; name: string }[] = [];
             const allBrands: { id: number; name: string }[] = [];
             const allAges: { id: number; label: string }[] = [];
-            
+
             // Extract unique brands from the response
             if (response.brands) {
               allBrands.push(...response.brands);
             }
-            
+
             // Extract categories from each category section
             Object.keys(response).forEach(key => {
               if (key !== 'brands' && key !== 'oferta' && response[key]) {
@@ -153,13 +161,13 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
                 }
               }
             });
-            
+
             setFilterData({
               categories: allCategories,
               brands: allBrands,
               ages: allAges,
             });
-            
+
             // Set offers if available
             if (response.oferta) {
               setOfferData(response.oferta);
@@ -171,7 +179,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
           if (response && response[categorySlug]) {
             setFilterData(response[categorySlug]);
           }
-          
+
           // Fetch offers separately for category pages
           const offersResponse = await api.filters.getOffers();
           if (offersResponse && offersResponse.oferta) {
@@ -191,7 +199,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
   // Initialize filters from URL params
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     // Categories
     const catParam = params.get('categories');
     if (catParam) {
@@ -200,7 +208,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
         setSelectedCategory(categoryId);
       }
     }
-    
+
     // Brands
     const brandParam = params.get('brand');
     if (brandParam) {
@@ -209,7 +217,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
         setSelectedBrand(brandId);
       }
     }
-    
+
     // Ages
     const ageParam = params.get('age_range');
     if (ageParam) {
@@ -218,12 +226,12 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
         setSelectedAge(ageId);
       }
     }
-    
+
     // Price
     const minPrice = params.get('min_price');
     const maxPrice = params.get('max_price');
     if (minPrice || maxPrice) {
-      const range = priceRanges.find(r => 
+      const range = priceRanges.find(r =>
         r.min === (minPrice ? parseInt(minPrice) : undefined) &&
         r.max === (maxPrice ? parseInt(maxPrice) : undefined)
       );
@@ -231,7 +239,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
         setSelectedPriceRange(range.label);
       }
     }
-    
+
     // Offers
     const offerParam = params.get('discount_id');
     if (offerParam) {
@@ -245,32 +253,32 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
 
   const handleApplyFilters = async () => {
     if (!onFiltersApplied) return;
-    
+
     setApplying(true);
-    
+
     // Build filter params
     const filterParams: FilterParams = {};
-    
+
     // Only add categories__slug for category pages, not shop page
     if (!isShopPage && categorySlug) {
       filterParams.categories__slug = categorySlug;
     }
-    
+
     // Add selected category
     if (selectedCategory !== null) {
       filterParams.categories = selectedCategory.toString();
     }
-    
+
     // Add selected brand
     if (selectedBrand !== null) {
       filterParams.brand = selectedBrand.toString();
     }
-    
+
     // Add selected age
     if (selectedAge !== null) {
       filterParams.age_range = selectedAge.toString();
     }
-    
+
     // Add price range
     if (selectedPriceRange) {
       const range = priceRanges.find(r => r.label === selectedPriceRange);
@@ -279,12 +287,12 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
         if (range.max !== undefined) filterParams.max_price = range.max;
       }
     }
-    
+
     // Add selected offer
     if (selectedOffer !== null) {
       filterParams.discount_id = selectedOffer.toString();
     }
-    
+
     // Call the callback with filter params
     onFiltersApplied(filterParams);
     setApplying(false);
@@ -296,7 +304,7 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
     setSelectedAge(null);
     setSelectedBrand(null);
     setSelectedOffer(null);
-    
+
     // Apply cleared filters
     if (onFiltersApplied) {
       const clearedParams: FilterParams = {};
@@ -338,8 +346,8 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
 
       {filterData.categories.length > 0 && (
         <FilterSection title="Kategoritë">
-          <div className="flex flex-col gap-2 text-sm text-gray-700">
-            {filterData.categories.map((cat) => (
+          <div className="flex flex-col gap-2 text-sm text-gray-700 w-full">
+            {(showAllCategories ? filterData.categories : filterData.categories.slice(0, FILTER_ITEM_LIMIT)).map((cat) => (
               <label key={cat.id} className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
                 <input
                   type="checkbox"
@@ -352,6 +360,14 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
                 </span>
               </label>
             ))}
+            {filterData.categories.length > FILTER_ITEM_LIMIT && (
+              <button
+                onClick={() => setShowAllCategories(!showAllCategories)}
+                className="text-[#FEBC1B] font-albertsans cursor-pointer text-[14px] font-semibold leading-[20px] underline mt-1 text-left hover:opacity-70 transition-opacity"
+              >
+                {showAllCategories ? 'See Less' : `See More (${filterData.categories.length - FILTER_ITEM_LIMIT})`}
+              </button>
+            )}
           </div>
         </FilterSection>
       )}
@@ -376,8 +392,8 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
 
       {filterData.ages.length > 0 && (
         <FilterSection title="Mosha">
-          <div className="flex flex-col gap-2 text-sm text-gray-700">
-            {filterData.ages.map((age) => (
+          <div className="flex flex-col gap-2 text-sm text-gray-700 w-full">
+            {(showAllAges ? filterData.ages : filterData.ages.slice(0, FILTER_ITEM_LIMIT)).map((age) => (
               <label key={age.id} className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
                 <input
                   type="checkbox"
@@ -390,14 +406,22 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
                 </span>
               </label>
             ))}
+            {filterData.ages.length > FILTER_ITEM_LIMIT && (
+              <button
+                onClick={() => setShowAllAges(!showAllAges)}
+                className="text-[#FEBC1B] font-albertsans text-[14px] font-semibold leading-[20px] underline mt-1 text-left hover:opacity-70 transition-opacity"
+              >
+                {showAllAges ? 'See Less' : `See More (${filterData.ages.length - FILTER_ITEM_LIMIT})`}
+              </button>
+            )}
           </div>
         </FilterSection>
       )}
 
       {filterData.brands.length > 0 && (
         <FilterSection title="Brand">
-          <div className="flex flex-col gap-2 text-sm text-gray-700">
-            {filterData.brands.map((brand) => (
+          <div className="flex flex-col gap-2 text-sm text-gray-700 w-full">
+            {(showAllBrands ? filterData.brands : filterData.brands.slice(0, FILTER_ITEM_LIMIT)).map((brand) => (
               <label key={brand.id} className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
                 <input
                   type="checkbox"
@@ -410,14 +434,22 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
                 </span>
               </label>
             ))}
+            {filterData.brands.length > FILTER_ITEM_LIMIT && (
+              <button
+                onClick={() => setShowAllBrands(!showAllBrands)}
+                className="text-[#FEBC1B] cursor-pointer font-albertsans text-[14px] font-semibold leading-[20px] underline mt-1 text-left hover:opacity-70 transition-opacity"
+              >
+                {showAllBrands ? 'See Less' : `See More (${filterData.brands.length - FILTER_ITEM_LIMIT})`}
+              </button>
+            )}
           </div>
         </FilterSection>
       )}
 
       {offerData.length > 0 && (
         <FilterSection title="Oferta">
-          <div className="flex flex-col gap-2 text-sm text-gray-700">
-            {offerData.map((offer) => (
+          <div className="flex flex-col gap-2 text-sm text-gray-700 w-full">
+            {(showAllOffers ? offerData : offerData.slice(0, FILTER_ITEM_LIMIT)).map((offer) => (
               <label key={offer.id} className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
                 <input
                   type="checkbox"
@@ -430,6 +462,14 @@ const TreeMenu: React.FC<TreeMenuProps> = ({ categorySlug = 'lodra', className, 
                 </span>
               </label>
             ))}
+            {offerData.length > FILTER_ITEM_LIMIT && (
+              <button
+                onClick={() => setShowAllOffers(!showAllOffers)}
+                className="text-[#FEBC1B] font-albertsans text-[14px] font-semibold leading-[20px] underline mt-1 text-left hover:opacity-70 transition-opacity"
+              >
+                {showAllOffers ? 'See Less' : `See More (${offerData.length - FILTER_ITEM_LIMIT})`}
+              </button>
+            )}
           </div>
         </FilterSection>
       )}

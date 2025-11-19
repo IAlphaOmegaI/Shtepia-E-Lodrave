@@ -27,9 +27,9 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [filterParams, setFilterParams] = useState<FilterParams>({});
-  
+
   // Check if we should use initial data (only for the first page with no filters)
-  const isInitialLoad = currentPage === 1 && 
+  const isInitialLoad = currentPage === 1 &&
     Object.keys(filterParams).length === 0 &&
     !sortBy;
 
@@ -42,7 +42,7 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
         page: currentPage,
         limit: itemsPerPage,
       };
-      
+
       // Override ordering based on sortBy
       if (sortBy === 'price_asc') {
         params.ordering = 'price';
@@ -54,7 +54,7 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
         params.ordering = '-sold_quantity';
       }
       // If no sort is selected (default), don't add ordering parameter
-      
+
       console.log('Fetching products with params:', params);
       return api.products.getAll(params);
     },
@@ -75,9 +75,9 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Shop Header */}
-      <PageHeader 
-        title="Të gjitha produktet" 
-        showClouds={true} 
+      <PageHeader
+        title="Të gjitha produktet"
+        showClouds={true}
       />
 
       {/* Main Content */}
@@ -132,15 +132,15 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                   </svg>
                 </button>
               </div>
-              
+
               {/* TreeMenu wrapper - pass isShopPage prop */}
               <div className={`
                 ${showMobileFilters ? 'overflow-y-auto h-[calc(100%-64px)] p-4' : ''}
                 lg:overflow-visible lg:h-auto lg:p-0 lg:sticky lg:top-4
               `}>
-                <TreeMenu 
+                <TreeMenu
                   isShopPage={true}
-                  className="bg-white" 
+                  className="bg-white"
                   onFiltersApplied={(filters) => {
                     handleFiltersApplied(filters);
                     setShowMobileFilters(false);
@@ -155,11 +155,11 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
             {/* Products Header */}
             <div className="bg-white rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="text-gray-600 font-albertsans">{paginatorInfo?.total || 0} produkte</p>
-              
+
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                 <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
                   <span className="text-gray-600 font-albertsans text-sm sm:text-base">Produkte:</span>
-                  <select 
+                  <select
                     value={itemsPerPage}
                     onChange={(e) => {
                       setItemsPerPage(Number(e.target.value));
@@ -172,10 +172,10 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                     <option value={36}>36</option>
                   </select>
                 </div>
-                
+
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
                   <span className="text-gray-600 font-albertsans text-sm sm:text-base">Sort:</span>
-                  <select 
+                  <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="border border-gray-300 rounded px-3 py-1 font-albertsans text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#FEBC1B] focus:border-[#FEBC1B] cursor-pointer sm:flex-initial"
@@ -222,19 +222,19 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                 ))}
               </div>
             )}
-            
+
             {/* Pagination */}
             {paginatorInfo && paginatorInfo.last_page > 1 && (
               <div className="mt-8">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
-                      <PaginationPrevious 
+                      <PaginationPrevious
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                       />
                     </PaginationItem>
-                    
+
                     {/* Generate page numbers */}
                     {(() => {
                       const pages = [];
@@ -242,17 +242,17 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                       const halfRange = Math.floor(maxPagesToShow / 2);
                       let startPage = Math.max(1, currentPage - halfRange);
                       const endPage = Math.min(paginatorInfo.last_page, startPage + maxPagesToShow - 1);
-                      
+
                       // Adjust start if we're near the end
                       if (endPage - startPage < maxPagesToShow - 1) {
                         startPage = Math.max(1, endPage - maxPagesToShow + 1);
                       }
-                      
+
                       // Add first page and ellipsis if needed
                       if (startPage > 1) {
                         pages.push(
                           <PaginationItem key={1}>
-                            <PaginationLink 
+                            <PaginationLink
                               onClick={() => setCurrentPage(1)}
                               className="cursor-pointer"
                             >
@@ -268,12 +268,12 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                           );
                         }
                       }
-                      
+
                       // Add page numbers
                       for (let i = startPage; i <= endPage; i++) {
                         pages.push(
                           <PaginationItem key={i}>
-                            <PaginationLink 
+                            <PaginationLink
                               onClick={() => setCurrentPage(i)}
                               isActive={currentPage === i}
                               className="cursor-pointer"
@@ -283,7 +283,7 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                           </PaginationItem>
                         );
                       }
-                      
+
                       // Add ellipsis and last page if needed
                       if (endPage < paginatorInfo.last_page) {
                         if (endPage < paginatorInfo.last_page - 1) {
@@ -295,7 +295,7 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                         }
                         pages.push(
                           <PaginationItem key={paginatorInfo.last_page}>
-                            <PaginationLink 
+                            <PaginationLink
                               onClick={() => setCurrentPage(paginatorInfo.last_page)}
                               className="cursor-pointer"
                             >
@@ -304,12 +304,12 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
                           </PaginationItem>
                         );
                       }
-                      
+
                       return pages;
                     })()}
-                    
+
                     <PaginationItem>
-                      <PaginationNext 
+                      <PaginationNext
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginatorInfo.last_page))}
                         className={currentPage === paginatorInfo.last_page ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                       />
