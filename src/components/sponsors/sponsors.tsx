@@ -53,7 +53,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
           breakpoints={breakpoints}
           className="brands-swiper"
         >
-          {brands.map((brand) => (
+          {brands.filter(brand=>brand.logo).map((brand) => (
             <SwiperSlide key={brand.id}>
               <div 
                 className="flex items-center justify-center p-8  cursor-pointer h-32"
