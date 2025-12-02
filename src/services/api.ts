@@ -163,7 +163,6 @@ export const api = {
   brands: {
     getAll: async (): Promise<Brand[]> => {
       const { data } = await apiClient.get('/brands/');
-      console.log('Fetched brands:', data.find(brand=>brand.slug==="akedo"));
       return data;
     },
     getById: async (id: string | number): Promise<Brand | null> => {
