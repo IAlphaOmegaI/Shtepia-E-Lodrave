@@ -61,7 +61,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
               >
                 {brand.logo ? (
                   <Image
-                    src={brand.logo.startsWith('http') ? brand.logo : `${BASE_IMAGE_URL}${brand.logo}`}
+                    src={brand.logo}
                     alt={`${brand.name} logo`}
                     width={120}
                     height={60}
