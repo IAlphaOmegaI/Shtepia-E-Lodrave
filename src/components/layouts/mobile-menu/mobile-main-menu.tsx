@@ -122,7 +122,7 @@ const MobileMainMenu: React.FC = () => {
               {selectedCategory?.children.map((child: any) => (
                 <li key={child.id}>
                   <Link
-                    href={`/categories/${child.slug}`}
+                    href={`/category/${child.slug}`}
                     onClick={closeDrawer}
                     className="block py-2 text-base text-gray-700 hover:text-[#F44535]"
                   >
