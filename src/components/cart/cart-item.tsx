@@ -64,7 +64,7 @@ const CartItem = ({ item }: CartItemProps) => {
         <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden bg-gray-100 rounded-lg">
           {item?.image && !imageError ? (
             <Image
-              src={`${process.env.NEXT_PUBLIC_IMAGE_URL || 'https://api.shtepialodrave.com'}${item.image}`}
+              src={item.image}
               alt={item.name}
               fill
               sizes="64px"
