@@ -251,6 +251,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                           alt={`${product.name} ${index + 1}`}
                           fill
                           className="object-contain p-2"
+                          unoptimized
                         />
                       </button>
                     ))}
@@ -299,6 +300,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                           alt={`${product.name} ${index + 1}`}
                           fill
                           className="object-contain p-2"
+                          unoptimized
                         />
                       </button>
                     ))}
@@ -695,7 +697,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                             alt={`${product.name} ${index + 1}`}
                             fill
                             className="object-contain"
-                            sizes="100vw"
+                            // sizes="100vw"
+                            unoptimized
                           />
                         </div>
                       </SwiperSlide>
@@ -726,7 +729,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                             alt={`${product.name} thumbnail ${index + 1}`}
                             fill
                             className="object-cover"
-                            sizes="118px"
+                            // sizes="118px"
+                            unoptimized
                           />
                         </div>
                       </SwiperSlide>
