@@ -31,6 +31,8 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
   const [filterParams, setFilterParams] = useState<FilterParams>({
     categories__slug: slug,
   });
+
+  console.log("slug",slug)
   
   // Check if we should use initial data (only for the first page with no filters)
   const isInitialLoad = currentPage === 1 && 
