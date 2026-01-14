@@ -5,16 +5,12 @@ import CategoryPageClient from './category-page-client';
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const decodedSlug=decodeURIComponent(slug)
-
-
-  
   // Fetch initial products server-side
   const initialData = await api.products.getAll({
-    categories__slug: decodedSlug,
+    categories__slug: slug,
     page: 1,
     limit: 12,
   });
 
-  return <CategoryPageClient slug={decodedSlug} initialData={initialData} />;
+  return <CategoryPageClient slug={slug} initialData={initialData} />;
 }
