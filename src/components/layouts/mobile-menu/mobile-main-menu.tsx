@@ -84,7 +84,7 @@ const MobileMainMenu: React.FC = () => {
                   </button>
                 ) : (
                   <Link
-                    href={`/categories/${category.slug}`}
+                    href={`/category/${category.slug}`}
                     onClick={closeDrawer}
                     className="block px-5 py-4 text-base font-medium text-gray-900 hover:bg-gray-50"
                   >
