@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { ArrowDownIcon } from '@/components/icons/arrow-down';
@@ -20,6 +20,29 @@ const DynamicMenu: React.FC = () => {
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
   const [categoryFilters, setCategoryFilters] = useState<Record<string, CategoryFilters>>({});
   const [loading, setLoading] = useState(true);
+  const [dropdownHeight, setDropdownHeight] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Calculate dropdown height to extend to bottom of viewport
+  const calculateDropdownHeight = useCallback(() => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const heightToBottom = viewportHeight - rect.top;
+      setDropdownHeight(heightToBottom);
+    }
+  }, []);
+
+  // Recalculate on scroll/resize when menu is open
+  useEffect(() => {
+    if (openMenu) {
+      calculateDropdownHeight();
+      window.addEventListener('resize', calculateDropdownHeight);
+      return () => {
+        window.removeEventListener('resize', calculateDropdownHeight);
+      };
+    }
+  }, [openMenu, calculateDropdownHeight]);
 
   // Fetch categories and all brands on mount
   useEffect(() => {
@@ -128,7 +151,7 @@ const DynamicMenu: React.FC = () => {
           <li
             key={menuKey}
             className={cn(
-              'menuItem relative mx-3 cursor-pointer py-3 xl:mx-4',
+              'menuItem mx-3 cursor-pointer py-3 xl:mx-4',
               {
                 'has-mega-menu': hasChildren,
               }
@@ -164,7 +187,11 @@ const DynamicMenu: React.FC = () => {
 
                 {/* Dropdown Menu */}
                 {isOpen && (
-                  <div className="mega-menu-dropdown fixed left-0 right-0 top-[149px] z-30 h-[calc(100vh-150px)] bg-white py-[24px] px-[100px] overflow-auto shadow-xl">
+                  <div
+                    ref={dropdownRef}
+                    className="mega-menu-dropdown absolute inset-x-0 w-screen z-30 bg-white py-[24px] px-[100px] overflow-auto shadow-xl"
+                    style={{ height: dropdownHeight ? `${dropdownHeight}px` : 'calc(100vh - 150px)' }}
+                  >
                     <div className="mx-auto max-w-7xl">
                       <div className="grid grid-cols-3 gap-x-20">
                         {/* Categories Column - Show filtered subcategories */}
