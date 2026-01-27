@@ -364,7 +364,7 @@ const Header = ({ layout }: { layout?: string }) => {
               )}
             </div>
             <span className="text-xs text-gray-700 font-medium">Dëshirat</span>
-          </motion.button> 
+          </motion.button>
 
           {/* Cart */}
           <motion.button
