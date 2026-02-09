@@ -1,17 +1,14 @@
 'use client';
 
-import LocationBasedShopForm from '@/components/form/location-based-shop-form';
 import { CloseIcon } from '@/components/icons/close';
-import { MapPin, MapPinNew } from '@/components/icons/map-pin';
-import { SearchIcon } from '@/components/icons/search';
-import { Search as SearchLucide, Heart, ShoppingCart } from 'lucide-react';
+import { MapPinNew } from '@/components/icons/map-pin';
 import DynamicMenu from '@/components/layouts/menu/dynamic-menu';
 import Alert from '@/components/ui/alert';
 import Button from '@/components/ui/button';
 import CountdownTimer from '@/components/ui/countdown-timer';
 import Logo from '@/components/ui/logo';
-import { Routes } from '@/config/routes';
 import { useSettings } from '@/framework/settings';
+import { useShop, useShopMaintenanceEvent } from '@/framework/shop';
 import { useHeaderSearch } from '@/layouts/headers/header-search-atom';
 import {
   RESPONSIVE_WIDTH,
@@ -27,24 +24,21 @@ import { useIsHomePage } from '@/lib/use-is-homepage';
 import { authorizationAtom } from '@/store/authorization-atom';
 import { displayMobileHeaderSearchAtom } from '@/store/display-mobile-header-search-atom';
 import { drawerAtom } from '@/store/drawer-atom';
+import { useCart } from '@/store/quick-cart/cart.context';
 import cn from 'classnames';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
+import { Heart, Search as SearchLucide, ShoppingCart } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWindowSize } from 'react-use';
-import { useShop } from '@/framework/shop';
-import { usePathname } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import { useShopMaintenanceEvent } from '@/framework/shop';
-import { ShoppingCartIcon } from '../icons/shopping-cart';
-import { FavoriteIcon } from '../icons/favorite';
-import { LoginUserIcon } from '../icons/user-login';
-import { TruckDeliveryIcon } from '../icons/truck-delivery';
-import { useCart } from '@/store/quick-cart/cart.context';
 import { useWishlist } from '../../framework/rest/wishlist';
-import { useRouter } from 'next/navigation';
+import { FavoriteIcon } from '../icons/favorite';
+import { ShoppingCartIcon } from '../icons/shopping-cart';
+import { LoginUserIcon } from '../icons/user-login';
 
 const Search = dynamic(() => import('@/components/ui/search/search'));
 const AuthorizedMenu = dynamic(() => import('./menu/authorized-menu'), {
