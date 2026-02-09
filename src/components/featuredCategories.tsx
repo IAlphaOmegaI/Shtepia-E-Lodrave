@@ -83,21 +83,21 @@ const FeaturedCategories = () => {
   if (!categories || categories.length === 0) {
     return null;
   }
-  
+
   return (
     <div className="bg-[#FFF8EC] mb-10 sm:mb-0sm:py-40">
       <div className="container mx-auto  px-10 sm:px-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-          {categories.map((cat, idx) => (
+          {categories.map((category, idx) => (
             <div
-              key={cat.id}
+              key={category.id}
               style={{
                 backgroundColor: cardBgColors[idx % cardBgColors.length],
               }}
               className="relative flex flex-col sm:flex-row items-center rounded-2xl shadow-lg w-full h-auto sm:h-[200px] overflow-hidden"
             >
               <Link
-                href={Routes.category(cat.slug)}
+                href={Routes.category(category.slug)}
                 className="absolute inset-0 z-20"
                 prefetch={true}
               />
@@ -108,27 +108,27 @@ const FeaturedCategories = () => {
               {/* Category image - centered on mobile, left aligned on desktop */}
               <Image
                 src={
-                  imageErrors[cat.id] 
+                  imageErrors[category.id] 
                     ? "/featured_category.png"
-                    : (cat.featured_image && cat.featured_image.trim() !== '' 
-                        ? (cat.featured_image.startsWith('http') 
-                            ? cat.featured_image 
-                            : `${BASE_IMAGE_URL}${cat.featured_image}`)
+                    : (category.featured_image && category.featured_image.trim() !== '' 
+                        ? (category.featured_image.startsWith('http') 
+                            ? category.featured_image 
+                            : `${BASE_IMAGE_URL}${category.featured_image}`)
                         : "/featured_category.png")
                 }
-                alt={cat.name}
+                alt={category.name}
                 width={230}
                 height={230}
                 className="relative sm:absolute w-[150px] sm:w-[230px] h-[150px] sm:h-full object-contain sm:left-0 sm:top-0 z-10 mx-auto sm:mx-0 mt-10 sm:mt-0"
                 priority={idx < 3} // Load first 3 images with priority
                 onError={() => {
-                  setImageErrors(prev => ({ ...prev, [cat.id]: true }));
+                  setImageErrors(prev => ({ ...prev, [category.id]: true }));
                 }}
               />
               {/* Category name - below image on mobile, right side on desktop */}
               <div className="flex-1 flex items-center justify-center sm:justify-end h-auto sm:h-full z-10 pb-4 sm:pb-0 sm:pr-10 w-full">
                 <span className="text-white text-2xl sm:text-3xl font-bold px-4 py-2 rounded-xl font-grandstander font-extrabol max-w-full sm:max-w-[170px] capitalize text-center sm:text-left">
-                  {cat.name}
+                  {category.name}
                 </span>
               </div>
             </div>

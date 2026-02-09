@@ -68,6 +68,8 @@ const Header = ({ layout }: { layout?: string }) => {
   const [displayMobileHeaderSearch, setDisplayMobileHeaderSearch] = useAtom(
     displayMobileHeaderSearchAtom,
   );
+
+  console.log('displayMobileHeaderSearch', displayMobileHeaderSearch);
   const [isAuthorize] = useAtom(authorizationAtom);
   const [openDropdown, setOpenDropdown] = useState(false);
   const router = useRouter();
@@ -307,7 +309,7 @@ const Header = ({ layout }: { layout?: string }) => {
         </div>
         {/* Mobile Search Overlay */}
         {displayMobileHeaderSearch && (
-          <div className="lg:hidden absolute top-0 left-0 right-0 bg-[#F44535] z-30 p-4">
+          <div className="lg:hidden absolute top-0 left-0 right-0 bg-[#F44535] z-110 p-4">
             <div className="flex items-center space-x-3">
               <div className="flex-1">
                 <Search variant="flat" label="search" placeholder="Search..." />
