@@ -117,7 +117,7 @@ const BestSellingProducts = () => {
           </h1>
         </div>
 
-        <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">
+        {/* <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">
           {popularCategories.slice(0, MAX_CATEGORIES_TO_DISPLAY).map((cat) => {
             return (<button
               key={cat.category.id}
@@ -139,7 +139,7 @@ const BestSellingProducts = () => {
             </button>)
           }
           )}
-        </div>
+        </div> */}
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
