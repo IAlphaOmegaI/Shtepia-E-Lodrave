@@ -1,12 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Button from '../ui/button';
-import { ShoppingCartIcon } from '../icons/shopping-cart';
-import ProductCarousel from '../products/product-carousel';
 import { api } from '@/services/api';
-import type { PopularProductCategory, PopularProduct, Product } from '@/types';
+import type { PopularProduct, PopularProductCategory, Product } from '@/types';
 import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import ProductCarousel from '../products/product-carousel';
 
 // Function to convert PopularProduct to Product format for ProductCard compatibility
 const convertToProductFormat = (popularProduct: PopularProduct): Product => {

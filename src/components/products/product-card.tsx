@@ -159,7 +159,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           src={imageUrl}
           alt={`${name} image`}
           fill
-          className="object-cover object-top"
+          className="object-contain object-top"
           onError={() => setImageError(true)}
         />
       </Link>
