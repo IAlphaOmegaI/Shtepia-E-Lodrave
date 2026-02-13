@@ -7,7 +7,7 @@ export default async function ShopPage() {
   const initialData = await api.products.getAll({
     page: 1,
     limit: 12,
-  });
+  }); 
 
   return <ShopPageClient initialData={initialData} />;
 }
