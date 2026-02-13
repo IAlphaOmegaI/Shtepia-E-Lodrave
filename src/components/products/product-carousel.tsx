@@ -27,13 +27,11 @@ const ProductCarousel: React.FC<CarouselProps> = ({
           prevEl: '.prev-button',
         }}
         breakpoints={breakpoints}
-        className="py-5"
+        className="py-5 swiper-equal-height"
       >
         {products.map((item) => (
-          <SwiperSlide key={item.id} className="h-auto">
-            <div className="h-full">
-              <ProductCard product={item} />
-            </div>
+          <SwiperSlide key={item.id}>
+            <ProductCard product={item} />
           </SwiperSlide>
         ))}
       </Swiper>

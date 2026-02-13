@@ -13,11 +13,11 @@ import Link from "next/link";
 export const NewProducts = () => {
   return (
     <div className="">
-      <div className="flex justify-center sm:justify-between items-end overflow-hidden bg-[hsl(217,84%,95%)] pt-16 sm:pt-0 px-2 sm:px-0">
+      <div className="flex justify-center sm:justify-between items-end overflow-hidden bg-[hsl(217,84%,95%)] pt-16 lg:pt-0 px-2 sm:px-0">
         <Image
           src={NewProducts1Image}
           alt="New Products 1"
-          className="hidden sm:block max-w-[450px] shrink-0"
+          className="hidden lg:block max-w-[450px] shrink-0"
         />
         <h1
           className="text-white text-center pb-10 sm:pb-0 font-grandstander mx-2 sm:mx-4 grow text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px]"
@@ -31,10 +31,10 @@ export const NewProducts = () => {
         <Image
           src={NewProducts2Image}
           alt="New Products 2"
-          className="hidden sm:block max-w-[450px] shrink-0"
+          className="hidden lg:block max-w-[450px] shrink-0"
         />
       </div>
-      <div className="bg-[hsl(217,84%,95%)] pt-4 sm:pt-8 px-3 sm:px-4">
+      <div className="bg-[hsl(217,84%,95%)] pt-4 lg:pt-8 px-3 sm:px-4">
         <div className="max-w-[720px] mx-auto md:max-h-[388px] grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-2 sm:gap-3">
           <Link href="/brands/lego" className="flex col-span-2 aspect-[2/1] md:aspect-auto overflow-hidden rounded-xl">
             <Image src={LegoImage} alt="Lego" className="size-full object-cover rounded-xl" />

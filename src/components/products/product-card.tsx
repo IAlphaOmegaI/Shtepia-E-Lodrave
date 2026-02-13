@@ -25,7 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
 
   const displayPrice = sale_price || price || '0';
   const originalPrice = max_price || price || '0';
-  
+
   // Calculate discount percentage if discount object exists
   let displayDiscount = '';
   if (discount) {
@@ -43,7 +43,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       displayDiscount = `${discountPercent}% OFF`;
     }
   }
-  
+
   // Check if image is a valid URL string or extract from object
   let imageUrl = '/product-placeholder.jpg';
   if (typeof image === 'string' && image.trim() !== '') {
@@ -51,7 +51,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
   } else if (typeof image === 'object' && image !== null) {
     imageUrl = (image as any).url || (image as any).src || '/product-placeholder.jpg';
   }
-  
+
   // Use placeholder if there's an image error  
   if (imageError) {
     imageUrl = '/product-placeholder.jpg';
@@ -60,13 +60,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
     // NEXT_PUBLIC_API_URL is https://api.shtepialodrave.com/api
     // We need https://api.shtepialodrave.com for media files
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.shtepialodrave.com/api';
-    
+
     // Remove only the trailing /api (not the 'api' in the domain)
     let baseUrl = apiUrl;
     if (apiUrl.endsWith('/api')) {
       baseUrl = apiUrl.substring(0, apiUrl.length - 4);
     }
-    
+
     imageUrl = `${baseUrl}${imageUrl}`;
   }
 
@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
     e.preventDefault();
     e.stopPropagation();
     setIsAddingToCart(true);
-    
+
     // Add item to cart
     addItem({
       id: product.id,
@@ -85,10 +85,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       quantity: 1,
       image: imageUrl,
     });
-    
+
     // Show success toast
     showToast(`${product.name} u shtua në shportë!`, 'success');
-    
+
     // Simulate loading animation
     setTimeout(() => {
       setIsAddingToCart(false);
@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
     e.preventDefault();
     e.stopPropagation();
     const isInList = isInWishlist(product.id);
-    
+
     if (isInList) {
       removeFromWishlist(product.id);
       showToast(`${product.name} u hoq nga lista e dëshirave!`, 'info');
@@ -131,47 +131,45 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
 
   return (
     <div
-      className={`bg-white w-full rounded-lg border p-4 ${
-        removeMaxWidth ? "" : "max-w-xs"
-      } mx-auto text-left relative flex flex-col h-full`}
+      className={`bg-white w-full rounded-lg border self-stretch p-4 ${removeMaxWidth ? "" : "max-w-xs"
+        } mx-auto text-left relative flex flex-col h-full`}
     >
       {/* Wishlist button */}
       <button
         onClick={handleToggleWishlist}
-        className={`absolute top-2 right-2 z-10 p-2 rounded-full transition-all ${
-          isInWishlist(product.id)
-            ? 'bg-[#F11602] hover:bg-red-600'
-            : 'bg-white hover:bg-gray-100 shadow-md'
-        }`}
-      >
-        <Heart 
-          className={`w-5 h-5 transition-colors ${
-            isInWishlist(product.id) ? 'text-white fill-white' : 'text-[#F11602]'
+        className={`absolute top-2 right-2 z-10 p-2 rounded-full transition-all ${isInWishlist(product.id)
+          ? 'bg-[#F11602] hover:bg-red-600'
+          : 'bg-white hover:bg-gray-100 shadow-md'
           }`}
+      >
+        <Heart
+          className={`w-5 h-5 transition-colors ${isInWishlist(product.id) ? 'text-white fill-white' : 'text-[#F11602]'
+            }`}
         />
       </button>
-      
+
       <Link
         href={`/products/${product.id}`}
-        className="relative h-[210px] mb-4 cursor-pointer block"
+        className="relative mb-4 cursor-pointer block"
       >
         <Image
           src={imageUrl}
           alt={`${name} image`}
-          fill
-          className="object-contain object-top"
+          width={100}
+          height={100}
+          className="object-contain h-45 w-full object-top"
           onError={() => setImageError(true)}
         />
       </Link>
-      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2 min-h-[52px]">
+      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2">
         {name}
       </h3>
       <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px] mb-1">
         {brand?.name || "Brand"}
       </p>
       <div className="flex items-end justify-between gap-2 flex-wrap mb-2 mt-auto">
-        <div className="flex flex-col items-start pt-[28px]">
-          <div className="min-h-[24px]">
+        <div className="flex flex-col items-start">
+          <div>
             {originalPrice !== displayPrice && (
               <span className="text-[#c1c1c1] font-albertsans text-[16px] font-medium leading-[24px] line-through">
                 {originalPrice} Lekë
@@ -190,7 +188,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       </div>
       <div>
         {Number(quantity) > 0 && (
-          // On hover we should make the icon color red 
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}

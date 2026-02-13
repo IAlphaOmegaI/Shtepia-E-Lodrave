@@ -155,6 +155,15 @@ header {
   }
 }
 
+/* Equal-height Swiper slides */
+.swiper-equal-height > .swiper-wrapper {
+  align-items: stretch;
+}
+
+.swiper-equal-height > .swiper-wrapper > .swiper-slide {
+  height: auto;
+}
+
 /* Brands Swiper Navigation Styling */
 .brands-swiper .swiper-button-prev,
 .brands-swiper .swiper-button-next {

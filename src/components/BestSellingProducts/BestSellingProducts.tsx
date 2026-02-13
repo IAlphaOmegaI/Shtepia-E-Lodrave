@@ -103,7 +103,7 @@ const BestSellingProducts = () => {
     <div className="w-full bg-[#FFFAEE] pb-12">
       <div className="bg-[#FFCB47] pb-20 flex flex-col gap-8">
 
-        <div className="flex justify-center sm:justify-between items-end overflow-hidden pt-16 sm:pt-0 px-2 sm:px-0">
+        <div className="flex justify-center sm:justify-between items-end overflow-hidden pt-16 lg:pt-0 px-2 sm:px-0">
           <Image
             src={Confetti1Image}
             alt="New Products 1"
