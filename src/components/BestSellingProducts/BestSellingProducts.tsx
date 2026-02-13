@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import ProductCarousel from '../products/product-carousel';
+import Confetti1Image from '../../../public/home/confetti-1.png';
+import Confetti2Image from '../../../public/home/confetti-2.png';
 
 // Function to convert PopularProduct to Product format for ProductCard compatibility
 const convertToProductFormat = (popularProduct: PopularProduct): Product => {
@@ -70,7 +72,7 @@ const MAX_CATEGORIES_TO_DISPLAY = 4;
 const BestSellingProducts = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [popularCategories, setPopularCategories] = useState<PopularProductCategory[]>([]);
-  
+
   const { data, isLoading } = useQuery({
     queryKey: ['popularProducts'],
     queryFn: () => api.products.getPopular(),
@@ -98,21 +100,29 @@ const BestSellingProducts = () => {
   const formattedProducts = activeProducts.map(convertToProductFormat);
 
   return (
-    <div className="w-full bg-[#fff] pb-12">
-      <div className="bg-[#FFCB47] pb-20">
-        <div
-          className="w-full bg-no-repeat bg-cover bg-center flex justify-center pt-20 pb-20"
-          style={{ backgroundImage: "url('/icons/confetti-section.svg')" }}
-        >
+    <div className="w-full bg-[#FFFAEE] pb-12">
+      <div className="bg-[#FFCB47] pb-20 flex flex-col gap-8">
+        <div className="flex justify-between overflow-hidden ">
+          <Image
+            src={Confetti1Image}
+            alt="Confetti 1"
+            className="max-w-[450px]"
+          />
           <h1
-            className="text-white text-center font-grandstander font-extrabold text-[50px] leading-[60px] whitespace-pre-line"
+            className="text-white text-center self-end font-grandstander mx-4 grow text-[40px] md:text-[50px] font-black leading-[60px]"
             style={{
-              WebkitTextStrokeWidth: '4px',
-              WebkitTextStrokeColor: '#F11602',
+              WebkitTextStrokeWidth: "3px",
+              WebkitTextStrokeColor: "red",
             }}
           >
             Produktet popullore
           </h1>
+          <Image
+            src={Confetti2Image}
+            alt="Confetti 2"
+            className="max-w-[450px]"
+
+          />
         </div>
 
         {/* <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">

@@ -32,7 +32,6 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
     categories__slug: slug,
   });
 
-  console.log("slug",slug)
   
   // Check if we should use initial data (only for the first page with no filters)
   const isInitialLoad = currentPage === 1 && 
@@ -50,6 +49,7 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
         limit: itemsPerPage,
       };
       
+      console.log("params",filterParams)
       // Override ordering based on sortBy
       if (sortBy === 'price_asc') {
         params.ordering = 'price';

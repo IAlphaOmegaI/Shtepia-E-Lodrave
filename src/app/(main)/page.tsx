@@ -6,6 +6,7 @@ import Sponsors from '@/components/sponsors/sponsors';
 import BestSellingProducts from '@/components/BestSellingProducts/BestSellingProducts';
 import LoyaltyCard from '@/components/LoyaltyCard/loyalty-card';
 import BlogsCard from '@/components/blogs/blogs';
+import { NewProducts } from '@/components/NewProducts/new-products';
 
 export default async function HomePage() {
   // Fetch data on the server using domain-specific services
@@ -21,29 +22,32 @@ export default async function HomePage() {
     <main className="min-h-screen bg-gray-50">
       {/* Hero Banner */}
       <LodraBanner />
-      
-      {/* Featured Categories */}
-      <FeaturedCategories />
-      
-      {/* New Collections */}
-      <NewCollections products={newCollectionProducts} />
-      
+      <NewProducts />
+
       {/* Sponsors */}
       <Sponsors brands={brands} />
-      
+
+
       {/* Best Selling Products */}
       <BestSellingProducts />
-      
+
+      {/* Featured Categories */}
+      <FeaturedCategories />
+
+      {/* New Collections */}
+      <NewCollections products={newCollectionProducts} />
+
+
       {/* Loyalty Card */}
       <LoyaltyCard />
-      
+
       {/* Blogs Section */}
       <div className="bg-[#fff] py-20">
         <div className="container mx-auto px-4">
-          <BlogsCard 
-            title="Blogs" 
+          <BlogsCard
+            title="Blogs"
             blogs={latestBlogs}
-            showSeeMore={true} 
+            showSeeMore={true}
             limit={6}
           />
         </div>
