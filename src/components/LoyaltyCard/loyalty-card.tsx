@@ -6,7 +6,7 @@ import LoyaltyCardImage from '../../../public/home/loyalty-card.png';
 
 const LoyaltyCard = () => {
   return (
-    <div className="flex flex-col md:flex-row overflow-hidden max-w-[1020px] mt-12 sm:mt-20 md:mt-32 sm:mx-8 lg:mx-auto md:mx-16 bg-[#F44535] rounded-2xl sm:rounded-3xl">
+    <div className="flex flex-col md:flex-row overflow-hidden max-w-[1020px] mt-12 sm:mt-20 md:mt-32 mx-8 lg:mx-auto md:mx-16 bg-[#F44535] rounded-2xl sm:rounded-3xl">
       <div className="relative w-full md:min-w-0 md:flex-1 md:max-w-[45%] shrink-0">
         <Image
           src={LoyaltyCardImage}
