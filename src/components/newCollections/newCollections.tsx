@@ -26,7 +26,7 @@ const breakpoints = {
 
 const NewCollections: React.FC<NewCollectionsProps> = ({ products }) => {
   const router = useRouter();
-  
+
   // Ensure we have at most 20 products
   const displayProducts = products.slice(0, 20);
   return (
@@ -65,7 +65,7 @@ const NewCollections: React.FC<NewCollectionsProps> = ({ products }) => {
               prevEl: ".prev",
             }}
             breakpoints={breakpoints}
-            className="py-5"
+            className="py-5 swiper-equal-height"
           >
             {displayProducts.map((item) => (
               <SwiperSlide key={item.id}>
