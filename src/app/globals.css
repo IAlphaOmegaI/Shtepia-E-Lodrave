@@ -153,6 +153,16 @@ header {
     background-repeat: no-repeat;
     background-position: center;
   }
+
+  .loyalty-card-title {
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #fff;
+  }
+  @media (min-width: 768px) {
+    .loyalty-card-title {
+      -webkit-text-stroke-width: 4px;
+    }
+  }
 }
 
 /* Equal-height Swiper slides */

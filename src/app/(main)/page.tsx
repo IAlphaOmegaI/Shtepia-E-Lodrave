@@ -42,7 +42,7 @@ export default async function HomePage() {
       <LoyaltyCard />
 
       {/* Blogs Section */}
-      <div className="bg-[#fff] py-20">
+      {/* <div className="bg-[#fff] py-20">
         <div className="container mx-auto px-4">
           <BlogsCard
             title="Blogs"
@@ -51,7 +51,7 @@ export default async function HomePage() {
             limit={6}
           />
         </div>
-      </div>
+      </div> */}
 
     </main>
   );
