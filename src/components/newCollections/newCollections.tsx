@@ -91,13 +91,13 @@ const NewCollections: React.FC<NewCollectionsProps> = ({ products }) => {
           </div>
           {/* Navigation Buttons */}
           <div
-            className="prev left-[-11px] swiperButtonPrev absolute top-1/2 z-10 -mt-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#F11602] border-opacity-70 bg-light text-[#F11602] shadow-xl transition-all duration-200 hover:border-[#F11602] hover:bg-[#F11602] hover:text-light ltr:-left-2 rtl:-right-2 md:-mt-5 md:h-9 md:w-9 ltr:md:-left-5"
+            className="prev absolute hover:text-[#FFCB47] bg-white top-2/4 z-10 -mt-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#F11602] border-opacity-70 bg-light text-[#F11602] shadow-xl transition-all duration-200 hover:border-[#F11602] hover:bg-[#F11602] hover:text-light ltr:-left-4 rtl:-right-4 md:-mt-5 md:h-9 md:w-9 ltr:md:-left-5 rtl:md:-right-5"
             role="button"
           >
             <ArrowPrev width={18} height={18} />
           </div>
           <div
-            className="next swiperButtonNext absolute top-1/2 z-10 -mt-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#F11602] border-opacity-70 bg-light text-[#F11602] shadow-xl transition-all duration-200 hover:border-[#F11602] hover:bg-[#F11602] hover:text-light ltr:-right-2 rtl:-left-2 md:-mt-5 md:h-9 md:w-9 ltr:md:-right-5"
+            className="next absolute top-2/4 z-10 bg-white hover:text-[#FFCB47] -mt-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#F11602] border-opacity-70 bg-light text-[#F11602] shadow-xl transition-all duration-200 hover:border-[#F11602] hover:bg-[#F11602] hover:text-light ltr:-right-4 rtl:-left-4 md:-mt-5 md:h-9 md:w-9 ltr:md:-right-5"
             role="button"
           >
             <ArrowNext width={18} height={18} />
