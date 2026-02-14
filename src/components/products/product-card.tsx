@@ -132,7 +132,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
   return (
     <div
       className={`bg-white w-full rounded-lg border self-stretch p-4 ${removeMaxWidth ? "" : "max-w-xs"
-        } mx-auto text-left relative flex flex-col h-full`}
+        } mx-auto text-left relative gap-1.5 flex flex-col h-full`}
     >
       {/* Wishlist button */}
       <button
@@ -164,10 +164,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
       <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2">
         {name}
       </h3>
-      <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px] mb-1">
+      <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px]">
         {brand?.name || "Brand"}
       </p>
-      <div className="flex items-end justify-between gap-2 flex-wrap mb-2 mt-auto">
+      <div className="flex items-end justify-between gap-2 flex-wrap mt-auto">
         <div className="flex flex-col items-start">
           <div>
             {originalPrice !== displayPrice && (
@@ -186,20 +186,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           </span>
         )}
       </div>
-      <div>
-        {Number(quantity) > 0 && (
-          <button
-            onClick={handleAddToCart}
-            disabled={isAddingToCart}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 h-[44px] px-4 border border-[#F11602] text-[#F11602] font-semibold rounded-[8px] hover:bg-[#F11602] hover:text-white transition-colors group"
-          >
-            <ShoppingCartIcon className="w-5 h-5 text-[#F11602] group-hover:text-[#fff]" />
-            <span className="text-[16px] leading-[20px] font-[500] font-albertsans text-center">
-              Shtoje në shportë
-            </span>
-          </button>
-        )}
-      </div>
+      {Number(quantity) > 0 && (
+        <button
+          onClick={handleAddToCart}
+          disabled={isAddingToCart}
+          className="cursor-pointer w-full flex items-center justify-center gap-2 h-[44px] px-4 border border-[#F11602] text-[#F11602] font-semibold rounded-[8px] hover:bg-[#F11602] hover:text-white transition-colors group"
+        >
+          <ShoppingCartIcon className="w-5 h-5 text-[#F11602] group-hover:text-[#fff]" />
+          <span className="text-[16px] leading-[20px] font-[500] font-albertsans text-center">
+            Shtoje në shportë
+          </span>
+        </button>
+      )}
     </div>
   );
 };
