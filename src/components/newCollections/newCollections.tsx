@@ -1,16 +1,16 @@
 'use client';
-import React from 'react';
+import { ArrowNext, ArrowPrev } from '@/components/icons';
+import { Routes } from '@/config/routes';
+import { NEW_COLLECTIONS_CATEGORY_SLUG } from '@/lib/constants';
+import type { Product } from '@/types';
 import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { ArrowNext, ArrowPrev } from '@/components/icons';
-import { useRouter } from 'next/navigation';
+import { Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import ProductCard from '../products/product-card';
-import type { Product } from '@/types';
-import { NEW_COLLECTIONS_CATEGORY_ID, NEW_COLLECTIONS_CATEGORY_SLUG } from '@/lib/constants';
-import { Routes } from '@/config/routes';
 
 interface NewCollectionsProps {
   products: Product[];

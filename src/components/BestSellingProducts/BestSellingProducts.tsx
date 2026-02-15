@@ -103,14 +103,14 @@ const BestSellingProducts = () => {
     <div className="w-full bg-[#FFFAEE] pb-12">
       <div className="bg-[#FFCB47] pb-20 flex flex-col gap-8">
 
-        <div className="flex justify-center sm:justify-between items-end overflow-hidden pt-16 lg:pt-0 px-2 sm:px-0">
+        <div className="flex justify-center sm:justify-between overflow-hidden pt-16 lg:pt-0 px-2 sm:px-0">
           <Image
             src={Confetti1Image}
             alt="New Products 1"
             className="hidden sm:block max-w-[450px] shrink-0"
           />
           <h1
-            className="text-white text-center pb-10 sm:pb-0 font-grandstander mx-2 sm:mx-4 grow text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px]"
+            className="text-white text-center self-end pb-10 sm:pb-0 font-grandstander mx-2 sm:mx-4 grow text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px]"
             style={{
               WebkitTextStrokeWidth: "3px",
               WebkitTextStrokeColor: "red",
