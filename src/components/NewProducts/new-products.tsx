@@ -45,7 +45,7 @@ export const NewProducts = () => {
           <Link href="/brands/dexy" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
             <Image src={TransformersImage} alt="Transformers" className="size-full object-cover rounded-xl" />
           </Link>
-          <Link href="/brands/hotwheels" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
+          <Link href="/brands/hot-wheels" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
             <Image src={HotWheelsImage} alt="Hot Wheels" className="size-full object-cover rounded-xl" />
           </Link>
           <Link href="/brands/games" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
