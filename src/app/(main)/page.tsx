@@ -22,10 +22,12 @@ export default async function HomePage() {
     <main className="min-h-screen bg-gray-50">
       {/* Hero Banner */}
       <LodraBanner />
-      <NewProducts />
 
       {/* Sponsors */}
       <Sponsors brands={brands} />
+      
+      <NewProducts />
+
 
 
       {/* Best Selling Products */}

@@ -63,7 +63,6 @@ const Header = ({ layout }: { layout?: string }) => {
     displayMobileHeaderSearchAtom,
   );
 
-  console.log('displayMobileHeaderSearch', displayMobileHeaderSearch);
   const [isAuthorize] = useAtom(authorizationAtom);
   const [openDropdown, setOpenDropdown] = useState(false);
   const router = useRouter();

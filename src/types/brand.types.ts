@@ -8,6 +8,7 @@ export interface Brand {
   children: Brand[];
   is_parent: boolean;
   is_child: boolean;
+  url: string;
 }
 
 export interface BrandListResponse {

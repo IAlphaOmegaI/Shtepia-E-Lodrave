@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { FilteredRoutes } from '@/config/routes';
 import type { Brand } from '@/types';
 import { ArrowNext, ArrowPrev } from '../icons';
+import Link from 'next/link';
 
 const BASE_IMAGE_URL = 'https://api.shtepialodrave.com';
 
@@ -28,8 +29,11 @@ const breakpoints = {
 const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
   const router = useRouter();
 
-  const handleBrandClick = (brandId: number) => {
-    router.push(FilteredRoutes.productsByBrand(brandId));
+  console.log('brands', brands);
+
+  const handleBrandClick = (brand: Brand) => {
+    // router.push(FilteredRoutes.productsByBrand(brandId));
+    router.push(brand.url);
   };
 
   if (!brands || brands.length === 0) {
@@ -73,9 +77,10 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
         >
           {brands.filter(brand => brand.logo).map((brand) => (
             <SwiperSlide key={brand.id}>
-              <div
+              <Link href={brand.url}>
+              <button
                 className="flex items-center justify-center p-8  cursor-pointer h-32"
-                onClick={() => handleBrandClick(brand.id)}
+                // onClick={() => handleBrandClick(brand)}
               >
                 {brand.logo ? (
                   <Image
@@ -92,7 +97,8 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
                     </h3>
                   </div>
                 )}
-              </div>
+              </button>
+              </Link>
             </SwiperSlide>
           ))}
         </Swiper>
