@@ -19,7 +19,7 @@ interface SponsorsProps {
 }
 
 const breakpoints = {
-  320: { slidesPerView: 1, spaceBetween: 20 },
+  320: { slidesPerView: 2.5, spaceBetween: 16 },
   640: { slidesPerView: 3, spaceBetween: 20 },
   768: { slidesPerView: 4, spaceBetween: 30 },
   1024: { slidesPerView: 5, spaceBetween: 30 },
@@ -29,7 +29,6 @@ const breakpoints = {
 const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
   const router = useRouter();
 
-  console.log('brands', brands);
 
   const handleBrandClick = (brand: Brand) => {
     // router.push(FilteredRoutes.productsByBrand(brandId));
@@ -41,10 +40,10 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
   }
 
   return (
-    <div className="py-16 bg-gray-50">
+    <div className="sm:py-16 py-8">
       <div className="container mx-auto px-4">
-        <div className='flex justify-between items-center mb-12'>
-          <h2 className="text-3xl sm:absolute z-0 inset-x-0 mx-auto font-bold text-center text-gray-800">
+        <div className='justify-between hidden sm:flex items-center mb-6 sm:mb-12 relative'>
+          <h2 className="text-3xl absolute z-0 inset-x-0 mx-auto font-bold text-center text-gray-800 pointer-events-none">
             Brendet Partnere
           </h2>
           <div className='flex z-10 ml-auto gap-1'>
@@ -79,7 +78,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
             <SwiperSlide key={brand.id}>
               <Link href={brand.url}>
               <button
-                className="flex items-center justify-center p-8  cursor-pointer h-32"
+                className="flex items-center px-5 justify-center cursor-pointer h-32"
                 // onClick={() => handleBrandClick(brand)}
               >
                 {brand.logo ? (
