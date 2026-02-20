@@ -18,9 +18,8 @@ interface NewCollectionsProps {
 
 const breakpoints = {
   320: { slidesPerView: 2, spaceBetween: 10 },
-  580: { slidesPerView: 3, spaceBetween: 16 },
-  1024: { slidesPerView: 4, spaceBetween: 12 },
-  1920: { slidesPerView: 5, spaceBetween: 10 },
+  580: { slidesPerView: 4, spaceBetween: 16 },
+  1024: { slidesPerView: 6, spaceBetween: 12 },
 };
 
 const NewCollections = ({ products }: NewCollectionsProps) => {

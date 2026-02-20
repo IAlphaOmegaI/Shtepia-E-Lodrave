@@ -49,7 +49,6 @@ export default function CategoryPageClient({ slug, initialData }: CategoryPageCl
         limit: itemsPerPage,
       };
       
-      console.log("params",filterParams)
       // Override ordering based on sortBy
       if (sortBy === 'price_asc') {
         params.ordering = 'price';

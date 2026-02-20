@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import TreeMenu, { FilterParams } from '@/components/ui/tree-menu';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
@@ -19,14 +20,17 @@ import {
 
 interface ShopPageClientProps {
   initialData: any;
+  brandId?: string;
 }
 
-export default function ShopPageClient({ initialData }: ShopPageClientProps) {
+export default function ShopPageClient({ initialData, brandId: initialBrandId }: ShopPageClientProps) {
   const [sortBy, setSortBy] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [currentPage, setCurrentPage] = useState(1);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [filterParams, setFilterParams] = useState<FilterParams>({});
+  const [filterParams, setFilterParams] = useState<FilterParams>({
+    brand: initialBrandId,
+  });
 
   // Check if we should use initial data (only for the first page with no filters)
   const isInitialLoad = currentPage === 1 &&
@@ -35,13 +39,14 @@ export default function ShopPageClient({ initialData }: ShopPageClientProps) {
 
   // Fetch products from API with filters
   const { data, isLoading, error } = useQuery({
-    queryKey: ['shopProducts', currentPage, itemsPerPage, sortBy, JSON.stringify(filterParams)],
+    queryKey: ['shopProducts', currentPage, itemsPerPage, sortBy,  JSON.stringify(filterParams)],
     queryFn: () => {
       const params: any = {
         ...filterParams,
         page: currentPage,
         limit: itemsPerPage,
       };
+
 
       // Override ordering based on sortBy
       if (sortBy === 'price_asc') {

@@ -161,10 +161,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           onError={() => setImageError(true)}
         />
       </Link>
-      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2">
+      <div className='space-y-2.5'>
+      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[20px] line-clamp-1">
         {name}
       </h3>
-      <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px]">
+      <p className="text-[#777] font-albertsans text-[14px] leading-[15px]  font-medium line-clamp-1">
         {brand?.name || "Brand"}
       </p>
       <div className="flex items-end justify-between gap-2 flex-wrap mt-auto">
@@ -176,7 +177,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
               </span>
             )}
           </div>
-          <span className="text-[#1A66EA] font-albertsans text-[24px] font-extrabold leading-[32px]">
+          <span className="text-[#1A66EA] font-albertsans text-[23px] leading-[20px] font-extrabold">
             {displayPrice} Lekë
           </span>
         </div>
@@ -198,6 +199,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           </span>
         </button>
       )}
+      </div>
     </div>
   );
 };

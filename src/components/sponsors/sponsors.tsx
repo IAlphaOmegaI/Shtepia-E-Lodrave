@@ -31,8 +31,9 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
 
 
   const handleBrandClick = (brand: Brand) => {
-    // router.push(FilteredRoutes.productsByBrand(brandId));
-    router.push(brand.url);
+    // router.push(FilteredRoutes.productsByBrand(brand.id));
+    router.push(`/brands/${brand.slug}`);
+    // router.push(brand.url);
   };
 
   if (!brands || brands.length === 0) {
@@ -76,10 +77,10 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
         >
           {brands.filter(brand => brand.logo).map((brand) => (
             <SwiperSlide key={brand.id}>
-              <Link href={brand.url}>
+              {/* <Link href={brand.url}> */}
               <button
-                className="flex items-center px-5 justify-center cursor-pointer h-32"
-                // onClick={() => handleBrandClick(brand)}
+                className="flex items-center px-8 sm:px-5 justify-center cursor-pointer h-32"
+                onClick={() => handleBrandClick(brand)}
               >
                 {brand.logo ? (
                   <Image
@@ -97,7 +98,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
                   </div>
                 )}
               </button>
-              </Link>
+              {/* </Link> */}
             </SwiperSlide>
           ))}
         </Swiper>

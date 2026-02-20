@@ -4,12 +4,12 @@ import NewProducts2Image from "../../../public/home/new-products-2.png";
 import NewProducts1MobileImage from "../../../public/home/new-products-1-mobile.png";
 import NewProducts2MobileImage from "../../../public/home/new-products-2-mobile.png";
 import NewProductsCloud from "../../../public/home/new-products-cloud.png";
-import LegoImage from "../../../public/home/lego.png";
-import BarbieImage from "../../../public/home/barbie.png";
-import MonopolyImage from "../../../public/home/monopoly.png";
-import TransformersImage from "../../../public/home/transformers.png";
-import CartersImage from "../../../public/home/carters.png";
-import HotWheelsImage from "../../../public/home/hotwheels.png";
+import LegoImage from "../../../public/home/lego.svg";
+import BarbieImage from "../../../public/home/barbie.svg";
+import CoolClubImage from "../../../public/home/cool-club.svg";
+import HasbroImage from "../../../public/home/hasbro.svg";
+import PlayDogImage from "../../../public/home/play-doh.svg";
+import NerfImage from "../../../public/home/nerf.svg";
 import Link from "next/link";
 
 export const NewProducts = () => {
@@ -61,20 +61,20 @@ export const NewProducts = () => {
           <Link href="/brands/lego" className="flex aspect-square md:col-span-2 md:aspect-auto overflow-hidden rounded-xl">
             <Image src={LegoImage} alt="Lego" className="size-full object-cover rounded-xl" />
           </Link>
-          <Link href="/brands/carters" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
-            <Image src={CartersImage} alt="Carters" className="size-full object-cover rounded-xl" />
+          <Link href="/brands/cool-club" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
+            <Image src={CoolClubImage} alt="Cool Club" className="size-full object-cover rounded-xl" />
           </Link>
-          <Link href="/brands/dexy" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
-            <Image src={TransformersImage} alt="Transformers" className="size-full object-cover rounded-xl" />
+          <Link href="/brands/ner" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
+            <Image src={NerfImage} alt="Transformers" className="size-full object-cover rounded-xl" />
           </Link>
-          <Link href="/brands/hot-wheels" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
-            <Image src={HotWheelsImage} alt="Hot Wheels" className="size-full object-cover rounded-xl" />
+          <Link href="/brands/hasbro" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
+            <Image src={HasbroImage} alt="Hot Wheels" className="size-full object-cover rounded-xl" />
           </Link>
-          <Link href="/brands/games" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
-            <Image src={MonopolyImage} alt="Monopoly" className="size-full object-cover rounded-xl" />
+          <Link href="/brands/brb" className="flex aspect-square md:aspect-auto overflow-hidden rounded-xl">
+            <Image src={BarbieImage} alt="Monopoly" className="size-full object-cover rounded-xl" />
           </Link>
-          <Link href="/brands/brb" className="flex aspect-square md:col-span-2 md:aspect-auto overflow-hidden rounded-xl">
-            <Image src={BarbieImage} alt="Barbie" className="size-full object-cover rounded-xl" />
+          <Link href="/brands/pd" className="flex aspect-square md:col-span-2 md:aspect-auto overflow-hidden rounded-xl">
+            <Image src={PlayDogImage} alt="Barbie" className="size-full object-cover rounded-xl" />
           </Link>
         </div>
         </div>
