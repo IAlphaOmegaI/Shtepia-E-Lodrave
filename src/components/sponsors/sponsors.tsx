@@ -77,10 +77,10 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
         >
           {brands.filter(brand => brand.logo).map((brand) => (
             <SwiperSlide key={brand.id}>
-              {/* <Link href={brand.url}> */}
+              <Link href={`/brands/${brand.slug}`}>
               <button
-                className="flex items-center px-8 sm:px-5 justify-center cursor-pointer h-32"
-                onClick={() => handleBrandClick(brand)}
+                className="flex items-center justify-center cursor-pointer w-16 h-12 sm:w-auto sm:h-32"
+                // onClick={() => handleBrandClick(brand)}
               >
                 {brand.logo ? (
                   <Image
@@ -98,7 +98,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
                   </div>
                 )}
               </button>
-              {/* </Link> */}
+              </Link>
             </SwiperSlide>
           ))}
         </Swiper>
