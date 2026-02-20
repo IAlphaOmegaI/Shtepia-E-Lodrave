@@ -161,11 +161,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           onError={() => setImageError(true)}
         />
       </Link>
-      <div className='space-y-2.5'>
-      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[20px] line-clamp-1">
+      <div className='sm:space-y-2.5'> {/* mt-auto */}
+      <h3 className="text-[#252323] font-albertsans text-[19px] sm:text-[20px] font-bold sm:leading-[20px] line-clamp-1">
         {name}
       </h3>
-      <p className="text-[#777] font-albertsans text-[14px] leading-[15px]  font-medium line-clamp-1">
+      <p className="text-[#777] font-albertsans text-[13px] sm:text-[14px] sm:leading-[15px]  font-medium line-clamp-1">
         {brand?.name || "Brand"}
       </p>
       <div className="flex items-end justify-between gap-2 flex-wrap mt-auto">
@@ -177,7 +177,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
               </span>
             )}
           </div>
-          <span className="text-[#1A66EA] font-albertsans text-[23px] leading-[20px] font-extrabold">
+          <span className="text-[#1A66EA] font-albertsans text-[21px] sm:text-[23px] sm:leading-[20px] font-extrabold">
             {displayPrice} Lekë
           </span>
         </div>
@@ -198,7 +198,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
             Shtoje në shportë
           </span>
         </button>
-      )}
+       )} 
       </div>
     </div>
   );
