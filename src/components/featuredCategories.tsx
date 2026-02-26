@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import { CategoryService } from '@/services';
 import { Routes } from '@/config/routes';
 import type { Category } from '@/types';
@@ -39,6 +41,12 @@ const cardBgColors = [
   '#FFB4A2', // 6th (peach)
 ];
 
+const swiperBreakpoints = {
+  0: { slidesPerView: 1.15, spaceBetween: 16, centeredSlides: true },
+  640: { slidesPerView: 2, spaceBetween: 32, centeredSlides: false },
+  768: { slidesPerView: 3, spaceBetween: 32, centeredSlides: false },
+};
+
 const FeaturedCategories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +78,7 @@ const FeaturedCategories = () => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="relative flex items-center rounded-2xl shadow-lg w-full h-[200px] overflow-hidden bg-gray-200 animate-pulse"
+                className="relative flex items-center shadow-lg w-full h-[200px] rounded-2xl overflow-hidden bg-gray-200 animate-pulse"
               />
             ))}
           </div>
@@ -85,54 +93,60 @@ const FeaturedCategories = () => {
   }
 
   return (
-    <div className="bg-[#FFF8EC] mb-10 sm:mb-0sm:py-40">
-      <div className="container mx-auto  px-10 sm:px-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-          {categories.map((category, idx) => (
-            <div
-              key={category.id}
-              style={{
-                backgroundColor: cardBgColors[idx % cardBgColors.length],
-              }}
-              className="relative flex flex-col sm:flex-row items-center rounded-2xl shadow-lg w-full h-auto sm:h-[200px] overflow-hidden"
-            >
-              <Link
-                href={Routes.category(category.slug)}
-                className="absolute inset-0 z-20"
-                prefetch={true}
-              />
-              {/* SVG background stripes */}
-              <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-                {stripesSVG}
-              </div>
-              {/* Category image - centered on mobile, left aligned on desktop */}
-              <Image
-                src={
-                  imageErrors[category.id] 
-                    ? "/featured_category.png"
-                    : (category.featured_image && category.featured_image.trim() !== '' 
-                        ? (category.featured_image.startsWith('http') 
-                            ? category.featured_image 
-                            : `${BASE_IMAGE_URL}${category.featured_image}`)
-                        : "/featured_category.png")
-                }
-                alt={category.name}
-                width={230}
-                height={230}
-                className="relative sm:absolute w-[150px] sm:w-[230px] h-[150px] sm:h-full object-contain sm:left-0 sm:top-0 z-10 mx-auto sm:mx-0 mt-10 sm:mt-0"
-                priority={idx < 3} // Load first 3 images with priority
-                onError={() => {
-                  setImageErrors(prev => ({ ...prev, [category.id]: true }));
-                }}
-              />
-              {/* Category name - below image on mobile, right side on desktop */}
-              <div className="flex-1 flex items-center justify-center sm:justify-end h-auto sm:h-full z-10 pb-4 sm:pb-0 sm:pr-10 w-full">
-                <span className="text-white text-2xl sm:text-3xl font-bold px-4 py-2 rounded-xl font-grandstander font-extrabol max-w-full sm:max-w-[170px] capitalize text-center sm:text-left">
-                  {category.name}
-                </span>
-              </div>
-            </div>
-          ))}
+    <div className="bg-[#FFF8EC] mb-10 sm:mb-0 sm:py-40">
+      <div className="container mx-auto px-10 sm:px-0">
+        <div className="relative overflow-visible">
+          <Swiper
+            breakpoints={swiperBreakpoints}
+            className="featured-categories-swiper !overflow-visible"
+          >
+            {categories.map((category, idx) => (
+              <SwiperSlide key={category.id}>
+                <div
+                  style={{
+                    backgroundColor: cardBgColors[idx % cardBgColors.length],
+                  }}
+                  className="relative flex flex-row items-end rounded-2xl shadow-lg w-full aspect-[3/2] sm:aspect-auto sm:h-[200px] overflow-hidden"
+                >
+                  <Link
+                    href={Routes.category(category.slug)}
+                    className="absolute inset-0 z-20"
+                    prefetch={true}
+                  />
+                  {/* SVG background stripes */}
+                  <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+                    {stripesSVG}
+                  </div>
+                  {/* Category image - in flow, aligned to bottom-left via flex items-end */}
+                  <Image
+                    src={
+                      imageErrors[category.id]
+                        ? "/featured_category.png"
+                        : (category.featured_image && category.featured_image.trim() !== ''
+                            ? (category.featured_image.startsWith('http')
+                                ? category.featured_image
+                                : `${BASE_IMAGE_URL}${category.featured_image}`)
+                            : "/featured_category.png")
+                    }
+                    alt={category.name}
+                    width={230}
+                    height={230}
+                    className="relative shrink-0 w-[130px] h-[130px] sm:w-[230px] sm:h-[200px] object-contain object-left-bottom z-10"
+                    priority={idx < 3}
+                    onError={() => {
+                      setImageErrors(prev => ({ ...prev, [category.id]: true }));
+                    }}
+                  />
+                  {/* Category name - takes remaining space, text centered vertically */}
+                  <div className="flex-1 self-stretch flex items-center justify-center sm:justify-end min-w-0 z-10 py-2 sm:py-0 sm:pr-10 pr-4">
+                    <span className="text-white text-2xl sm:text-3xl font-bold px-2 py-1 rounded-xl font-grandstander font-extrabol max-w-full sm:max-w-[170px] capitalize text-center sm:text-left">
+                      {category.name}
+                    </span>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </div>
     </div>

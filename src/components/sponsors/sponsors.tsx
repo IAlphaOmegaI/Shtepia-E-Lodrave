@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { FilteredRoutes } from '@/config/routes';
 import type { Brand } from '@/types';
 import { ArrowNext, ArrowPrev } from '../icons';
+import Link from 'next/link';
 
 const BASE_IMAGE_URL = 'https://api.shtepialodrave.com';
 
@@ -18,7 +19,7 @@ interface SponsorsProps {
 }
 
 const breakpoints = {
-  320: { slidesPerView: 1, spaceBetween: 20 },
+  320: { slidesPerView: 2.5, spaceBetween: 16 },
   640: { slidesPerView: 3, spaceBetween: 20 },
   768: { slidesPerView: 4, spaceBetween: 30 },
   1024: { slidesPerView: 5, spaceBetween: 30 },
@@ -28,8 +29,11 @@ const breakpoints = {
 const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
   const router = useRouter();
 
-  const handleBrandClick = (brandId: number) => {
-    router.push(FilteredRoutes.productsByBrand(brandId));
+
+  const handleBrandClick = (brand: Brand) => {
+    // router.push(FilteredRoutes.productsByBrand(brand.id));
+    router.push(`/brands/${brand.slug}`);
+    // router.push(brand.url);
   };
 
   if (!brands || brands.length === 0) {
@@ -37,10 +41,10 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
   }
 
   return (
-    <div className="py-16 bg-gray-50">
+    <div className="sm:py-16 py-8">
       <div className="container mx-auto px-4">
-        <div className='flex justify-between items-center mb-12'>
-          <h2 className="text-3xl sm:absolute z-0 inset-x-0 mx-auto font-bold text-center text-gray-800">
+        <div className='justify-between hidden sm:flex items-center mb-6 sm:mb-12 relative'>
+          <h2 className="text-3xl absolute z-0 inset-x-0 mx-auto font-bold text-center text-gray-800 pointer-events-none">
             Brendet Partnere
           </h2>
           <div className='flex z-10 ml-auto gap-1'>
@@ -73,9 +77,10 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
         >
           {brands.filter(brand => brand.logo).map((brand) => (
             <SwiperSlide key={brand.id}>
-              <div
-                className="flex items-center justify-center p-8  cursor-pointer h-32"
-                onClick={() => handleBrandClick(brand.id)}
+              <Link href={`/brands/${brand.slug}`}>
+              <button
+                className="flex items-center justify-center cursor-pointer w-16 h-12 sm:w-auto sm:h-32"
+                // onClick={() => handleBrandClick(brand)}
               >
                 {brand.logo ? (
                   <Image
@@ -92,7 +97,8 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
                     </h3>
                   </div>
                 )}
-              </div>
+              </button>
+              </Link>
             </SwiperSlide>
           ))}
         </Swiper>

@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import ProductCarousel from '../products/product-carousel';
 import Confetti1Image from '../../../public/home/confetti-1.png';
 import Confetti2Image from '../../../public/home/confetti-2.png';
+import Confetti1MobileImage from '../../../public/home/confetti-1-mobile.png';
+import Confetti2MobileImage from '../../../public/home/confetti-2-mobile.png';
 
 // Function to convert PopularProduct to Product format for ProductCard compatibility
 const convertToProductFormat = (popularProduct: PopularProduct): Product => {
@@ -60,10 +62,9 @@ const convertToProductFormat = (popularProduct: PopularProduct): Product => {
 };
 
 const breakpoints = {
-  320: { slidesPerView: 1, spaceBetween: 10 },
-  580: { slidesPerView: 2, spaceBetween: 16 },
-  1024: { slidesPerView: 3, spaceBetween: 24 },
-  1440: { slidesPerView: 4, spaceBetween: 24 },
+  320: { slidesPerView: 2, spaceBetween: 10 },
+  580: { slidesPerView: 4, spaceBetween: 16 },
+  1024: { slidesPerView: 6, spaceBetween: 12 },
 };
 
 // Number of categories to display
@@ -100,54 +101,48 @@ const BestSellingProducts = () => {
   const formattedProducts = activeProducts.map(convertToProductFormat);
 
   return (
-    <div className="w-full bg-[#FFFAEE] pb-12">
-      <div className="bg-[#FFCB47] pb-20 flex flex-col gap-8">
+    <div className="w-full mb-6 md:mb-12">
+      <div className="bg-[#FFCB47] pb-6 md:pb-12 flex flex-col gap-6 md:gap-8 relative overflow-hidden">
+        {/* Mobile: decorative confetti in top corners */}
+        <Image
+          src={Confetti1MobileImage}
+          alt=""
+          aria-hidden
+          className="sm:hidden absolute h-[90px] w-[70px] -top-1 pointer-events-none"
+        />
+        <Image
+          src={Confetti2MobileImage}
+          alt=""
+          aria-hidden
+          className="sm:hidden absolute -top-1 right-0 h-[90px] w-[70px] pointer-events-none"
+        />
 
-        <div className="flex justify-center sm:justify-between overflow-hidden pt-16 lg:pt-0 px-2 sm:px-0">
+        {/* Header: centered on mobile, three-column on sm+ */}
+        <div className="flex justify-center sm:justify-between overflow-hidden pt-8 sm:pt-16 lg:pt-0">
           <Image
             src={Confetti1Image}
-            alt="New Products 1"
-            className="hidden sm:block max-w-[450px] shrink-0"
+            alt=""
+            aria-hidden
+            className="hidden sm:block max-w-[420px] shrink-0"
           />
-          <h1
-            className="text-white text-center self-end pb-10 sm:pb-0 font-grandstander mx-2 sm:mx-4 grow text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px]"
-            style={{
-              WebkitTextStrokeWidth: "3px",
-              WebkitTextStrokeColor: "red",
-            }}
-          >
-            Produktet popullore
-          </h1>
+          <div className="mt-auto flex flex-col items-center mx-0 sm:mx-4">
+            <h1
+              className="text-white text-center font-grandstander grow text-[32px] xs:text-[36px] sm:text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px] max-w-[90vw] sm:max-w-none"
+              style={{
+                WebkitTextStrokeWidth: '2.5px',
+                WebkitTextStrokeColor: 'red',
+              }}
+            >
+              Produktet<br /> popullore
+            </h1>
+          </div>
           <Image
             src={Confetti2Image}
-            alt="New Products 2"
-            className="hidden sm:block max-w-[450px] shrink-0"
+            alt=""
+            aria-hidden
+            className="hidden sm:block max-w-[420px] shrink-0"
           />
         </div>
-
-        {/* <div className="flex justify-center gap-4 mb-10 mt-[-41px] flex-wrap">
-          {popularCategories.slice(0, MAX_CATEGORIES_TO_DISPLAY).map((cat) => {
-            return (<button
-              key={cat.category.id}
-              onClick={() => setActiveTab(cat.category.name)}
-              className={
-                'px-8 py-3 rounded-[20px] font-albertsans font-semibold text-[18px] transition-all duration-200 capitalize ' +
-                (activeTab === cat.category.name
-                  ? 'bg-[#FFF] text-[#000] shadow-lg transform scale-105'
-                  : 'bg-[#FFE4A1] text-[#666] hover:bg-[#FFD98F] hover:text-[#333]')
-              }
-            >
-              {cat.category.name === 'veshje' ? 'Veshje' : 
-               cat.category.name === 'lodra' ? 'Lodra' : 
-               cat.category.name === 'aksesore' ? 'Aksesorë' :
-               cat.category.name === 'pantallona' ? 'Pantallona' :
-               cat.category.name === 'puzzle' ? 'Puzzle' :
-               cat.category.name === 'fustane' ? 'Fustane' :
-               cat.category.name.charAt(0).toUpperCase() + cat.category.name.slice(1)}
-            </button>)
-          }
-          )}
-        </div> */}
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
@@ -158,12 +153,13 @@ const BestSellingProducts = () => {
         )}
       </div>
       <Image
-        src={'/icons/yellow-wave.svg'}
-        alt="Wave"
+        src="/icons/yellow-wave.svg"
+        alt=""
+        aria-hidden
         width={1920}
         height={1080}
         className="w-full h-auto"
-      ></Image>
+      />
     </div>
   );
 };

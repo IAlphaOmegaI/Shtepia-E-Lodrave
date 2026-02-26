@@ -157,14 +157,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
           alt={`${name} image`}
           width={100}
           height={100}
-          className="object-contain h-45 w-full object-top"
+          className="object-contain h-35 sm:h-45 w-full object-top"
           onError={() => setImageError(true)}
         />
       </Link>
-      <h3 className="text-[#252323] font-albertsans text-[20px] font-bold leading-[26px] line-clamp-2">
+      <div className='sm:space-y-2.5'> {/* mt-auto */}
+      <h3 className="text-[#252323] font-albertsans text-[19px] sm:text-[20px] font-bold sm:leading-[20px] line-clamp-1">
         {name}
       </h3>
-      <p className="text-[#777] font-albertsans text-[16px] font-medium leading-[20px]">
+      <p className="text-[#777] font-albertsans text-[13px] sm:text-[14px] sm:leading-[15px]  font-medium line-clamp-1">
         {brand?.name || "Brand"}
       </p>
       <div className="flex items-end justify-between gap-2 flex-wrap mt-auto">
@@ -176,7 +177,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
               </span>
             )}
           </div>
-          <span className="text-[#1A66EA] font-albertsans text-[24px] font-extrabold leading-[32px]">
+          <span className="text-[#1A66EA] font-albertsans text-[21px] sm:text-[23px] sm:leading-[20px] font-extrabold">
             {displayPrice} Lekë
           </span>
         </div>
@@ -197,7 +198,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, removeMaxWidth = fal
             Shtoje në shportë
           </span>
         </button>
-      )}
+       )} 
+      </div>
     </div>
   );
 };

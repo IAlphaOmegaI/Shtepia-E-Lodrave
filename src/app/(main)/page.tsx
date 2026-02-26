@@ -19,13 +19,15 @@ export default async function HomePage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Hero Banner */}
       <LodraBanner />
-      <NewProducts />
 
       {/* Sponsors */}
       <Sponsors brands={brands} />
+      
+      <NewProducts />
+
 
 
       {/* Best Selling Products */}
