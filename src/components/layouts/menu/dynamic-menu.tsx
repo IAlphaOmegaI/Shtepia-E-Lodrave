@@ -271,7 +271,7 @@ const DynamicMenu: React.FC = () => {
                                   {legoBrand.children.map((child) => (
                                     <li key={child.id}>
                                       <Link
-                                        href={`/brands/${child.slug}`}
+                                        href={`/brands/lego?sub-brand=${child.id}`}
                                         onClick={() => setOpenMenu(null)}
                                         className="block text-[18px] font-normal not-italic leading-[24px] text-[#252323] hover:text-[#4a4a4a] transition-colors capitalize mb-4"
                                       >
