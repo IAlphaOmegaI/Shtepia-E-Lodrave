@@ -101,7 +101,7 @@ const BestSellingProducts = () => {
   const formattedProducts = activeProducts.map(convertToProductFormat);
 
   return (
-    <div className="w-full mb-6 md:mb-12">
+    <div className="w-full mb-6 bg-[#FFF8EC] md:mb-12">
       <div className="bg-[#FFCB47] pb-6 md:pb-12 flex flex-col gap-6 md:gap-8 relative overflow-hidden">
         {/* Mobile: decorative confetti in top corners */}
         <Image
@@ -125,7 +125,7 @@ const BestSellingProducts = () => {
             aria-hidden
             className="hidden sm:block max-w-[420px] shrink-0"
           />
-          <div className="mt-auto flex flex-col items-center mx-0 sm:mx-4">
+          <div className="self-end flex flex-col items-center mx-0 sm:mx-4">
             <h1
               className="text-white text-center font-grandstander grow text-[32px] xs:text-[36px] sm:text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px] max-w-[90vw] sm:max-w-none"
               style={{
@@ -133,7 +133,7 @@ const BestSellingProducts = () => {
                 WebkitTextStrokeColor: 'red',
               }}
             >
-              Produktet<br /> popullore
+              Produktet më të<br/> kërkuara
             </h1>
           </div>
           <Image
