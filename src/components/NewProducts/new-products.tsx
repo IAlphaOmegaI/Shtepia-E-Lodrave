@@ -38,7 +38,7 @@ export const NewProducts = () => {
             aria-hidden
             className="hidden sm:block max-w-[400px] max-h-[200px] shrink-0"
           />
-          <div className="mt-auto flex flex-col items-center mx-0 sm:mx-4">
+          <div className="self-center flex flex-col items-center mx-0 sm:mx-4">
             <h1
               className="text-white text-center font-grandstander grow text-[32px] xs:text-[36px] sm:text-[40px] md:text-[50px] font-black leading-tight sm:leading-[60px] max-w-[90vw] sm:max-w-none"
               style={{
@@ -46,7 +46,7 @@ export const NewProducts = () => {
                 WebkitTextStrokeColor: 'blue',
               }}
             >
-              Produktet<br /> popullore
+              Produktet e reja
             </h1>
           </div>
           <Image

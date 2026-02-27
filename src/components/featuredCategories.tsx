@@ -72,7 +72,7 @@ const FeaturedCategories = () => {
   // Show loading state
   if (loading) {
     return (
-      <div className="bg-[#FFF8EC] mb-10 sm:mb-0 sm:py-40">
+      <div className="bg-[#FFF8EC] -mt-6 md:-mt-12 py-10 sm:py-40">
         <div className="container mx-auto px-10 sm:px-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
@@ -93,7 +93,7 @@ const FeaturedCategories = () => {
   }
 
   return (
-    <div className="bg-[#FFF8EC] mb-10 sm:mb-0 sm:py-40">
+    <div className="bg-[#FFF8EC] -mt-6 md:-mt-12 py-10 sm:py-24">
       <div className="container mx-auto px-10 sm:px-0">
         <div className="relative overflow-visible">
           <Swiper

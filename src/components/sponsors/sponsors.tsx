@@ -41,9 +41,9 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
   }
 
   return (
-    <div className="sm:py-16 py-8">
+    <div className="sm:py-10 py-8">
       <div className="container mx-auto px-4">
-        <div className='justify-between hidden sm:flex items-center mb-6 sm:mb-12 relative'>
+        {/* <div className='justify-between hidden sm:flex items-center mb-6 sm:mb-12 relative'>
           <h2 className="text-3xl absolute z-0 inset-x-0 mx-auto font-bold text-center text-gray-800 pointer-events-none">
             Brendet Partnere
           </h2>
@@ -59,7 +59,7 @@ const Sponsors: React.FC<SponsorsProps> = ({ brands }) => {
               <ArrowNext width={18} height={18} />
             </button>
           </div>
-        </div>
+        </div> */}
 
         <Swiper
           modules={[Navigation, Autoplay]}

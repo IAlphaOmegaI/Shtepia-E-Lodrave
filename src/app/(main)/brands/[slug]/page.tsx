@@ -6,6 +6,7 @@ import { BrandService } from '@/services';
 import { api } from '@/services/api';
 import type { Brand, Product } from '@/types';
 import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { use, useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -63,6 +64,17 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
 
 export default function BrandPage({ params }: BrandPageProps) {
   const resolvedParams = use(params);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const subBrandParam = searchParams.get('sub-brand');
+  const selectedSubBrandIdFromUrl: number | null =
+    subBrandParam !== null
+      ? (() => {
+          const n = parseInt(subBrandParam, 10);
+          return Number.isNaN(n) ? null : n;
+        })()
+      : null;
+
   const [brand, setBrand] = useState<Brand | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,8 +83,13 @@ export default function BrandPage({ params }: BrandPageProps) {
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatorInfo, setPaginatorInfo] = useState<any>(null);
-  const [selectedSubBrandId, setSelectedSubBrandId] = useState<number | null>(null);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Effective sub-brand for API: only use if it's a valid child of the current brand
+  const effectiveSubBrandId =
+    brand?.children?.length && selectedSubBrandIdFromUrl !== null && brand.children.some((c) => c.id === selectedSubBrandIdFromUrl)
+      ? selectedSubBrandIdFromUrl
+      : null;
 
   useEffect(() => {
     const fetchBrand = async () => {
@@ -96,7 +113,7 @@ export default function BrandPage({ params }: BrandPageProps) {
 
       try {
         setProductsLoading(true);
-        const brandId = selectedSubBrandId ?? brand.id;
+        const brandId = effectiveSubBrandId ?? brand.id;
         const params: any = {
           brand: brandId,
           page: currentPage,
@@ -120,7 +137,7 @@ export default function BrandPage({ params }: BrandPageProps) {
     };
 
     fetchProducts();
-  }, [brand, selectedSubBrandId, sortBy, currentPage, itemsPerPage]);
+  }, [brand, effectiveSubBrandId, sortBy, currentPage, itemsPerPage]);
 
   const getImageUrl = (path: string | null | undefined) => {
     if (!path) return null;
@@ -164,7 +181,12 @@ export default function BrandPage({ params }: BrandPageProps) {
   const hasSubBrands = subBrands.length > 0;
 
   const handleSubBrandFilter = (subBrandId: number | null) => {
-    setSelectedSubBrandId(subBrandId);
+    const next = new URLSearchParams(searchParams.toString());
+    if (subBrandId === null) next.delete('sub-brand');
+    else next.set('sub-brand', String(subBrandId));
+    const path = `/brands/${resolvedParams.slug}`;
+    const query = next.toString();
+    router.replace(query ? `${path}?${query}` : path, { scroll: false });
     setCurrentPage(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -255,7 +277,7 @@ export default function BrandPage({ params }: BrandPageProps) {
                         <input
                           type="radio"
                           name="subBrand"
-                          checked={selectedSubBrandId === null}
+                          checked={selectedSubBrandIdFromUrl === null}
                           onChange={() => {
                             handleSubBrandFilter(null);
                             setShowMobileFilters(false);
@@ -269,7 +291,7 @@ export default function BrandPage({ params }: BrandPageProps) {
                           <input
                             type="radio"
                             name="subBrand"
-                            checked={selectedSubBrandId === sub.id}
+                            checked={selectedSubBrandIdFromUrl === sub.id}
                             onChange={() => {
                               handleSubBrandFilter(sub.id);
                               setShowMobileFilters(false);
