@@ -129,6 +129,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
     : 0;
 
+  const isOutOfStock = product.quantity === 0;
+
   // Handle Escape key to close lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -413,27 +415,29 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
               {/* Quantity and Add to Cart */}
               <div className="flex items-center gap-4 mb-8">
-                <div className="flex items-center border border-[#E5E5E5] rounded-[8px] bg-[#F8F8F8]">
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-4 py-3 hover:bg-gray-200 transition-colors text-[24px] font-medium text-[#666]"
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <span className="px-6 font-medium text-[20px] text-[#252323] font-albertsans min-w-[60px] text-center">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setQuantity((q) => Math.min(q + 1, product.quantity))
-                    }
-                    className="px-4 py-3 hover:bg-gray-200 transition-colors text-[24px] font-medium text-[#666]"
-                    disabled={quantity >= product.quantity}
-                  >
-                    +
-                  </button>
-                </div>
+                {!isOutOfStock && (
+                  <div className="flex items-center border border-[#E5E5E5] rounded-[8px] bg-[#F8F8F8]">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="px-4 py-3 hover:bg-gray-200 transition-colors text-[24px] font-medium text-[#666]"
+                      disabled={quantity <= 1}
+                    >
+                      -
+                    </button>
+                    <span className="px-6 font-medium text-[20px] text-[#252323] font-albertsans min-w-[60px] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setQuantity((q) => Math.min(q + 1, product.quantity))
+                      }
+                      className="px-4 py-3 hover:bg-gray-200 transition-colors text-[24px] font-medium text-[#666]"
+                      disabled={quantity >= product.quantity}
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
 
                 {/* <span className="text-[#777] text-[16px] font-albertsans">
                   ({product.quantity} copë në dispozicion)
@@ -443,11 +447,15 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               <div className="flex flex-col sm:flex-row gap-4 items-center ">
                 <button
                   onClick={handleAddToCart}
-                 
-                  className="cursor-pointer flex-1 bg-[#FEBC1B] hover:bg-[#FEB000] text-[#252323] font-semibold py-4 px-8 rounded-[8px] transition-colors flex items-center justify-center gap-3 text-[18px] font-albertsans h-[56px]"
+                  disabled={isOutOfStock}
+                  className={`flex-1 font-semibold py-4 px-8 rounded-[8px] transition-colors flex items-center justify-center gap-3 text-[18px] font-albertsans h-[56px] ${
+                    isOutOfStock
+                      ? "cursor-not-allowed bg-gray-300 text-gray-500"
+                      : "cursor-pointer bg-[#FEBC1B] hover:bg-[#FEB000] text-[#252323]"
+                  }`}
                 >
-                  <ShoppingCartIcon className="w-5 h-5 text-[#252323]" />
-                  Shtoje në shportë
+                  <ShoppingCartIcon className={`w-5 h-5 ${isOutOfStock ? "text-gray-500" : "text-[#252323]"}`} />
+                  {isOutOfStock ? "Jashtë stokut" : "Shtoje në shportë"}
                 </button>
 
                 <button
