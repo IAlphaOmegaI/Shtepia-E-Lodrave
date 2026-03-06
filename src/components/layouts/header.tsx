@@ -28,7 +28,7 @@ import { useCart } from '@/store/quick-cart/cart.context';
 import cn from 'classnames';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-import { Heart, Search as SearchLucide, ShoppingCart } from 'lucide-react';
+import { Heart, Search as SearchLucide, ShoppingCart, Truck } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -194,9 +194,9 @@ const Header = ({ layout }: { layout?: string }) => {
           }}
         >
           {/* Desktop Layout */}
-          <div className="hidden lg:grid lg:grid-cols-3 w-full items-center">
-            {/* Left Section - Logo & Stores Link */}
-            <div className="flex items-center">
+          <div className="hidden lg:flex w-full justify-between items-center gap-6 xl:gap-8">
+            {/* Left - Logo & Stores Link */}
+            <div className="flex items-center shrink-0">
               <Logo
                 className={cn(
                   "flex justify-start py-2 sm:py-3",
@@ -205,22 +205,32 @@ const Header = ({ layout }: { layout?: string }) => {
               />
               <Link
                 href="/stores"
-                className="hidden xl:flex items-center gap-1 text-white ltr:ml-6 rtl:mr-6 whitespace-nowrap"
+                className="hidden xl:flex items-center gap-1.5 text-white ltr:ml-6 rtl:mr-6 whitespace-nowrap font-medium text-sm hover:underline"
               >
-                <MapPinNew className="w-4 h-4" />
-                <span className="hover:underline font-bold text-sm">Dyqanet tona</span>
+                <MapPinNew className="w-4 h-4 shrink-0" />
+                <span>Dyqanet tona</span>
               </Link>
             </div>
-            
-            {/* Center Section - Search */}
-            <div className="flex justify-center items-center px-4">
-              <div className="w-full max-w-lg">
-                <Search variant="flat" label="search" placeholder="Search..." />
-              </div>
+
+            {/* Center - Search (pill shape, takes remaining space) */}
+            <div className="w-fit flex justify-center items-center min-w-0 max-w-2xl mx-4">
+              <Search
+                variant="header"
+                label="search"
+                placeholder="Kërko produktin tënd të preferuar këtu..."
+                // className="w-full"
+              />
             </div>
-            
-            {/* Right Section - User Actions */}
-            <div className="flex items-center justify-end space-x-3 text-white relative z-[50]">
+
+            {/* Right - Transporti, User, Wishlist, Cart */}
+            <div className="flex items-center justify-end gap-1 xl:gap-3 text-white shrink-0 relative z-[50]">
+              {/* <Link
+                href="/shipping"
+                className="hidden xl:flex items-center gap-1.5 text-white font-medium text-sm hover:underline whitespace-nowrap"
+              >
+                <Truck className="w-4 h-4 shrink-0" />
+                <span>Transporti</span>
+              </Link> */}
                 {isClient && isAuthorize ? (
                   <AuthorizedMenu />
                 ) : (

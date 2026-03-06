@@ -11,7 +11,7 @@ import { ProductService } from '@/services/product.service';
 interface SearchProps {
   className?: string;
   label?: string;
-  variant?: 'minimal' | 'flat' | 'normal';
+  variant?: 'minimal' | 'flat' | 'normal' | 'header';
   placeholder?: string;
   inputClassName?: string;
 }
@@ -155,7 +155,7 @@ const Search: React.FC<SearchProps> = ({
   };
 
   return (
-    <div ref={searchRef} className={cn("relative w-full", className)}>
+    <div ref={searchRef} className={cn("relative max-w-[460px] w-full", className)}>
       <form onSubmit={handleSearch} className="relative flex w-full">
         <label htmlFor={label} className="sr-only">
           {label}
@@ -175,14 +175,19 @@ const Search: React.FC<SearchProps> = ({
               {
                 "border-gray-200 bg-gray-50": variant === "minimal",
                 "border-0 bg-gray-100": variant === "flat",
-                "rounded-b-none": showDropdown,
+                "rounded-b-none": showDropdown && variant !== "header",
+                "rounded-full !pl-4 pr-12 py-2.5 border-0 bg-white placeholder-gray-400": variant === "header",
+                "rounded-b-none ": variant === "header" && showDropdown,
               },
               inputClassName
             )}
           />
           <button
             type="submit"
-            className="absolute left-0 flex h-full w-10 items-center justify-center text-gray-600"
+            className={cn(
+              "flex h-full w-10 items-center justify-center text-gray-500",
+              variant === "header" ? "absolute right-0" : "absolute left-0"
+            )}
           >
             {isLoading ? (
               <div className="h-[18px] w-[18px] animate-spin rounded-full border-2 border-gray-300 border-t-[#F44535]"></div>
@@ -194,7 +199,10 @@ const Search: React.FC<SearchProps> = ({
             <button
               type="button"
               onClick={clearSearch}
-              className="absolute right-0 flex h-full w-10 items-center justify-center text-gray-600 hover:text-gray-900"
+              className={cn(
+                "absolute flex h-full w-10 items-center justify-center text-gray-600 hover:text-gray-900",
+                variant === "header" ? "right-10" : "right-0"
+              )}
             >
               <CloseIcon className="h-[14px] w-[14px]" />
             </button>
@@ -210,7 +218,10 @@ const Search: React.FC<SearchProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-0 right-0 z-50 mt-0 max-h-96 overflow-y-auto rounded-b-lg bg-white shadow-lg border border-t-0 border-gray-300"
+            className={cn(
+              "absolute left-0 right-0 z-50 mt-0 max-h-96 overflow-y-auto bg-white shadow-lg border border-t-0 border-gray-300",
+              variant === "header" ? "rounded-b-2xl" : "rounded-b-lg"
+            )}
           >
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
