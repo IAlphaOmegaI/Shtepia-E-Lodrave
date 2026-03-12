@@ -133,7 +133,7 @@ const BestSellingProducts = () => {
                 WebkitTextStrokeColor: 'red',
               }}
             >
-              Produktet më të<br/> kërkuara
+              Produktet në trend
             </h1>
           </div>
           <Image

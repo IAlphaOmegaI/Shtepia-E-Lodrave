@@ -46,7 +46,7 @@ export const NewProducts = () => {
                 WebkitTextStrokeColor: 'blue',
               }}
             >
-              Produktet e reja
+              Produktet më të<br/> kërkuara
             </h1>
           </div>
           <Image

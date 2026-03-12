@@ -23,8 +23,22 @@ const LodraBanner = () => {
 
   return (
     <div className="relative w-full overflow-hidden bg-[#fff9f0]">
+  <Link
+              href={"/category/oferta"}
+              className="block relative w-full min-h-[200px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[500px]"
+            >
+              <Image
+                src={"/home/home-banner/1.svg"}
+                alt={"Banner 1"}
+                fill
+                className="object-cover object-bottom"
+                sizes="100vw"
+                priority
+              />
+            </Link>
+
       {/* Carousel */}
-      <Swiper
+      {/* <Swiper
         modules={[Navigation, Autoplay]}
         navigation={{
           nextEl: `.lodra-banner-next-${id}`,
@@ -56,10 +70,10 @@ const LodraBanner = () => {
             </Link>
           </SwiperSlide>
         ))}
-      </Swiper>
+      </Swiper> */}
 
       {/* Absolute prev/next – same style as product carousel */}
-      <div
+      {/* <div
         className={`lodra-banner-prev-${id} absolute top-2/5 z-10 hidden md:flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#F11602] border-opacity-70 bg-white text-[#F11602] shadow-xl transition-all duration-200 hover:border-[#F11602] hover:bg-[#F11602] hover:text-white ltr:left-4 rtl:-right-4 md:h-9 md:w-9 ltr:md:left-5 rtl:md:right-5`}
         role="button"
         aria-label="Previous slide"
@@ -72,7 +86,7 @@ const LodraBanner = () => {
         aria-label="Next slide"
       >
         <ArrowNext width={18} height={18} />
-      </div>
+      </div> */}
     </div>
   );
 };
